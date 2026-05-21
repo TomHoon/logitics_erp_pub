@@ -2,7 +2,6 @@
 
 .container {
     display: flex;
-    margin: 0 auto;
     justify-content: space-between;
     width: 1440px;
     background-color: #1B3A6B;
@@ -19,7 +18,7 @@
     gap: 10px;
 }
 .left2 {
-    margin-left: 32px;
+    margin-left: 29px;
 }
 
 .imgIcon {

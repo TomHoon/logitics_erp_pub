@@ -1,6 +1,19 @@
+'use client';
+
+import { useEffect } from 'react';
 import style from './Nav.module.css'
+import baseApi from '@/common/api/baseApi';
 
 export default function Nav({initial = '홍', fullName = '홍길동'}) {
+
+    useEffect(() => {
+        const getEmployees = async () => {
+            const res = await baseApi.get('/api/v1/employees');
+            console.log(res);
+        }
+        getEmployees();
+    }, []);
+
     return (
         <div className={style.container}>
         
