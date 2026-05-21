@@ -1,0 +1,24 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.titleArea {
+    display: flex;
+    flex-direction: column;
+}
+
+.mainTitle {
+    font-weight: 700;
+    font-size: 20px;
+}
+.desc {
+    font-size: 13px;
+    font-weight: 400;
+    color: #6B7280;
+}
+.buttonArea {
+    display: flex;
+    gap: 8px;
+}

@@ -43,10 +43,15 @@ export default function layout({children}) {
         <div className={s.container}>
             <Nav/>
             <div className={s.mainWrapper}>
+                {/* aside영역 */}
                 <Aside 
                     menus={dummy}
                 />
-                {children}
+                
+                {/* 메인영역 */}
+                <div className={s.mainContentWrapper}>
+                    {children}
+                </div>
             </div>
 
         </div>
