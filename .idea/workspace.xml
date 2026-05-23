@@ -5,19 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="84f0f6a0-c322-47ac-afec-7bbf4a18cec3" name="Changes" comment="Xss">
-      <change afterPath="$PROJECT_DIR$/public/kakaologin.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/Landing.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/info/layout.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/info/layout.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/info/register/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/info/register/page.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/Landing.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Landing.module.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/Aside.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/Aside.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/Aside.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/Aside.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/Nav.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/Nav.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/common/Nav.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/Nav.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/SearchBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/SearchBar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/SearchBar.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/SearchBar.module.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,6 +105,8 @@
       <workItem from="1779181382267" duration="2067000" />
       <workItem from="1779534945595" duration="1267000" />
       <workItem from="1779536221752" duration="7856000" />
+      <workItem from="1779546177969" duration="20000" />
+      <workItem from="1779546293385" duration="2261000" />
     </task>
     <servers />
   </component>

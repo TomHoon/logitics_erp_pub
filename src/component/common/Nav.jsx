@@ -15,7 +15,7 @@ export default function Nav({initial = '홍', fullName = '홍길동'}) {
     }, []);
 
     return (
-        <div className={style.container}>
+        <div className={`${style.container}`}>
         
             <div className={style.left}>
                 <div className={style.left1}>
