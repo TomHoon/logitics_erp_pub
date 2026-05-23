@@ -1,7 +1,6 @@
 import s from './Aside.module.css'
 
 export default function Aside({menus}) {
-    console.log('menus >> ', menus);
 
     return (
         <div className={s.container}>

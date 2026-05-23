@@ -1,6 +1,9 @@
 .container {
     display: flex;
     flex-direction: column;
+    border-radius: 8px;
+    background-color: #fff;
+    padding: 16px 0 16px 16px;
 }
 .searchBarIcon{
     width: 14px;
@@ -8,6 +11,7 @@
 }
 .searchBarTitle {
     display: flex;
+    gap: 8px;
     align-items: center;
 }
 .searchBarTitle img {

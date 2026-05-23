@@ -5,13 +5,13 @@ import CInput from './element/CInput';
 import CLabel from './element/CLabel';
 import CSelect from './element/CSelect';
 import s from './SearchBar.module.css';
-
+import { Search } from 'lucide-react';
 
 export default function SearchBar() {
     return (
         <div className={s.container}>
             <div className={s.searchBarTitle}>
-                <img className={s.searchBarIcon} src="search.png" alt="" />
+                <Search size={15}/>
                 <span>검색조건</span>
             </div>
 

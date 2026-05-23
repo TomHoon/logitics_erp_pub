@@ -1,0 +1,79 @@
+.container {
+    display: flex;
+    margin: 0 auto;
+    flex-direction: column;
+}
+.loginContentWrapper {
+    display: flex;
+}
+
+.guideArea {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    background: linear-gradient(
+            to top right,
+            #0F2547,
+            #1E40AF
+    );
+}
+
+.guideTitle {
+    display: flex;
+    color: #93C5FD;
+    padding: 7px 16px;
+    background-color: #2c437d;
+    border-radius: 20px;
+}
+
+.guideCenterTitle {
+    font-size: 38px;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+}
+.guideDesc {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 400;
+    color: #BFDBFE;
+}
+
+
+.spec {
+    display: flex;
+    gap: 65px;
+}
+.specNumber {
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+}
+.spec li:not(:last-child)::after {
+    content: "";
+    width: 1px;
+    height: 44px;
+    background-color: #fff;
+    position: absolute;
+    right: -30px;
+    top: 10px
+}
+.spec li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.specDesc {
+    font-size: 12px;
+    font-weight: 400;
+    color:#93C5FD;
+}
+
+.centerTitleHL {
+    color: #60A5FA;
+}
+.loginArea {
+    flex: 1;
+}
