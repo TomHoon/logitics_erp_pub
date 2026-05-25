@@ -1,11 +1,14 @@
-import { Input } from "@/components/ui/input";
-
 import s from './CInput.module.css'
 
-export default function CInput({placeholder}) {
+export default function CInput({placeholder, width}) {
     return (
         <>
-            <input className={s.cInput} type="text" placeholder={placeholder} />
+            <input
+              className={`${s.cInput}`}
+              style={{ width: `${width ?? 120}px` }}
+              type="text"
+              placeholder={placeholder}
+            />
         </>
     )
 }

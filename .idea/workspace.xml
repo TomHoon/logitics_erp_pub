@@ -5,12 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="84f0f6a0-c322-47ac-afec-7bbf4a18cec3" name="Changes" comment="Xss">
-      <change afterPath="$PROJECT_DIR$/src/component/common/element/CInputCustom.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/component/common/element/CInputCustom.module.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/component/home/Home.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/component/appointment/AppointMent.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/component/appointment/AppointMent.module.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/component/appointment/AppointmentForm.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/component/appointment/AppointmentForm.module.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/component/info/register/InfoRegister.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/Landing.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/home/Home.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/info/appointment/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/info/appointment/page.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/info/layout.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/info/layout.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/info/register/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/info/register/page.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/SearchBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/SearchBar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/ViewTable.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/ViewTable.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/ViewTable.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/ViewTable.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/element/CButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CButton.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/element/CButton.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CButton.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/element/CInput.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CInput.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/element/CInput.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CInput.module.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +123,7 @@
       <workItem from="1779536221752" duration="7856000" />
       <workItem from="1779546177969" duration="20000" />
       <workItem from="1779546293385" duration="2283000" />
-      <workItem from="1779692403759" duration="3551000" />
+      <workItem from="1779692403759" duration="18638000" />
     </task>
     <servers />
   </component>

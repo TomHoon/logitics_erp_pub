@@ -7,7 +7,7 @@ import CSelect from './element/CSelect';
 import s from './SearchBar.module.css';
 import { Search } from 'lucide-react';
 
-export default function SearchBar() {
+export default function SearchBar({useKeyword, useDpt, usePeriod, useExactDate, useCustomRender}) {
     return (
         <div className={s.container}>
             <div className={s.searchBarTitle}>
@@ -22,24 +22,28 @@ export default function SearchBar() {
                     /> 
                     <CInput/>
                 </div>
+
                 <div className={s.conditionItem}>
                     <CLabel
                         labelName='부서'
                     /> 
                     <CSelect/>
                 </div>
+
                 <div className={s.conditionItem}>
                     <CLabel
                         labelName='직급'
                     /> 
                     <CSelect/>
                 </div>
+
                 <div className={s.conditionItem}>
                     <CLabel
                         labelName='재직중'
                     /> 
                     <CSelect/>
                 </div>
+
                 <div className={s.conditionItem}>
                     <CButton
                         path='/search-w.png'
