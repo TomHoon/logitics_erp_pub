@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="84f0f6a0-c322-47ac-afec-7bbf4a18cec3" name="Changes" comment="Xss">
+      <change afterPath="$PROJECT_DIR$/src/component/common/element/CInputCustom.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/component/common/element/CInputCustom.module.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/component/home/Home.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/Landing.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/Landing.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/Landing.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/home/Home.module.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/Nav.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/Nav.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/Nav.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/Nav.module.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,29 +48,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;js.debugger.nextJs.config.created.client&quot;: &quot;true&quot;,
-    &quot;js.debugger.nextJs.config.created.server&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/donghoonlee/Public/logitics_erp_pub&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "js.debugger.nextJs.config.created.client": "true",
+    "js.debugger.nextJs.config.created.server": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/Users/donghoonlee/Public/logitics_erp_pub",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/component/home" />
+      <recent name="$PROJECT_DIR$/src/component" />
       <recent name="$PROJECT_DIR$/public" />
     </key>
   </component>
@@ -106,7 +110,8 @@
       <workItem from="1779534945595" duration="1267000" />
       <workItem from="1779536221752" duration="7856000" />
       <workItem from="1779546177969" duration="20000" />
-      <workItem from="1779546293385" duration="2261000" />
+      <workItem from="1779546293385" duration="2283000" />
+      <workItem from="1779692403759" duration="3551000" />
     </task>
     <servers />
   </component>

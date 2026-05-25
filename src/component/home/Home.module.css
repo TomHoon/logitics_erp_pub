@@ -158,6 +158,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    padding: 113.5px 110px;
 }
 
 .titleSection{
@@ -310,4 +311,106 @@
     color: #2563EB;
     font-size: 14px;
     font-weight: 600;
+}
+
+
+.joinArea {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.joinFormSection {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 560px;
+    gap: 14px;
+}
+
+.joinFormSection div {
+    width: 273px;
+}
+
+.joinWrapper {
+    padding: 113.5px 110px;
+}
+
+
+.guideAndConsent {
+    display: flex;
+    margin-top: 14px;
+    margin-bottom: 24px;
+    flex-direction: column;
+
+}
+
+.guideContentWrapper {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+}
+
+.guideContent {
+    color: #9CA3AF;
+    font-size: 12px;
+
+}
+
+.consentWrapper {
+    display: flex;
+    justify-content: space-between;
+    background-color: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    padding: 15px 16px;
+    margin-top: 24px;
+}
+.checkConsent {
+    color: #374151;
+    font-size: 13px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.consentClickButton {
+    color: #2563EB;
+    font-size: 13px;
+}
+
+
+.joinButtonSection {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.joinButton {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    background-color: #1E3A5F;
+    width: 100%;
+    border-radius: 10px;
+    padding: 16px 0;
+}
+
+.joinButton span {
+    font-size: 15px;
+    color: #fff;
+}
+
+.loginButton {
+    width: 100%;
+    color: #6B7280;
+    font-size: 14px;
+    justify-content: center;
+    display: flex;
+}
+
+.loginButton span {
+    color: #2563EB;
+    font-weight: 700;
+    margin-left: 6px;
 }
