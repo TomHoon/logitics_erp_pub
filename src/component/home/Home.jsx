@@ -1,10 +1,23 @@
+'use client';
+
 import c from "@/component/home/Home.module.css";
 import Nav from "@/component/common/Nav";
 import {UserPen, BanknoteArrowUp, Clock, EyeOff, Lock, LogIn, Mail, ShieldCheck, Users, IdCard, Building2, Briefcase, Eye, CircleCheck, Info} from "lucide-react";
 import {Checkbox} from "@/components/ui/checkbox";
 import CInputCustom from "@/component/common/element/CInputCustom";
+import {useState} from "react";
+import baseApi from "@/common/api/baseApi";
 
 export default function Home() {
+
+  const [loginUserInfo, setLoginUserInfo] = useState({});
+
+  const goLogin = async () => {
+    const res = await baseApi.post("/api/v1/employees/login", {...loginUserInfo});
+
+    localStorage.setItem("accessToken", res.data.data.accessToken);
+
+  }
 
 
   const renderJoin = () => {
@@ -116,13 +129,13 @@ export default function Home() {
           <div className={c.inputItem}>
             <Mail className={c.mail} color='#9CA3AF'/>
             <label htmlFor="email">이메일</label>
-            <input type="text" placeholder='이메일 주소를 입력하세요'/>
+            <input type="text" placeholder='이메일 주소를 입력하세요' onChange={(e) => setLoginUserInfo((prev) => ({...prev, email: e.target.value }))}/>
           </div>
 
           <div className={c.inputItem}>
             <Lock className={c.mail} color='#9CA3AF'/>
             <label htmlFor="email">비밀번호</label>
-            <input type="password" placeholder='비밀번호를 입력하세요'/>
+            <input type="password" placeholder='비밀번호를 입력하세요' onChange={(e) => setLoginUserInfo((prev) => ({...prev, password: e.target.value }))}/>
             <EyeOff className={c.eye} color='#9CA3AF'/>
             {/*<Eye className={c.mail} color='#9CA3AF'/>*/}
           </div>
@@ -140,7 +153,7 @@ export default function Home() {
         </section>
 
         <section className={c.loginButtonSection}>
-          <div className={c.loginButtonItem}>
+          <div className={c.loginButtonItem} onClick={() => goLogin()}>
             <LogIn />
             <span>로그인</span>
           </div>
@@ -238,8 +251,8 @@ export default function Home() {
           </ul>
         </div>
 
-        {/*{renderLogin()}*/}
-        {renderJoin()}
+        {renderLogin()}
+        {/*{renderJoin()}*/}
 
       </div>
     </div>

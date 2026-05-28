@@ -8,7 +8,13 @@ export default function Nav({initial = '홍', fullName = '홍길동'}) {
 
     useEffect(() => {
         const getEmployees = async () => {
-            const res = await baseApi.get('/api/v1/employees');
+            const token = localStorage.getItem('accessToken');
+
+            const res = await baseApi.get('/api/v1/employees', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             console.log(res);
         }
         getEmployees();
