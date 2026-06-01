@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
 import CStatusLabel from "./element/CStatusLabel";
 import CEditButton from "./element/CEditButton";
-import c from './ViewTable.module.css';
-import { ChevronLeft } from "lucide-react";
-import { ChevronRight } from "lucide-react";
+import c from "./ViewTable.module.css";
+import {ChevronLeft} from "lucide-react";
+import {ChevronRight} from "lucide-react";
 
 const dummy = [
   {
@@ -119,27 +119,30 @@ const dummy = [
   },
 ];
 const dummyColumns = [
-  'NO',
-  '사원번호',
-  '성명',
-  '부서',
-  '직급',
-  '입사일',
-  '연락처',
-  '이메일',
-  '재직상태',
-  '관리',
-]
+  "NO",
+  "사원번호",
+  "성명",
+  "부서",
+  "직급",
+  "입사일",
+  "연락처",
+  "이메일",
+  "재직상태",
+  "관리",
+];
 
-export default function ViewTable({renderRow, columns = dummyColumns, rowList = dummy, renderTitle, isShowTopTotalCount = false}){
-  console.log('renderTitle >> ', typeof renderTitle);
+export default function ViewTable({
+  renderRow,
+  columns = dummyColumns,
+  rowList = dummy,
+  renderTitle,
+  isShowTopTotalCount = false,
+}) {
   return (
     <div className={c.container}>
-      {(typeof renderTitle === 'function' || isShowTopTotalCount) && (
+      {(typeof renderTitle === "function" || isShowTopTotalCount) && (
         <div className={c.topInfo}>
-          <div className={c.titleArea}>
-            {renderTitle()}
-          </div>
+          <div className={c.titleArea}>{renderTitle()}</div>
 
           <div>
             <span className={c.totalCountText}>총 {rowList.length}건</span>
@@ -187,7 +190,6 @@ export default function ViewTable({renderRow, columns = dummyColumns, rowList = 
             <ChevronLeft />
           </span>
 
-
           <ul className={c.numbering}>
             <li className={c.active}>1</li>
             <li>2</li>
@@ -200,5 +202,5 @@ export default function ViewTable({renderRow, columns = dummyColumns, rowList = 
         </div>
       </div>
     </div>
-  )
+  );
 }
