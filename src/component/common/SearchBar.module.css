@@ -5,28 +5,35 @@
     background-color: #fff;
     padding: 16px 0 16px 16px;
 }
-.searchBarIcon{
+
+.searchBarIcon {
     width: 14px;
     height: 14px
 }
+
 .searchBarTitle {
     display: flex;
     gap: 8px;
     align-items: center;
 }
+
 .searchBarTitle img {
     width: 14px;
     height: 14px;
 }
+
 .searchBarTitle span {
     font-size: 13px;
     color: #1B3A6B;
     font-weight: 700;
 }
+
 .searchConditionWrapper {
+    margin-top: 16px;
     display: flex;
     gap: 16px;
 }
+
 .conditionItem {
     display: flex;
     align-items: center;

@@ -24,7 +24,6 @@
 }
 
 .columnRow li {
-    flex: 1;
     text-align: center;
 }
 
@@ -47,10 +46,8 @@
 }
 
 .itemRow li {
-    flex: 1;
     text-align: center;
 }
-
 
 
 .totalCountContainer {

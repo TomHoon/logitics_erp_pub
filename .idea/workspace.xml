@@ -5,11 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="84f0f6a0-c322-47ac-afec-7bbf4a18cec3" name="Changes" comment="Xss">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.prettierrc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/component/common/PostCodeButton.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eslint.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/eslint.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/event-support/layout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/layout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/event-support/layout.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/layout.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/info/card/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/info/card/page.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/info/layout.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/info/layout.module.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/common/api/baseApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/api/baseApi.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/Aside.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/Aside.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/Aside.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/Aside.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/BreadCrumb.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/BreadCrumb.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/MainTitle.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/MainTitle.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/MainTitleWrapper.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/MainTitleWrapper.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/common/Nav.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/Nav.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/SearchBar.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/SearchBar.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/ViewTable.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/ViewTable.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/ViewTable.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/ViewTable.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/element/CButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CButton.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/element/CEditButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CEditButton.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/element/CInput.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CInput.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/element/CInput.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CInput.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/element/CSelect.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CSelect.module.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/home/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/home/Home.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/info/register/InfoRegister.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/info/register/InfoRegister.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/button.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/button.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,10 +42,13 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JSX File" />
         <option value="package.json" />
+        <option value="JSX File" />
       </list>
     </option>
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -39,6 +65,9 @@
     &quot;accountId&quot;: &quot;9d744412-8320-4804-92e8-17c6e9a32b89&quot;
   }
 }</component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -47,29 +76,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;js.debugger.nextJs.config.created.client&quot;: &quot;true&quot;,
-    &quot;js.debugger.nextJs.config.created.server&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/donghoonlee/Public/logitics_erp_pub&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "code.cleanup.on.save": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "js.debugger.nextJs.config.created.client": "true",
+    "js.debugger.nextJs.config.created.server": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/Users/kim-yoonkyung/Documents/logitics_erp_pub/src/app/(main)",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.Next.js: server-side.executor": "Debug",
+    "prettierjs.PrettierConfiguration.Package": "/Users/kim-yoonkyung/Documents/logitics_erp_pub",
+    "rearrange.code.on.save": "true",
+    "settings.editor.selected.configurable": "configurable.group.appearance",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "/Applications/WebStorm.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/app/(main)" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/component/home" />
       <recent name="$PROJECT_DIR$/src/component" />
@@ -111,6 +150,7 @@
       <workItem from="1779546177969" duration="20000" />
       <workItem from="1779546293385" duration="2283000" />
       <workItem from="1779692403759" duration="18638000" />
+      <workItem from="1781579487942" duration="14804000" />
     </task>
     <servers />
   </component>

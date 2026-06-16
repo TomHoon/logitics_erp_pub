@@ -4,7 +4,9 @@
     flex-direction: column;
     color: #60A5FA;
     background-color: #1E293B;
+    height: calc(100vh - 63px);
 }
+
 .menuTitle {
     display: flex;
     padding: 12.5px 0px 12.5px 16px;
@@ -25,6 +27,15 @@
     background-color: #1e293b;
 }
 
+.menuSub li.active {
+    background: #2A3F5C;
+    color: #fff;
+}
+
+.menuSub li.active::before {
+    background: #3B82F6;
+}
+
 
 .menuSub li::before {
     position: absolute;
@@ -37,14 +48,7 @@
     background-color: #475569;
 }
 
-.active {
-    background-color: #3B82F6;
-    color: #fff;
-}
-.active::before {
-    background-color: #2A3F5C;
 
-}
 .img13 {
     width: 13px;
     height: 13px;
