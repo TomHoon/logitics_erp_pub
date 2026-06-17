@@ -1,5 +1,178 @@
 .container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
+
+.formContainer {
+
+}
+
+.formTitle {
+    display: flex;
+    justify-content: space-between;
+    background-color: #F8FAFC;
+    padding: 15.5px 20px;
+}
+
+.formTitleLeft {
+    display: flex;
+    gap: 8px;
+    font-size: 14px;
+    color: #1B3A6B;
+    align-items: center;
+    font-weight: 700;
+}
+
+.formTitleRight {
+    font-size: 12px;
+    color: #9CA3AF;
+    display: flex;
+    gap: 4px;
+}
+
+.formTitleRight span {
+    color: red;
+}
+
+.formItemTitle {
+    font-weight: 700;
+    color: #1B3A6B;
+    font-size: 13px;
+    position: relative;
+    padding-left: 11px;
+}
+
+
+.formItem {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.formItemTitle::before {
+    content: "";
+    width: 3px;
+    height: 14px;
+    background-color: #1B3A6B;
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    border-radius: 8px;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.formContent {
+    padding: 20px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.formItemData {
+    display: flex;
+    gap: 12px;
+}
+
+.formApplyInfoItem {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.formInputWrapper {
+    display: flex;
+    position: relative;
+}
+
+.formCalendarIcon {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.formInput {
+    font-size: 13px;
+    color: #374151;
+    padding: 10px 0 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #D1D5DB;
+    line-height: 15.6px;
+    width: 150px;
+}
+
+.formInput2 {
+    font-size: 13px;
+    color: #374151;
+    padding: 10px 0 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #D1D5DB;
+    line-height: 15.6px;
+    width: 180px;
+}
+
+.formSelect2 {
+    padding: 10px 12px;
+    width: 140px;
+    font-size: 13px;
+    color: #374151;
+    border-radius: 6px;
+    border: 1px solid #D1D5DB;
+    line-height: 15.6px;
+}
+
+.formInputLabel {
+    font-size: 13px;
+    color: #374151;
+    font-weight: 700;
+}
+
+.eventTypeList {
+    display: flex;
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+}
+
+.eventTypeItem {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 11px 18px;
+    color: #6B7280;
+    font-size: 13px;
+    line-height: 15.6px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    position: relative;
+
+}
+
+.eventTypeItem:not(:first-child)::before {
+    position: absolute;
+    content: "";
+    width: 1px;
+    height: 100%;
+    left: 0;
+    background-color: #D1D5DB;
+}
+
+.eventTypeItem.active {
+    background-color: #1B3A6B;
+    color: #fff;
+    font-size: 13px;
+}
+
+.eventDesc {
+    display: flex;
+    width: fit-content;
+    background-color: #EFF6FF;
+    font-size: 13px;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 6px;
+}
+

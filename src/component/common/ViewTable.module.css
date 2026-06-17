@@ -111,3 +111,7 @@
     padding: 4px 12px;
     background-color: #EFF6FF;
 }
+
+.itemSelectedActive {
+    background-color: #BFDBFE;
+}
