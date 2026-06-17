@@ -12,8 +12,6 @@ export default function PostCodeButton({onCompletePostData, buttonRender}) {
 		
 		const postCode = new window.daum.Postcode({
 			oncomplete(data) {
-				console.log(data.zonecode);
-				console.log(data.address);
 				onCompletePostData?.(data);
 			},
 		});

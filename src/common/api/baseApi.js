@@ -21,6 +21,7 @@ baseApi.interceptors.response.use(
 		if (error.status === 403) {
 			alert("토큰 만료로 로그인 페이지로 이동합니다.");
 			localStorage.removeItem("accessToken");
+			localStorage.removeItem("user");
 			window.location.replace("/");
 		}
 		// Any status codes that falls outside the range of 2xx cause this function to trigger

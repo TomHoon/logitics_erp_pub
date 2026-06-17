@@ -3,21 +3,21 @@
 import c from "@/component/home/Home.module.css";
 import Nav from "@/component/common/Nav";
 import {
-  BanknoteArrowUp,
-  Briefcase,
-  Building2,
-  CircleCheck,
-  Clock,
-  Eye,
-  EyeOff,
-  IdCard,
-  Info,
-  Lock,
-  LogIn,
-  Mail,
-  ShieldCheck,
-  UserPen,
-  Users
+	BanknoteArrowUp,
+	Briefcase,
+	Building2,
+	CircleCheck,
+	Clock,
+	Eye,
+	EyeOff,
+	IdCard,
+	Info,
+	Lock,
+	LogIn,
+	Mail,
+	ShieldCheck,
+	UserPen,
+	Users
 } from "lucide-react";
 import {Checkbox} from "@/components/ui/checkbox";
 import CInputCustom from "@/component/common/element/CInputCustom";
@@ -37,6 +37,7 @@ export default function Home() {
 			
 			if (res.data.data.accessToken) {
 				localStorage.setItem("accessToken", res.data.data.accessToken);
+				localStorage.setItem("user", JSON.stringify(res.data.data));
 				router.push("/info/register");
 				return;
 			}
@@ -168,8 +169,17 @@ export default function Home() {
 					<div className={c.inputItem}>
 						<Lock className={c.mail} color='#9CA3AF'/>
 						<label htmlFor="email">비밀번호</label>
-						<input type="password" placeholder='비밀번호를 입력하세요'
-									 onChange={(e) => setLoginUserInfo((prev) => ({...prev, password: e.target.value}))}/>
+						<input
+							type="password"
+							placeholder='비밀번호를 입력하세요'
+							onChange={(e) => setLoginUserInfo((prev) => ({...prev, password: e.target.value}))}
+							onKeyDown={(e) => {
+								if (e.key === 'Enter') {
+									goLogin();
+								}
+							}}
+						
+						/>
 						<EyeOff className={c.eye} color='#9CA3AF'/>
 						{/*<Eye className={c.mail} color='#9CA3AF'/>*/}
 					</div>

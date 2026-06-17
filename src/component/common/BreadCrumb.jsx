@@ -17,7 +17,6 @@ export default function BreadCrumb({crumList}) {
 	];
 	
 	const renderBreadCrumb = (item, idx) => {
-		console.log('item', item);
 		const renderList = [];
 		
 		switch (item.type) {

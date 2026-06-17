@@ -5,34 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="84f0f6a0-c322-47ac-afec-7bbf4a18cec3" name="Changes" comment="Xss">
-      <change afterPath="$PROJECT_DIR$/.prettierrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/component/common/PostCodeButton.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/fonts/NotoSansKR-Regular.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/ConfirmAlert.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/LoadingSpinner.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eslint.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/eslint.config.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/event-support/layout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/layout.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/event-support/layout.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/layout.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/info/card/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/info/card/page.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/info/layout.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(main)/info/layout.module.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/practice.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/common/api/baseApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/api/baseApi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/Aside.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/Aside.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/Aside.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/Aside.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/appointment/AppointMent.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/appointment/AppointMent.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/appointment/AppointMent.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/appointment/AppointMent.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/appointment/AppointmentForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/appointment/AppointmentForm.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/common/BreadCrumb.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/BreadCrumb.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/MainTitle.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/MainTitle.module.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/common/MainTitleWrapper.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/MainTitleWrapper.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/Nav.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/Nav.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/PostCodeButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/PostCodeButton.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/SearchBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/SearchBar.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/common/SearchBar.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/SearchBar.module.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/common/ViewTable.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/ViewTable.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/ViewTable.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/ViewTable.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/element/CButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CButton.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/common/element/CEditButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CEditButton.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/common/element/CInput.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CInput.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/element/CInput.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CInput.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/common/element/CSelect.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CSelect.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/common/element/CSelect.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CSelect.module.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/home/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/home/Home.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/info/register/InfoRegister.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/info/register/InfoRegister.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/button.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/button.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.md" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +86,7 @@
     "js.debugger.nextJs.config.created.client": "true",
     "js.debugger.nextJs.config.created.server": "true",
     "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/Users/kim-yoonkyung/Documents/logitics_erp_pub/src/app/(main)",
+    "last_opened_file_path": "/Users/kim-yoonkyung/Documents/logitics_erp_pub/public",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.standard": "true",
     "node.js.detected.package.tslint": "true",
@@ -107,6 +105,8 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public" />
+      <recent name="$PROJECT_DIR$/src/fonts" />
       <recent name="$PROJECT_DIR$/src/app/(main)" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -150,7 +150,11 @@
       <workItem from="1779546177969" duration="20000" />
       <workItem from="1779546293385" duration="2283000" />
       <workItem from="1779692403759" duration="18638000" />
-      <workItem from="1781579487942" duration="14804000" />
+      <workItem from="1781579487942" duration="14980000" />
+      <workItem from="1781601293279" duration="49000" />
+      <workItem from="1781662502686" duration="68000" />
+      <workItem from="1781662578934" duration="5000" />
+      <workItem from="1781662594873" duration="16993000" />
     </task>
     <servers />
   </component>

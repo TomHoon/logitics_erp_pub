@@ -1,7 +1,6 @@
 "use client";
 
 import c from "./ViewTable.module.css";
-import {ChevronLeft, ChevronRight} from "lucide-react";
 import {clsx} from "clsx";
 
 const dummy = [
@@ -138,7 +137,7 @@ export default function ViewTable({
 																		smallColumnIdxList = []
 																	}) {
 	return (
-		<div className={c.container}>
+		<div className={c.container} id="viewtable">
 			{(typeof renderTitle === "function" || isShowTopTotalCount) && (
 				<div className={c.topInfo}>
 					<div className={c.titleArea}>{renderTitle()}</div>
@@ -189,19 +188,19 @@ export default function ViewTable({
 				<span className={c.totalCount}>총 {rowList.length}건</span>
 				
 				<div className={c.pagingWrapper}>
-          <span>
-            <ChevronLeft/>
-          </span>
+					{/*<span>*/}
+					{/*  <ChevronLeft/>*/}
+					{/*</span>*/}
 					
 					<ul className={c.numbering}>
 						<li className={c.active}>1</li>
-						<li>2</li>
-						<li>3</li>
+						{/*<li>2</li>*/}
+						{/*<li>3</li>*/}
 					</ul>
 					
-					<span>
-            <ChevronRight/>
-          </span>
+					{/*<span>*/}
+					{/*  <ChevronRight/>*/}
+					{/*</span>*/}
 				</div>
 			</div>
 		</div>
