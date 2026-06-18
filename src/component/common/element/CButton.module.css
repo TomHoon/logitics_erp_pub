@@ -11,6 +11,13 @@
     border-radius: 6px;
 }
 
+.type3 {
+    background-color: #fff;
+    border: 1px solid #DC2626;
+    color: #DC2626;
+    border-radius: 6px;
+}
+
 
 .commonButton {
     display: flex;
@@ -20,7 +27,8 @@
     align-items: center;
     gap: 6px;
 }
-.commonButton img{
+
+.commonButton img {
     width: 14px;
     height: 14px;
 }

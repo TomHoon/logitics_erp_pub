@@ -4,9 +4,7 @@
     gap: 16px;
 }
 
-.formContainer {
-
-}
+.formContainer {}
 
 .formTitle {
     display: flex;
@@ -176,3 +174,159 @@
     border-radius: 6px;
 }
 
+.formUploadWrapper {
+    display: flex;
+    align-items: center;
+    background-color: #F9FAFB;
+    justify-content: center;
+    border: 1px solid #D1D5DB;
+    gap: 10px;
+    border-radius: 8px;
+    padding: 23px 374px;
+}
+
+.formUploadText {
+    display: flex;
+}
+
+.formUploadText {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.textTop {
+    font-size: 13px;
+    color: #6B7280;
+    text-align: center;
+}
+
+.textBottom {
+    text-align: center;
+
+    font-size: 11px;
+    color: #6B7280;
+
+}
+
+.formUploadedFileName {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.formUploadedFilesWrapper {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    border: 1px solid #E5E7EB;
+    padding: 8px 12px;
+    border-radius: 8px;
+    justify-content: space-between;
+}
+
+.formUploadedInfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.formUploadedFileSpec {
+    font-size: 11px;
+    color: #9CA3AF;
+
+}
+
+.formUploadSection {
+    display: flex;
+    gap: 12px;
+    flex-direction: column;
+}
+
+.formUploadCommentWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.commentTitle {
+    font-size: 13px;
+    color: #374151;
+    font-weight: 700;
+}
+
+.commentTextArea {
+    width: 100%;
+    font-size: 13px;
+    color: #9CA3AF;
+    padding: 10px 12px;
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+    resize: none;
+}
+
+.uploadButtonWrapper {
+    display: flex;
+    gap: 8px;
+    padding: 18px 10px;
+    justify-content: flex-end;
+}
+
+.modalHeader {
+    padding: 20px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.modalHeader button[data-slot="dialog-close"] {
+    background: #2D5F9E;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.closeBtn {
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.modalContent {
+    padding: 16px;
+    max-height: 70vh;
+    overflow-y: scroll;
+}
+
+.footerGuide {
+    font-size: 12px;
+    color: #9CA3AF;
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+}
+
+.footerContainer {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-content: center;
+    padding: 10px 20px;
+}
+
+.footerButtons {
+    display: flex;
+    gap: 8px;
+}
+
+.uploadDeleteButton {
+    display: flex;
+    color: #EF4444;
+    font-size: 12px;
+    align-items: center;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.uploadInfoWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

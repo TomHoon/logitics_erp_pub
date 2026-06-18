@@ -9,6 +9,9 @@
     display: flex;
     padding: 13.5px 16px;
     background-color: #F1F5F9;
+    font-size: 12px;
+    color: #6B7280;
+    font-weight: 700;
 }
 
 /*.columnRow li:nth-child(1) {*/

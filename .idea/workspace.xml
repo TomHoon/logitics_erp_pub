@@ -1,75 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="84f0f6a0-c322-47ac-afec-7bbf4a18cec3" name="Changes" comment="Xss">
-      <change afterPath="$PROJECT_DIR$/public/fonts/NotoSansKR-Regular.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/common/ConfirmAlert.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/common/LoadingSpinner.jsx" afterDir="false" />
+    <list default="true" id="c64931bc-6c6b-44db-b02c-6f04096754fc" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/practice.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/api/baseApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/api/baseApi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/appointment/AppointMent.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/appointment/AppointMent.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/appointment/AppointMent.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/appointment/AppointMent.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/appointment/AppointmentForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/appointment/AppointmentForm.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/BreadCrumb.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/BreadCrumb.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/MainTitleWrapper.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/MainTitleWrapper.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/PostCodeButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/PostCodeButton.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/SearchBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/SearchBar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/SearchBar.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/SearchBar.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/ViewTable.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/ViewTable.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/element/CEditButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CEditButton.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/element/CInput.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CInput.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/element/CSelect.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CSelect.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/common/element/CSelect.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/common/element/CSelect.module.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/home/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/home/Home.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/info/register/InfoRegister.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/info/register/InfoRegister.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.md" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="package.json" />
-        <option value="JSX File" />
-      </list>
-    </option>
-  </component>
-  <component name="FormatOnSaveOptions">
-    <option name="myRunOnSave" value="true" />
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;TomHoon&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/TomHoon/logitics_erp_pub.git&quot;,
-    &quot;accountId&quot;: &quot;9d744412-8320-4804-92e8-17c6e9a32b89&quot;
-  }
-}</component>
-  <component name="OptimizeOnSaveOptions">
-    <option name="myRunOnSave" value="true" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 8
-}</component>
-  <component name="ProjectId" id="3Dw7fU9h0yPvC9JsLR96AmWfmcG" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 8
+}]]></component>
+  <component name="ProjectId" id="3FHRjQmtSzce0pawQ0gMYoRHiB2" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -78,43 +29,17 @@
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "code.cleanup.on.save": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
     "js.debugger.nextJs.config.created.client": "true",
     "js.debugger.nextJs.config.created.server": "true",
     "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/Users/kim-yoonkyung/Documents/logitics_erp_pub/public",
     "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.standard": "true",
-    "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.standard": "",
-    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "npm.Next.js: server-side.executor": "Debug",
-    "prettierjs.PrettierConfiguration.Package": "/Users/kim-yoonkyung/Documents/logitics_erp_pub",
-    "rearrange.code.on.save": "true",
-    "settings.editor.selected.configurable": "configurable.group.appearance",
     "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "/Applications/WebStorm.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/public" />
-      <recent name="$PROJECT_DIR$/src/fonts" />
-      <recent name="$PROJECT_DIR$/src/app/(main)" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/component/home" />
-      <recent name="$PROJECT_DIR$/src/component" />
-      <recent name="$PROJECT_DIR$/public" />
-    </key>
-  </component>
   <component name="RunManager" selected="npm.Next.js: server-side">
     <configuration name="Next.js: debug client-side" type="JavascriptDebugType" uri="http://localhost:3000/">
       <method v="2" />
@@ -133,32 +58,19 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-WS-252.28238.10" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-WS-252.27397.92" />
       </set>
     </attachedChunks>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="84f0f6a0-c322-47ac-afec-7bbf4a18cec3" name="Changes" comment="" />
-      <created>1779181381089</created>
+      <changelist id="c64931bc-6c6b-44db-b02c-6f04096754fc" name="Changes" comment="" />
+      <created>1781730143598</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1779181381089</updated>
-      <workItem from="1779181382267" duration="2067000" />
-      <workItem from="1779534945595" duration="1267000" />
-      <workItem from="1779536221752" duration="7856000" />
-      <workItem from="1779546177969" duration="20000" />
-      <workItem from="1779546293385" duration="2283000" />
-      <workItem from="1779692403759" duration="18638000" />
-      <workItem from="1781579487942" duration="14980000" />
-      <workItem from="1781601293279" duration="49000" />
-      <workItem from="1781662502686" duration="68000" />
-      <workItem from="1781662578934" duration="5000" />
-      <workItem from="1781662594873" duration="16993000" />
+      <updated>1781730143598</updated>
+      <workItem from="1781730145118" duration="3000" />
     </task>
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
   </component>
 </project>

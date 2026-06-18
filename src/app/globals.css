@@ -51,7 +51,6 @@
 * {
     box-sizing: border-box;
     margin: 0;
-    padding: 0;
 }
 
 select {
@@ -60,7 +59,8 @@ select {
     background-repeat: no-repeat;
     background-position: right 12px center;
     padding-right: 36px;
-    background-size: 12px 12px; /* 크기 조절 */
+    background-size: 12px 12px;
+    /* 크기 조절 */
 
 }
 
