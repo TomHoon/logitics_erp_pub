@@ -27,4 +27,12 @@ const getToday = () => {
 	return parsedToday;
 };
 
-export { parsingDate, getToday };
+const getNowTime = () => {
+	const now = new Date();
+	const hour = now.getHours();
+	const min = now.getMinutes();
+
+	return `${hour}:${min}`;
+};
+
+export { parsingDate, getToday, getNowTime };

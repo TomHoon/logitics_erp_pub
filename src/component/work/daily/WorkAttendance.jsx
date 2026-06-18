@@ -29,7 +29,17 @@ import { clsx } from 'clsx';
 
 import MainTitleWrapper from '@/component/common/MainTitleWrapper';
 import c from './WorkAttendance.module.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { getNowTime, parsingDate } from '@/common/utils/dateUtils';
+import CSelect from '@/component/common/element/CSelect';
+import baseApi from '@/common/api/baseApi';
+
 const rows = [
 	{
 		no: 'EMP-001',
@@ -113,6 +123,39 @@ const types = [
 
 export default function WorkAttendance() {
 	const [isOverTime, setIsOverTime] = useState(false);
+	const [startTime, setStartTime] = useState('09:00');
+	const [endTime, setEndTime] = useState('18:00');
+	const [startOverTime, setStartOverTime] = useState('18:00');
+	const [endOverTime, setEndOverTime] = useState('23:00');
+
+	const [openPopover, setOpenPopover] = useState(false);
+	const [date, setDate] = useState(parsingDate(new Date()));
+
+	const [userInfo, setUserInfo] = useState({});
+
+	const [attendanceList, setAttendanceList] = useState([]);
+
+	useEffect(() => {
+		const jsonUser = localStorage.getItem('user');
+		const user = JSON.parse(jsonUser);
+
+		setUserInfo({ ...user });
+	}, []);
+
+	const getAttendanceDaily = async () => {
+		const token = localStorage.getItem('accessToken');
+		const res = await baseApi.get('/api/v1/attendances/daily', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+
+		setAttendanceList(res?.data?.data);
+	};
+
+	useEffect(() => {
+		getAttendanceDaily();
+	}, []);
 
 	const buttonRender = () => {
 		// return (
@@ -144,31 +187,92 @@ export default function WorkAttendance() {
 			<BreadCrumb />
 			<MainTitleWrapper buttonRender={buttonRender} />
 			<div className={c.mainContentWrapper}>
-				<TopBar />
+				<TopBar
+					openPopover={openPopover}
+					setOpenPopover={setOpenPopover}
+					date={date}
+					setDate={setDate}
+				/>
 
 				<div className="mt-14 grid grid-cols-[330px_1fr] gap-3">
-					<RegisterCard isOverTime={isOverTime} setIsOverTime={setIsOverTime} />
-					<TableCard />
+					<RegisterCard
+						userInfo={userInfo}
+						isOverTime={isOverTime}
+						setIsOverTime={setIsOverTime}
+						startTime={startTime}
+						endTime={endTime}
+						setStartTime={setStartTime}
+						setEndTime={setEndTime}
+						startOverTime={startOverTime}
+						endOverTime={endOverTime}
+						setStartOverTime={setStartOverTime}
+						setEndOverTime={setEndOverTime}
+					/>
+					<TableCard date={date} attendanceList={attendanceList} />
 				</div>
 			</div>
 		</main>
 	);
 }
 
-function TopBar() {
+function TopBar({ openPopover, setOpenPopover, date, setDate }) {
 	return (
 		<div className="flex h-[60px] items-center justify-between rounded-[6px] border border-[#E5E7EB] bg-white !px-5 mt-">
 			<div className="flex items-center gap-4">
 				<div className="flex h-[34px] overflow-hidden rounded-[5px] border border-[#D1D5DB]">
 					<button className="w-[34px] border-r bg-[#F8FAFC]">
-						<ChevronLeft size={16} className="mx-auto" />
+						<ChevronLeft
+							size={16}
+							className="mx-auto"
+							onClick={() => {
+								const originDate = new Date(date);
+								originDate.setDate(originDate.getDate() - 1);
+								setDate(parsingDate(originDate));
+							}}
+						/>
 					</button>
 					<div className="flex w-[180px] items-center justify-center gap-2 text-[14px] font-bold">
-						<CalendarDays size={15} className="text-[#183A6B]" />
-						2025년 7월 1일 (화)
+						{/* <CalendarDays size={15} className="text-[#183A6B]" /> */}
+						<Popover open={openPopover} onOpenChange={setOpenPopover}>
+							<PopoverTrigger>
+								<div
+									className={c.calendarWrapper}
+									onClick={() => setOpenPopover(true)}
+								>
+									<span className={c.searchFromDate}>{date}</span>
+									<CalendarDays
+										size={13}
+										className={c.calendar}
+										color="#9CA3AF"
+									/>
+								</div>
+							</PopoverTrigger>
+
+							<PopoverContent>
+								<Calendar
+									mode="single"
+									selected={date}
+									onSelect={(date) => {
+										if (date) {
+											setDate(parsingDate(date));
+										}
+
+										setOpenPopover(false);
+									}}
+								/>
+							</PopoverContent>
+						</Popover>
 					</div>
 					<button className="w-[34px] border-l bg-[#F8FAFC]">
-						<ChevronRight size={16} className="mx-auto" />
+						<ChevronRight
+							size={16}
+							className="mx-auto"
+							onClick={() => {
+								const originDate = new Date(date);
+								originDate.setDate(originDate.getDate() + 1);
+								setDate(parsingDate(originDate));
+							}}
+						/>
 					</button>
 				</div>
 
@@ -179,10 +283,7 @@ function TopBar() {
 
 				<div className="flex items-center gap-2">
 					<span className="text-[14px] font-bold">부서</span>
-					<button className="flex h-[34px] w-[150px] items-center justify-between rounded-[5px] border border-[#D1D5DB] !px-3 text-[13px] text-[#6B7280]">
-						전체 부서
-						<ChevronRight size={14} className="rotate-90 text-[#9CA3AF]" />
-					</button>
+					<CSelect />
 				</div>
 
 				<div className="relative">
@@ -208,7 +309,22 @@ function TopBar() {
 	);
 }
 
-function RegisterCard({ isOverTime, setIsOverTime }) {
+function RegisterCard({
+	isOverTime,
+	setIsOverTime,
+	startTime,
+	endTime,
+	setStartTime,
+	setEndTime,
+	startOverTime,
+	endOverTime,
+	setStartOverTime,
+	setEndOverTime,
+	userInfo = {},
+}) {
+	const todayMonth = new Date().getMonth() + 1 + '월';
+	const todayDate = new Date().getDate() + '일';
+
 	return (
 		<section className="rounded-[6px] border border-[#E5E7EB] bg-white">
 			<div className="flex h-[44px] items-center justify-between border-b !px-4">
@@ -217,7 +333,7 @@ function RegisterCard({ isOverTime, setIsOverTime }) {
 					근태 등록
 				</div>
 				<span className="rounded-full bg-[#DBEAFE] !px-3 !py-1 text-[12px] font-bold text-[#2563EB]">
-					7월 1일
+					{`${todayMonth} ${todayDate}`}
 				</span>
 			</div>
 
@@ -226,9 +342,11 @@ function RegisterCard({ isOverTime, setIsOverTime }) {
 				<div className="mb-4 flex h-[36px] items-center justify-between rounded-[5px] border border-[#2563EB] !px-3">
 					<div className="flex items-center gap-2">
 						<span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#DBEAFE] text-[11px] font-bold text-[#2563EB]">
-							박
+							{(userInfo?.name || '').slice(0, 1)}
 						</span>
-						<b className="text-[13px]">박민준 · 개발팀</b>
+						<b className="text-[13px]">
+							{userInfo?.name} · {userInfo?.departmentName}
+						</b>
 					</div>
 					<X size={14} className="text-[#9CA3AF]" />
 				</div>
@@ -241,8 +359,13 @@ function RegisterCard({ isOverTime, setIsOverTime }) {
 				</div>
 
 				<div className="mt-4 grid grid-cols-2 gap-2">
-					<TimeInput label="출근 시간" value="09:00" />
-					<TimeInput label="퇴근 시간" value="18:00" />
+					<TimeInput
+						label="출근 시간"
+						value={getNowTime()}
+						setTime={setStartTime}
+						readOnly
+					/>
+					<TimeInput label="퇴근 시간" value={endTime} setTime={setEndTime} />
 				</div>
 
 				<div className="mt-4 flex items-center justify-between">
@@ -266,14 +389,16 @@ function RegisterCard({ isOverTime, setIsOverTime }) {
 					</div>
 				</div>
 
-				<div className="grid grid-cols-[1fr_20px_1fr_50px] items-center gap-2">
-					<SmallTime value="18:00" />
-					<span className="text-center text-[#9CA3AF]">~</span>
-					<SmallTime value="20:30" />
-					<div className="flex h-[36px] items-center justify-center rounded-[5px] border border-[#BBF7D0] bg-[#DCFCE7] text-[13px] font-bold text-[#22C55E]">
-						2.5h
+				{isOverTime && (
+					<div className="grid grid-cols-[1fr_20px_1fr_50px] items-center gap-2">
+						<SmallTime value={startOverTime} setTime={setStartOverTime} />
+						<span className="text-center text-[#9CA3AF]">~</span>
+						<SmallTime value={endOverTime} setTime={setEndOverTime} />
+						{/* <div className="flex h-[36px] items-center justify-center rounded-[5px] border border-[#BBF7D0] bg-[#DCFCE7] text-[13px] font-bold text-[#22C55E]">
+							2.5h
+						</div> */}
 					</div>
-				</div>
+				)}
 
 				<div className="mt-4">
 					<Label>비고</Label>
@@ -298,13 +423,13 @@ function RegisterCard({ isOverTime, setIsOverTime }) {
 	);
 }
 
-function TableCard() {
+function TableCard({ date, attendanceList }) {
 	return (
 		<section className="overflow-hidden rounded-[6px] border border-[#E5E7EB] bg-white">
 			<div className="flex h-[44px] items-center justify-between border-b bg-[#F8FAFC] !px-4">
 				<div className="flex items-center gap-2 text-[15px] font-bold text-[#183A6B]">
 					<ListChecks size={16} />
-					2025.07.01 근태 목록
+					{date} 근태 목록
 				</div>
 
 				<div className="flex items-center gap-2">
@@ -338,7 +463,7 @@ function TableCard() {
 				</thead>
 
 				<tbody>
-					{rows.map((row) => (
+					{attendanceList.map((row, idx) => (
 						<tr
 							key={row.no}
 							className={`h-[40px] border-t text-center ${
@@ -348,16 +473,26 @@ function TableCard() {
 							<td>
 								<input type="checkbox" />
 							</td>
-							<Td>{row.no}</Td>
+							<Td>{row.employeeNo}</Td>
 							<Td bold>{row.name}</Td>
-							<Td>{row.dept}</Td>
-							<Td>{row.rank}</Td>
+							<Td>{row.departmentName}</Td>
+							<Td>{row.positionName}</Td>
 							<Td>
-								<StatusBadge type={row.type} />
+								<StatusBadge type={row.checkInTime ? '출근' : '미등록'} />
 							</Td>
-							<Td color={row.type === '지각' ? 'orange' : ''}>{row.in}</Td>
-							<Td>{row.out}</Td>
-							<Td color={row.ot !== '-' ? 'purple' : ''}>{row.ot}</Td>
+							<Td
+								color={
+									Number((row?.checkInTime || '').replaceAll(':', '')) > 905
+										? 'orange'
+										: ''
+								}
+							>
+								{row.checkInTime || '-'}
+							</Td>
+							<Td>{row?.checkOutTime || '-'}</Td>
+							<Td color={row.ot !== '-' ? 'purple' : ''}>
+								{row?.overtime || '-'}
+							</Td>
 							<Td
 								color={
 									row.type === '지각'
@@ -369,7 +504,7 @@ function TableCard() {
 												: ''
 								}
 							>
-								{row.memo}
+								{row.comment || '-'}
 							</Td>
 							<td>
 								{row.type === '미등록' ? (
@@ -422,9 +557,9 @@ function TableCard() {
 						<ChevronLeft size={14} />
 					</PageBtn>
 					<PageBtn active>1</PageBtn>
-					<PageBtn>2</PageBtn>
-					<PageBtn>3</PageBtn>
-					<PageBtn>4</PageBtn>
+					{/* <PageBtn>2</PageBtn> */}
+					{/* <PageBtn>3</PageBtn> */}
+					{/* <PageBtn>4</PageBtn> */}
 					<PageBtn>
 						<ChevronRight size={14} />
 					</PageBtn>
@@ -488,22 +623,24 @@ function TypeButton({ label, icon: Icon, selected, color }) {
 	);
 }
 
-function TimeInput({ label, value }) {
+function TimeInput({ label, value, setTime, readOnly = false }) {
 	return (
 		<div>
 			<Label>{label}</Label>
-			<SmallTime value={value} />
+			<SmallTime value={value} setTime={setTime} readOnly={readOnly} />
 		</div>
 	);
 }
 
-function SmallTime({ value }) {
+function SmallTime({ value, setTime, readOnly = false }) {
 	return (
 		<div className="relative">
 			<input
 				type="time"
 				value={value}
-				className="h-[36px] w-full rounded-[5px] border border-[#D1D5DB] px-3 pr-8 text-[13px] font-bold outline-none"
+				readOnly={readOnly}
+				onChange={(e) => setTime(e.target.value)}
+				className="h-[36px] w-full rounded-[5px] border border-[#D1D5DB] !px-3 text-[13px] font-bold outline-none"
 			/>
 			{/* <Clock
 				size={14}
