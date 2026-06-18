@@ -1,4 +1,5 @@
 'use client';
+import axios from 'axios';
 
 import BreadCrumb from '@/component/common/BreadCrumb';
 import MainTitleWrapper from '@/component/common/MainTitleWrapper';
@@ -6,7 +7,6 @@ import c from './EventSupportApply.module.css';
 import {
 	Baby,
 	CakeSlice,
-	Calendar,
 	CalendarDays,
 	Ellipsis,
 	Flower2,
@@ -24,13 +24,16 @@ import {
 	Gift,
 	Clock7,
 } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+
 import { clsx } from 'clsx';
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover';
-import { useEffect, useState } from 'react';
+
+import { useEffect, useState, useRef } from 'react';
 import CButton from '@/component/common/element/CButton';
 import { getToday, parsingDate } from '@/common/utils/dateUtils';
 import ViewTable from '@/component/common/ViewTable';
@@ -43,6 +46,55 @@ import {
 } from '@/components/ui/dialog';
 import LoadingSpinner from '@/common/LoadingSpinner';
 import WelfareDetailModal from '@/component/modal/WelfareDetailModal';
+import { getSizeMB } from '@/common/utils/fileUtil';
+import { toast } from 'sonner';
+import baseApi from '@/common/api/baseApi';
+
+const bankList = [
+	{ value: 'KB', label: 'KB국민은행' },
+	{ value: 'SHINHAN', label: '신한은행' },
+	{ value: 'WOORI', label: '우리은행' },
+	{ value: 'HANA', label: '하나은행' },
+	{ value: 'NH', label: 'NH농협은행' },
+	{ value: 'IBK', label: 'IBK기업은행' },
+	{ value: 'SC', label: 'SC제일은행' },
+	{ value: 'CITI', label: '씨티은행' },
+	{ value: 'KDB', label: 'KDB산업은행' },
+	{ value: 'SUHYUP', label: '수협은행' },
+	{ value: 'POST', label: '우체국' },
+	{ value: 'MG', label: '새마을금고' },
+	{ value: 'SHINHYUP', label: '신협' },
+	{ value: 'KFCC', label: '저축은행' },
+	{ value: 'KBANK', label: '케이뱅크' },
+	{ value: 'KAKAO', label: '카카오뱅크' },
+	{ value: 'TOSS', label: '토스뱅크' },
+	{ value: 'BUSAN', label: '부산은행' },
+	{ value: 'DAEGU', label: '대구은행' },
+	{ value: 'GWANGJU', label: '광주은행' },
+	{ value: 'JEONBUK', label: '전북은행' },
+	{ value: 'GYEONGNAM', label: '경남은행' },
+	{ value: 'JEJU', label: '제주은행' },
+];
+
+const relationList = [
+	{ value: '본인', label: '본인' },
+	{ value: '배우자', label: '배우자' },
+	{ value: '부', label: '부' },
+	{ value: '모', label: '모' },
+	{ value: '조부', label: '조부' },
+	{ value: '조모', label: '조모' },
+	{ value: '외조부', label: '외조부' },
+	{ value: '외조모', label: '외조모' },
+	{ value: '자녀', label: '자녀' },
+	{ value: '형제', label: '형제' },
+	{ value: '자매', label: '자매' },
+	{ value: '시부', label: '시부' },
+	{ value: '시모', label: '시모' },
+	{ value: '장인', label: '장인' },
+	{ value: '장모', label: '장모' },
+	{ value: '며느리', label: '며느리' },
+	{ value: '사위', label: '사위' },
+];
 
 const columns = [
 	'NO',
@@ -57,7 +109,7 @@ const columns = [
 	'관리',
 ];
 
-const rowList = [
+const dummyrowList = [
 	{
 		신청일: '2025.07.01',
 		경조구분: '출산',
@@ -171,18 +223,130 @@ const eventTypeList = [
 	},
 ];
 
+// "EmployeeEventSupportId": 1,
+// "accountHolder": "이동훈",
+// "accountNumber": "3120116768251",
+// "applicationDate": "2026-06-18",
+// "approvalStatus": "확인",
+// "bankName": "농협",
+// "employee_id": null,
+// "eventDate": "2026-06-18",
+// "eventLocation": "서울",
+// "eventType": "결혼",
+// "familyRelation": "본인",
+// "memo": "string",
+// "requestedAmount": 50000,
+// "targetName": "이동훈"
+
+const columnKeyMap = {
+	신청일: 'applicationDate',
+	경조구분: 'eventType',
+	대상자: 'targetName',
+	관계: 'familyRelation',
+	경조일: 'eventDate',
+	지급금액: 'requestedAmount',
+	지급계좌: 'accountNumber',
+	처리상태: '',
+};
+
+const initialApplyFormInfo = {
+	relation: '',
+	targetName: '',
+	eventLocation: '',
+	bankNumber: '',
+	bankName: '',
+	holderName: '',
+};
+
 export default function EventSupportApply() {
+	const fileUploaderRef = useRef(null);
 	const [openCalendar, setOpenCalendar] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [openDialog, setOpenDialog] = useState(false);
 	const [date, setDate] = useState(parsingDate(new Date()));
 	const [userInfo, setUserInfo] = useState({});
 	const [selectedEventType, setSelectedEventType] = useState('본인결혼');
+	const [applyFormInfo, setApplyFormInfo] = useState({});
+	const [uploadedFileList, setUploadedFileList] = useState([]);
+	const [uploadedFileId, setUploadedFileId] = useState(null);
+	const [rowList, setRowList] = useState([]);
+	const [modalDetailInfo, setModalDeatilInfo] = useState({});
+
+	const getEventModalDetail = async (item) => {
+		try {
+			setIsLoading(true);
+			const token = localStorage.getItem('accessToken');
+			const res = await baseApi.get(
+				`/api/v1/support/detail/${item.EmployeeEventSupportId}`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+			setModalDeatilInfo(res?.data?.data);
+			setOpenDialog(true);
+		} catch (e) {
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const fileUpload = async (files) => {
+		try {
+			const formData = new FormData();
+			for (const f of files) {
+				formData.append('file', f);
+				setUploadedFileList((prev) => [
+					...prev,
+					{
+						fileSize: `${getSizeMB(f.size)}MB`,
+						fileName: f.name,
+					},
+				]);
+			}
+
+			formData.append('refType', '경조사비신청');
+
+			const token = localStorage.getItem('accessToken');
+
+			const res = await axios.post(
+				'http://localhost:33000/api/v1/files/upload',
+				formData,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			setUploadedFileId(res?.data?.data);
+			toast('파일업로드 성공');
+		} catch (e) {
+		} finally {
+		}
+	};
+
+	const getAppliedHistory = async () => {
+		const token = localStorage.getItem('accessToken');
+
+		const res = await baseApi.get('/api/v1/support', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+
+		setRowList(res?.data?.data || []);
+	};
 
 	useEffect(() => {
 		const jsonUser = localStorage.getItem('user');
 		const parsedUserInfo = JSON.parse(jsonUser);
 		setUserInfo({ ...parsedUserInfo });
+	}, []);
+
+	useEffect(() => {
+		getAppliedHistory();
 	}, []);
 
 	const renderRow = (item, idx) => {
@@ -200,10 +364,11 @@ export default function EventSupportApply() {
 					<li
 						key={cIdx}
 						className="flex-[0.5] text-[12px] text-[#374151]"
-						onClick={() => setOpenDialog(true)}
+						onClick={async () => {
+							await getEventModalDetail(item);
+						}}
 					>
 						<span
-							onClick={() => setOpenDialog(true)}
 							className={clsx(
 								c.tableDetailButton,
 								'text-[#374151] text-[12px] px-[10px] py-[4px] bg-[#F1F5F9] rounded-[4px]'
@@ -233,11 +398,57 @@ export default function EventSupportApply() {
 							c === '처리상태' && getStatusClass(item[c])
 						)}
 					>
-						{item[c]}
+						{c === '처리상태' ? '검토중' : item[columnKeyMap[c]]}
 					</span>
 				</li>
 			);
 		});
+	};
+
+	const applyEventSupport = async () => {
+		try {
+			const token = localStorage.getItem('accessToken');
+
+			const values = Object.values(applyFormInfo);
+			console.log('applyFormInfo >> ', applyFormInfo);
+			const hasEmpty = values.some((item) => {
+				console.log(item);
+				return !item || item == '';
+			});
+			if (hasEmpty || values.length == 0) {
+				toast('필수 값이 누락되어 있습니다. 필수 값을 입력해주세요.');
+				return;
+			}
+
+			const res = await baseApi.post(
+				'/api/v1/support',
+				{
+					eventType: selectedEventType || '',
+					familyRelation: applyFormInfo?.relation || '',
+					targetName: applyFormInfo?.targetName || '',
+					applicationDate: parsingDate(new Date()),
+					eventDate: date,
+					requestedAmount: 50000,
+					eventLocation: applyFormInfo?.eventLocation,
+					accountNumber: applyFormInfo?.bankNumber,
+					bankName: applyFormInfo?.bankName,
+					accountHolder: applyFormInfo?.holderName,
+					approvalStatus: '확인',
+					memo: '',
+					...(uploadedFileId && { fileIdList: [uploadedFileId] }),
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+			toast('경조비 신청 완료');
+			getAppliedHistory();
+			setApplyFormInfo({ ...initialApplyFormInfo });
+		} catch (e) {
+		} finally {
+		}
 	};
 
 	return (
@@ -371,6 +582,7 @@ export default function EventSupportApply() {
 								{eventTypeList.map((item, idx) => (
 									<>
 										<div
+											key={idx}
 											className={clsx(
 												c.eventTypeItem,
 												item.text === selectedEventType && c.active
@@ -404,8 +616,14 @@ export default function EventSupportApply() {
 									<input
 										type="text"
 										placeholder="EMP-001"
-										readOnly
 										className={c.formInput2}
+										value={applyFormInfo?.targetName}
+										onChange={(e) =>
+											setApplyFormInfo((prev) => ({
+												...prev,
+												targetName: e.target.value,
+											}))
+										}
 									/>
 								</div>
 							</div>
@@ -417,10 +635,22 @@ export default function EventSupportApply() {
 								</p>
 
 								<div className={c.formInputWrapper}>
-									<select className={c.formSelect2}>
+									<select
+										className={c.formSelect2}
+										value={applyFormInfo?.relation}
+										onChange={(e) =>
+											setApplyFormInfo((prev) => ({
+												...prev,
+												relation: e.target.value,
+											}))
+										}
+									>
 										<option value="">선택하세요</option>
-										<option value="부모">부모</option>
-										<option value="배우자">배우자</option>
+										{relationList.map((item, idx) => (
+											<option key={idx} value={item.value}>
+												{item.label}
+											</option>
+										))}
 									</select>
 								</div>
 							</div>
@@ -430,40 +660,25 @@ export default function EventSupportApply() {
 									경조일
 									<span className="text-[#EF4444]">*</span>
 								</p>
-								<div
-									className={c.formInputWrapper}
-									onClick={() => {
-										setOpenCalendar(true);
-									}}
-								>
-									<Popover open={openCalendar} onOpenChange={setOpenCalendar}>
-										<PopoverTrigger>
-											<div>
-												<input
-													type="text"
-													placeholder="YYYY.MM.DD"
-													readOnly
-													className={c.formInput2}
-												/>
-												<CalendarDays
-													size={13}
-													color="#9CA3AF"
-													className={c.formCalendarIcon}
-												/>
-											</div>
-										</PopoverTrigger>
-										<PopoverContent>
-											<Calendar
-												mode="single"
-												selected={date}
-												onSelect={(date) => {
-													setDate(parsingDate(date));
-													setOpenCalendar(false);
-												}}
-											/>
-										</PopoverContent>
-									</Popover>
-								</div>
+								<Popover open={openCalendar} onOpenChange={setOpenCalendar}>
+									<PopoverTrigger>
+										<div className={c.triggerWrapper}>
+											<span className={c.triggerDate}>{date}</span>
+											<CalendarDays size={13} color="#9CA3AF" />
+										</div>
+									</PopoverTrigger>
+
+									<PopoverContent>
+										<Calendar
+											mode="single"
+											selected={date}
+											onSelect={(date) => {
+												setDate(parsingDate(date));
+												setOpenCalendar(false);
+											}}
+										/>
+									</PopoverContent>
+								</Popover>
 							</div>
 
 							<div className={c.formApplyInfoItem}>
@@ -472,8 +687,14 @@ export default function EventSupportApply() {
 									<input
 										type="text"
 										placeholder="EMP-001"
-										readOnly
 										className={c.formInput2}
+										value={applyFormInfo?.eventLocation}
+										onChange={(e) =>
+											setApplyFormInfo((prev) => ({
+												...prev,
+												eventLocation: e.target.value,
+											}))
+										}
 									/>
 								</div>
 							</div>
@@ -489,10 +710,22 @@ export default function EventSupportApply() {
 							<div className={c.formApplyInfoItem}>
 								<p className={c.formInputLabel}>은행명</p>
 								<div className={c.formInputWrapper}>
-									<select className={c.formSelect2}>
-										<option value="">선택하세요</option>
-										<option value="부모">국민은행</option>
-										<option value="배우자">하나은행</option>
+									<select
+										className={c.formSelect2}
+										value={applyFormInfo?.bankName}
+										onChange={(e) =>
+											setApplyFormInfo((prev) => ({
+												...prev,
+												bankName: e.target.value,
+											}))
+										}
+									>
+										<option value='"'>선택하세요</option>
+										{bankList.map((item, idx) => (
+											<option key={idx} value={item.label}>
+												{item.label}
+											</option>
+										))}
 									</select>
 								</div>
 							</div>
@@ -504,6 +737,13 @@ export default function EventSupportApply() {
 										type="text"
 										placeholder="- 없이 숫자만 입력"
 										className={c.formInput2}
+										value={applyFormInfo?.bankNumber}
+										onChange={(e) =>
+											setApplyFormInfo((prev) => ({
+												...prev,
+												bankNumber: e.target.value,
+											}))
+										}
 									/>
 								</div>
 							</div>
@@ -511,13 +751,34 @@ export default function EventSupportApply() {
 							<div className={c.formApplyInfoItem}>
 								<p className={c.formInputLabel}>예금주</p>
 								<div className={c.formInputWrapper}>
-									<input type="text" className={c.formInput2} />
+									<input
+										type="text"
+										className={c.formInput2}
+										value={applyFormInfo?.holderName}
+										onChange={(e) =>
+											setApplyFormInfo((prev) => ({
+												...prev,
+												holderName: e.target.value,
+											}))
+										}
+									/>
 								</div>
 							</div>
 						</div>
 					</section>
 
 					<section className={c.formItem}>
+						<input
+							type="file"
+							ref={fileUploaderRef}
+							accept=".jpg,.jpeg,.png,.pdf"
+							onChange={(e) => {
+								console.log('e', e.target.files);
+
+								fileUpload(e.target.files);
+							}}
+							hidden
+						/>
 						<p className={c.formItemTitle}>
 							첨부파일
 							<span className="text-[#EF4444]">*</span>
@@ -532,7 +793,7 @@ export default function EventSupportApply() {
 										청첩장·출생증명서 등 관련 서류를 첨부해 주세요
 									</span>
 									<span className={c.textBottom}>
-										PDF, JPG, PNG · 최대 10MB · 파일 3개까지
+										PDF, JPG, PNG · 최대 10MB · 파일 1개
 									</span>
 								</div>
 								<div>
@@ -541,28 +802,43 @@ export default function EventSupportApply() {
 										buttonName="파일선택"
 										fontSize={13}
 										padding="6px 16px"
+										onClick={() => {
+											if (uploadedFileList.length >= 1) {
+												toast('1개만 등록이 가능합니다.');
+												return;
+											}
+											fileUploaderRef?.current?.click();
+										}}
 									/>
 								</div>
 							</div>
 
 							{/* 업로드된 리스트 */}
-							<div className={c.formUploadedFilesWrapper}>
-								<div className={c.uploadInfoWrapper}>
-									<FileText color="#3B82F6" size={15} />
-									<div className={c.formUploadedInfo}>
-										<span className={c.formUploadedFileName}>
-											청첩장_이영희.pdf
-										</span>
-										<span className={c.formUploadedFileSpec}>
-											238 KB · 업로드 완료
-										</span>
-									</div>
-								</div>
-								<div className={c.uploadDeleteButton}>
-									<XIcon size={13} color="#EF4444" />
-									<span>삭제</span>
-								</div>
-							</div>
+							{uploadedFileList.length > 0 &&
+								uploadedFileList.map((item, idx) => (
+									<>
+										<div className={c.formUploadedFilesWrapper}>
+											<div className={c.uploadInfoWrapper}>
+												<FileText color="#3B82F6" size={15} />
+												<div className={c.formUploadedInfo}>
+													<span className={c.formUploadedFileName}>
+														{item.fileName}
+													</span>
+													<span className={c.formUploadedFileSpec}>
+														{item.fileSize} · 업로드 완료
+													</span>
+												</div>
+											</div>
+											<div
+												className={c.uploadDeleteButton}
+												onClick={() => setUploadedFileList([])}
+											>
+												<XIcon size={13} color="#EF4444" />
+												<span>삭제</span>
+											</div>
+										</div>
+									</>
+								))}
 
 							{/* 비고 영역 */}
 							<div className={c.formUploadCommentWrapper}>
@@ -587,6 +863,7 @@ export default function EventSupportApply() {
 							buttonName="신청하기"
 							beforeIcon={<SendHorizontal size={13} />}
 							type="type2"
+							onClick={() => applyEventSupport()}
 						/>
 					</div>
 				</div>
@@ -600,7 +877,13 @@ export default function EventSupportApply() {
 				/>
 			</div>
 
-			<WelfareDetailModal open={openDialog} setOpen={setOpenDialog} />
+			<WelfareDetailModal
+				open={openDialog}
+				setOpen={setOpenDialog}
+				isLoading={isLoading}
+				detailInfo={modalDetailInfo}
+			/>
+			<LoadingSpinner isLoading={isLoading} />
 		</div>
 	);
 }
