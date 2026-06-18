@@ -1,7 +1,24 @@
 'use client';
 
-import { CalendarDays, Grid3X3 } from 'lucide-react';
-
+import BreadCrumb from '@/component/common/BreadCrumb';
+import MainTitleWrapper from '@/component/common/MainTitleWrapper';
+import clsx from 'clsx';
+import { CalendarDays, Grid3X3, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import c from "./WorkMonthly.module.css"
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useEffect, useState } from 'react';
+import { parsingDate, parsingMonthKorean } from '@/common/utils/dateUtils';
+import { Calendar } from '@/components/ui/calendar';
+import CButton from '@/component/common/element/CButton';
+import CSelect from '@/component/common/element/CSelect';
+import baseApi from '@/common/api/baseApi';
 const employees = [
 	{
 		name: '김철수',
@@ -90,12 +107,161 @@ const employees = [
 		},
 	},
 ];
-
+const statusList = [
+	['출근', '#CBD5E1'],
+	['지각', '#FDBA74'],
+	['연차', '#86EFAC'],
+	['반차', '#7DD3FC'],
+	['출장', '#C4B5FD'],
+	['결근', '#FCA5A5'],
+	['휴일', '#CBD5E1'],
+];
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
 export default function WorkMonthly() {
+
+	const [openPopover, setOpenPopover] = useState(false);
+	const [date, setDate] = useState(parsingDate(new Date()));
+
+	const getMonthlyList = async () => {
+		const token = localStorage.getItem("accessToken");
+		const res = await baseApi.get("/api/v1/attendances/monthly", {
+			headers: {
+				Authorization: `Bearer ${token}`
+			}
+		});
+	}
+
+	useEffect(() => {
+		getMonthlyList()
+	}, [])
+
 	return (
-		<main className="w-[1190px] bg-[#F3F6FA] p-[10px] text-[#1F2937]">
+		<main className={clsx("w-[1190px] bg-[#F3F6FA] p-[10px] text-[#1F2937]", c.mainWrapper)}>
+			<BreadCrumb
+				crumList={[
+					{ type: 'icon', path: '/breadcrumb/breadcrumb-home.png', title: '' },
+					{ type: 'title', path: '/breadcrumb/breadcrumb-home.png', title: '근태관리' },
+					{ type: 'title', path: '/breadcrumb/breadcrumb-home.png', title: '근태관리' },
+					{ type: 'title', path: '/breadcrumb/breadcrumb-home.png', title: '월근태현황' },
+				]}
+			/>
+
+			<MainTitleWrapper
+				buttonRender={() => { }}
+				mainTitleData={{
+					title: "월근태현황",
+					desc: "부서별·직원별 월간 근태 현황을 조회하고 관리합니다."
+				}}
+			/>
+
+			<div className="w-[1167px] rounded-[12px] border border-[#E5E7EB] bg-white px-[32px] py-[22px] shadow-sm">
+				<div className="flex items-center justify-between">
+					{/* left area */}
+					<div className="flex items-center gap-[28px]">
+						{/* month picker */}
+						<div className="flex h-[34px] overflow-hidden rounded-[10px] border border-[#D1D5DB] bg-white">
+							<button className="flex w-[56px] items-center justify-center border-r border-[#D1D5DB] bg-[#F8FAFC]">
+								<ChevronLeft
+									size={22}
+									className="text-[#334155] "
+									onClick={() => {
+										const originDate = new Date(date);
+										originDate.setMonth(originDate.getMonth() - 1);
+										setDate(parsingDate(originDate));
+									}}
+								/>
+							</button>
+
+							<div className="flex w-[180px] items-center justify-center gap-2 text-[14px] font-bold">
+								{/* <CalendarDays size={15} className="text-[#183A6B]" /> */}
+								<Popover open={openPopover} onOpenChange={setOpenPopover} className="flex">
+									<PopoverTrigger>
+										<div
+											className={c.calendarWrapper}
+											onClick={() => setOpenPopover(true)}
+
+										>
+											<span className={c.searchFromDate}>{parsingMonthKorean(date)}</span>
+											<CalendarDays
+												size={13}
+												className={c.calendar}
+												color="#9CA3AF"
+											/>
+										</div>
+									</PopoverTrigger>
+
+									<PopoverContent>
+										<Calendar
+											mode="single"
+											selected={date}
+											onSelect={(date) => {
+												if (date) {
+													setDate(parsingMonthKorean(date));
+												}
+
+												setOpenPopover(false);
+											}}
+										/>
+									</PopoverContent>
+								</Popover>
+							</div>
+
+							<button className="flex w-[56px] h-[34px] items-center justify-center border-l border-[#D1D5DB] bg-[#F8FAFC]">
+								<ChevronRight
+									size={22}
+									className="text-[#334155]"
+									onClick={() => {
+										const originDate = new Date(date);
+										originDate.setMonth(originDate.getMonth() + 1);
+										setDate(parsingDate(originDate));
+									}}
+								/>
+							</button>
+						</div>
+
+						{/* department */}
+						<div className="flex items-center gap-[14px]">
+							<span className="text-[13px] font-[700] text-[#111827]">부서</span>
+
+
+							<CSelect
+								optionList={[
+									"전체 부서",
+									"개발팀",
+									"경영지원팀"
+								]}
+							/>
+						</div>
+
+						{/* search button */}
+						<button className="flex">
+
+							<CButton
+								beforeIcon={<Search size={22} />}
+								buttonName="조회"
+								type='type2'
+							/>
+						</button>
+					</div>
+
+					{/* legend */}
+					<div className="flex items-center gap-[14px]">
+						{statusList.map(([label, color]) => (
+							<div key={label} className="flex items-center gap-[7px]">
+								<span
+									className="h-[10px] w-[10px] rounded-[5px]"
+									style={{ backgroundColor: color }}
+								/>
+								<span className="text-[11px] font-[500] text-[#64748B]">
+									{label}
+								</span>
+							</div>
+						))}
+					</div>
+				</div>
+			</div>
+
 			<section className="overflow-hidden rounded-[8px] border border-[#E5E7EB] bg-white">
 				<div className="flex h-[42px] items-center justify-between px-4">
 					<div className="flex items-center gap-2 text-[15px] font-bold text-[#183A6B]">
@@ -127,8 +293,7 @@ export default function WorkMonthly() {
 								{days.map((day) => (
 									<th
 										key={day}
-										className={`w-[25px] border border-[#E5E7EB] font-bold ${
-											day === 5 ||
+										className={`w-[25px] border border-[#E5E7EB] font-bold ${day === 5 ||
 											day === 6 ||
 											day === 12 ||
 											day === 13 ||
@@ -136,9 +301,9 @@ export default function WorkMonthly() {
 											day === 20 ||
 											day === 26 ||
 											day === 27
-												? 'bg-[#EAF1F8] text-[#94A3B8]'
-												: ''
-										}`}
+											? 'bg-[#EAF1F8] text-[#94A3B8]'
+											: ''
+											}`}
 									>
 										{day}
 									</th>

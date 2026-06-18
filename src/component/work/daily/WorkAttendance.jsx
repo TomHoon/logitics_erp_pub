@@ -36,10 +36,11 @@ import {
 	PopoverTrigger,
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { getNowTime, parsingDate } from '@/common/utils/dateUtils';
+import { getAttnedTime, getNowTime, parsingDate, parsingIsoTime } from '@/common/utils/dateUtils';
 import CSelect from '@/component/common/element/CSelect';
 import baseApi from '@/common/api/baseApi';
-
+import { toast } from 'sonner';
+import LoadingSpinner from '@/common/LoadingSpinner';
 const rows = [
 	{
 		no: 'EMP-001',
@@ -116,15 +117,15 @@ const types = [
 	{ label: '결근', icon: X, color: 'red' },
 	{ label: '연차', icon: CalendarCheck, color: 'green' },
 	{ label: '반차', icon: CalendarDays, color: 'sky' },
-	{ label: '출장', icon: Briefcase, color: 'purple' },
+	{ label: '퇴근', icon: Briefcase, color: 'purple' },
 	{ label: '교육', icon: BookOpen, color: 'gray' },
 	{ label: '공가', icon: ShieldCheck, color: 'gray' },
 ];
 
 export default function WorkAttendance() {
 	const [isOverTime, setIsOverTime] = useState(false);
-	const [startTime, setStartTime] = useState('09:00');
-	const [endTime, setEndTime] = useState('18:00');
+	const [startTime, setStartTime] = useState(getNowTime());
+	const [endTime, setEndTime] = useState(getNowTime());
 	const [startOverTime, setStartOverTime] = useState('18:00');
 	const [endOverTime, setEndOverTime] = useState('23:00');
 
@@ -134,6 +135,59 @@ export default function WorkAttendance() {
 	const [userInfo, setUserInfo] = useState({});
 
 	const [attendanceList, setAttendanceList] = useState([]);
+	const [selectedTab, setSelectedTab] = useState();
+	const [memo, setMemo] = useState();
+	const [statusMap, setStatusMap] = useState({})
+
+	const [isLoading, setIsLoading] = useState(false);
+
+	const goAttend = async () => {
+		const token = localStorage.getItem("accessToken");
+		try {
+			setIsLoading(true)
+			let path = "/api/v1/attendances/checkin"
+			if (selectedTab === '퇴근') {
+				path = "/api/v1/attendances/checkout"
+			}
+
+			const is출퇴근 = ["출근", "퇴근"].includes(selectedTab);
+			if (!is출퇴근) {
+				toast("개발 전 입니다.", { position: 'top-center' })
+				return;
+			}
+
+			if (selectedTab === '퇴근') {
+
+				const start = Number((startTime || '').replaceAll(":", ""));
+				const end = Number((endTime || '').replaceAll(":", ""));
+				if (start > end) {
+					toast("퇴근시간이 잘못 입력되었습니다.", { position: "top-center" })
+					return;
+				}
+
+			}
+
+			const res = await baseApi.post(path, {
+				workDate: selectedTab === '출근' ? parsingDate(new Date()) : parsingIsoTime(endTime),
+				memo
+			}, {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			});
+
+			toast(`${selectedTab} 정상처리 되었습니다.`, { position: 'top-center' })
+			getAttendanceDaily();
+
+			setIsLoading(true)
+		} catch (e) {
+			toast(e?.response?.data?.message || "네트워크 에러", { position: 'top-center' });
+		} finally {
+			setIsLoading(false)
+		}
+
+
+	}
 
 	useEffect(() => {
 		const jsonUser = localStorage.getItem('user');
@@ -142,15 +196,40 @@ export default function WorkAttendance() {
 		setUserInfo({ ...user });
 	}, []);
 
-	const getAttendanceDaily = async () => {
-		const token = localStorage.getItem('accessToken');
-		const res = await baseApi.get('/api/v1/attendances/daily', {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+	const getAttendanceDaily = async (findDate) => {
+		try {
 
-		setAttendanceList(res?.data?.data);
+			setIsLoading(true)
+			const token = localStorage.getItem('accessToken');
+			const res = await baseApi.get('/api/v1/attendances/daily', {
+				params: {
+					...(findDate && { findDate })
+				},
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			const statusMap = {
+				전체: res?.data?.data?.length,
+				출근: 0,
+				퇴근: 0,
+				지각: 0,
+				결근: 0,
+				연차: 0,
+			}
+
+			for (const a of res?.data?.data) {
+				if (a?.checkInTime) statusMap.출근++;
+			}
+			setStatusMap({ ...statusMap })
+
+			setAttendanceList(res?.data?.data);
+		} catch (e) {
+
+		} finally {
+			setIsLoading(false)
+		}
 	};
 
 	useEffect(() => {
@@ -184,18 +263,39 @@ export default function WorkAttendance() {
 
 	return (
 		<main className="w-[1190px] bg-[#F3F6FA] !p-[10px] text-[#1F2937]">
-			<BreadCrumb />
-			<MainTitleWrapper buttonRender={buttonRender} />
+			<BreadCrumb
+				crumList={[
+					{ type: 'icon', path: '/breadcrumb/breadcrumb-home.png', title: '' },
+					{ type: 'title', path: '/breadcrumb/breadcrumb-home.png', title: '근태관리' },
+					{ type: 'title', path: '/breadcrumb/breadcrumb-home.png', title: '근태관리' },
+					{ type: 'title', path: '/breadcrumb/breadcrumb-home.png', title: '일일근태등록' },
+				]}
+			/>
+			<MainTitleWrapper
+				buttonRender={buttonRender}
+				mainTitleData={{
+					title: "일일근태등록",
+					desc: "날짜별 직원 근태 현황을 등록하고 수정합니다."
+				}}
+
+			/>
 			<div className={c.mainContentWrapper}>
 				<TopBar
 					openPopover={openPopover}
 					setOpenPopover={setOpenPopover}
 					date={date}
 					setDate={setDate}
+					statusMap={statusMap}
+					getAttendanceDaily={getAttendanceDaily}
 				/>
 
 				<div className="mt-14 grid grid-cols-[330px_1fr] gap-3">
 					<RegisterCard
+						memo={memo}
+						setMemo={setMemo}
+						selectedTab={selectedTab}
+						setSelectedTab={setSelectedTab}
+						goAttend={goAttend}
 						userInfo={userInfo}
 						isOverTime={isOverTime}
 						setIsOverTime={setIsOverTime}
@@ -211,11 +311,13 @@ export default function WorkAttendance() {
 					<TableCard date={date} attendanceList={attendanceList} />
 				</div>
 			</div>
+
+			<LoadingSpinner isLoading={isLoading} />
 		</main>
 	);
 }
 
-function TopBar({ openPopover, setOpenPopover, date, setDate }) {
+function TopBar({ openPopover, setOpenPopover, date, setDate, statusMap, getAttendanceDaily }) {
 	return (
 		<div className="flex h-[60px] items-center justify-between rounded-[6px] border border-[#E5E7EB] bg-white !px-5 mt-">
 			<div className="flex items-center gap-4">
@@ -228,6 +330,7 @@ function TopBar({ openPopover, setOpenPopover, date, setDate }) {
 								const originDate = new Date(date);
 								originDate.setDate(originDate.getDate() - 1);
 								setDate(parsingDate(originDate));
+								getAttendanceDaily(originDate)
 							}}
 						/>
 					</button>
@@ -271,6 +374,7 @@ function TopBar({ openPopover, setOpenPopover, date, setDate }) {
 								const originDate = new Date(date);
 								originDate.setDate(originDate.getDate() + 1);
 								setDate(parsingDate(originDate));
+								getAttendanceDaily(originDate)
 							}}
 						/>
 					</button>
@@ -299,11 +403,11 @@ function TopBar({ openPopover, setOpenPopover, date, setDate }) {
 			</div>
 
 			<div className="flex items-center gap-2">
-				<Chip text="전체 23명" color="gray" />
-				<Chip text="출근 18" color="blue" />
-				<Chip text="지각 2" color="orange" />
-				<Chip text="결근 1" color="red" />
-				<Chip text="연차 2" color="green" />
+				<Chip text={`전체${statusMap.전체}명`} color="gray" />
+				<Chip text={`출근${statusMap.출근}`} color="blue" />
+				<Chip text={`지각${statusMap.지각}`} color="orange" />
+				<Chip text={`결근${statusMap.결근}`} color="red" />
+				<Chip text={`연차${statusMap.연차}`} color="green" />
 			</div>
 		</div>
 	);
@@ -321,6 +425,11 @@ function RegisterCard({
 	setStartOverTime,
 	setEndOverTime,
 	userInfo = {},
+	goAttend,
+	selectedTab,
+	setSelectedTab,
+	memo,
+	setMemo
 }) {
 	const todayMonth = new Date().getMonth() + 1 + '월';
 	const todayDate = new Date().getDate() + '일';
@@ -354,14 +463,14 @@ function RegisterCard({
 				<Label required>근태 유형</Label>
 				<div className="grid grid-cols-3 gap-2">
 					{types.map((item, idx) => (
-						<TypeButton key={item.label} {...item} selected={idx === 0} />
+						<TypeButton onClick={() => setSelectedTab(item.label)} key={item.label} {...item} selected={item.label === selectedTab} />
 					))}
 				</div>
 
 				<div className="mt-4 grid grid-cols-2 gap-2">
 					<TimeInput
 						label="출근 시간"
-						value={getNowTime()}
+						value={startTime}
 						setTime={setStartTime}
 						readOnly
 					/>
@@ -405,6 +514,8 @@ function RegisterCard({
 					<textarea
 						placeholder="특이사항을 입력하세요"
 						className="h-[58px] w-full resize-none rounded-[5px] border border-[#D1D5DB] p-3 text-[13px] outline-none"
+						value={memo}
+						onChange={(e) => setMemo(e.target.value)}
 					/>
 				</div>
 
@@ -413,7 +524,7 @@ function RegisterCard({
 						<RotateCcw size={14} />
 						초기화
 					</button>
-					<button className="flex h-[36px] w-[82px] items-center justify-center gap-1 rounded-[5px] bg-[#183A6B] text-[13px] font-bold text-white">
+					<button className="flex h-[36px] w-[82px] items-center justify-center gap-1 rounded-[5px] bg-[#183A6B] text-[13px] font-bold text-white" onClick={() => goAttend()}>
 						<Save size={14} />
 						저장
 					</button>
@@ -434,7 +545,7 @@ function TableCard({ date, attendanceList }) {
 
 				<div className="flex items-center gap-2">
 					<span className="rounded-full bg-[#DBEAFE] !px-3 !py-1 text-[12px] font-bold text-[#2563EB]">
-						총 23명
+						총 {attendanceList.length}명
 					</span>
 					<button className="flex h-[32px] items-center gap-1 rounded-[5px] border border-[#BBF7D0] bg-[#F0FDF4] !px-3 text-[13px] font-bold text-[#16A34A]">
 						<Users size={14} />
@@ -466,9 +577,8 @@ function TableCard({ date, attendanceList }) {
 					{attendanceList.map((row, idx) => (
 						<tr
 							key={row.no}
-							className={`h-[40px] border-t text-center ${
-								row.type === '미등록' ? 'bg-[#FFFBEB]' : 'bg-white'
-							}`}
+							className={`h-[40px] border-t text-center ${row.type === '미등록' ? 'bg-[#FFFBEB]' : 'bg-white'
+								}`}
 						>
 							<td>
 								<input type="checkbox" />
@@ -487,11 +597,11 @@ function TableCard({ date, attendanceList }) {
 										: ''
 								}
 							>
-								{row.checkInTime || '-'}
+								{getAttnedTime(row.checkInTime) || '-'}
 							</Td>
-							<Td>{row?.checkOutTime || '-'}</Td>
+							<Td>{getAttnedTime(row?.checkOutTime) || '-'}</Td>
 							<Td color={row.ot !== '-' ? 'purple' : ''}>
-								{row?.overtime || '-'}
+								{getAttnedTime(row?.overtime) || '-'}
 							</Td>
 							<Td
 								color={
@@ -530,18 +640,20 @@ function TableCard({ date, attendanceList }) {
 					<tr className="h-[42px] border-t border-[#BFDBFE] bg-[#EFF6FF] text-center font-bold text-[#183A6B]">
 						<td colSpan={5}></td>
 						<td>합계</td>
-						<td>6명 조회</td>
+						<td>{attendanceList.length}명 조회</td>
 						<td>
-							평균
+							{/* 							평균
 							<br />
-							09:05
+							09:05 */}
 						</td>
 						<td>
-							평균
+							{/* 							평균
 							<br />
-							18:09
+							18:09 */}
 						</td>
-						<td className="text-[#7C3AED]">3.0h</td>
+						<td className="text-[#7C3AED]">
+							{/* 3.0h */}
+						</td>
 						<td></td>
 					</tr>
 				</tfoot>
@@ -549,7 +661,8 @@ function TableCard({ date, attendanceList }) {
 
 			<div className="flex h-[44px] items-center justify-between border-t px-4">
 				<p className="text-[13px] text-[#6B7280]">
-					전체 23명 중 6명 표시 · 미등록 1명
+					{/* 전체 {attendanceList.length}명 중 6명 표시 · 미등록 1명 */}
+					전체 {attendanceList.length}명
 				</p>
 
 				<div className="flex gap-1">
@@ -595,7 +708,7 @@ function Label({ children, required }) {
 	);
 }
 
-function TypeButton({ label, icon: Icon, selected, color }) {
+function TypeButton({ label, icon: Icon, selected, color, onClick }) {
 	const selectedClass = selected
 		? 'border-[#183A6B] bg-[#183A6B] text-white'
 		: 'border-[#D1D5DB] bg-white text-[#6B7280]';
@@ -611,11 +724,11 @@ function TypeButton({ label, icon: Icon, selected, color }) {
 
 	return (
 		<button
-			className={`flex h-[36px] items-center justify-center gap-1 rounded-[5px] border text-[13px] font-bold ${
-				selected
-					? selectedClass
-					: `${selectedClass} ${colorClass[color]} cursor-pointer`
-			}`}
+			className={`flex h-[36px] items-center justify-center gap-1 rounded-[5px] border text-[13px] font-bold ${selected
+				? selectedClass
+				: `${selectedClass} ${colorClass[color]} cursor-pointer`
+				}`}
+			onClick={() => onClick?.()}
 		>
 			<Icon size={14} />
 			{label}
@@ -693,11 +806,10 @@ function StatusBadge({ type }) {
 function PageBtn({ children, active }) {
 	return (
 		<button
-			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${
-				active
-					? 'border-[#183A6B] bg-[#183A6B] text-white'
-					: 'border-[#E5E7EB] bg-white text-[#6B7280]'
-			}`}
+			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${active
+				? 'border-[#183A6B] bg-[#183A6B] text-white'
+				: 'border-[#E5E7EB] bg-white text-[#6B7280]'
+				}`}
 		>
 			{children}
 		</button>

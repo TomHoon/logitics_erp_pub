@@ -30,9 +30,38 @@ const getToday = () => {
 const getNowTime = () => {
 	const now = new Date();
 	const hour = now.getHours();
-	const min = now.getMinutes();
+	const min = now.getMinutes() < 10 ? '0' + now.getMinutes() : now.getMinutes();
 
+	const result = `${hour}:${min}`;
+	console.log(result)
 	return `${hour}:${min}`;
 };
 
-export { parsingDate, getToday, getNowTime };
+const getAttnedTime = (target) => {
+	if (!target) return null;
+	const date = new Date(target);
+	const hour = date.getHours();
+	const min = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+	return `${hour}:${min}`
+
+}
+
+const parsingIsoTime = (target) => {
+	const time = target;
+
+	const today = new Date().toISOString().split("T")[0];
+
+	const localDateTime = `${today}T${time}:00`;
+	return localDateTime;
+}
+
+const parsingMonthKorean = (target) => {
+	console.log(target)
+	const datedTarget = new Date(target);
+	const year = datedTarget.getFullYear();
+	const month = datedTarget.getMonth() + 1 < 10 ? "0" + (datedTarget.getMonth() + 1) : datedTarget.getMonth() + 1;
+
+	return `${year}년 ${month}월`
+}
+
+export { parsingDate, getToday, getNowTime, getAttnedTime, parsingIsoTime, parsingMonthKorean };
