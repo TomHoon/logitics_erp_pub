@@ -23,7 +23,13 @@ import {
 	Trash2,
 	Users,
 } from 'lucide-react';
+import BreadCrumb from '@/component/common/BreadCrumb';
+import CButton from '@/component/common/element/CButton';
+import { clsx } from 'clsx';
 
+import MainTitleWrapper from '@/component/common/MainTitleWrapper';
+import c from './WorkAttendance.module.css';
+import { useState } from 'react';
 const rows = [
 	{
 		no: 'EMP-001',
@@ -106,13 +112,44 @@ const types = [
 ];
 
 export default function WorkAttendance() {
-	return (
-		<main className="w-[1190px] bg-[#F3F6FA] p-[10px] text-[#1F2937]">
-			<TopBar />
+	const [isOverTime, setIsOverTime] = useState(false);
 
-			<div className="mt-4 grid grid-cols-[330px_1fr] gap-3">
-				<RegisterCard />
-				<TableCard />
+	const buttonRender = () => {
+		// return (
+		// 	<>
+		// 		<CButton
+		// 			path="/download.png"
+		// 			type="type1"
+		// 			buttonName="PDF 다운로드"
+		// 			onClick={() => {
+		// 				setIsOpenAlert(true);
+		// 			}}
+		// 		/>
+		// 		<CButton
+		// 			path="/plus.png"
+		// 			type="type2"
+		// 			buttonName="신규등록"
+		// 			onClick={() => {
+		// 				setSelectedInfo({});
+		// 				setIsEdit(false);
+		// 				setOpen(true);
+		// 			}}
+		// 		/>
+		// 	</>
+		// );
+	};
+
+	return (
+		<main className="w-[1190px] bg-[#F3F6FA] !p-[10px] text-[#1F2937]">
+			<BreadCrumb />
+			<MainTitleWrapper buttonRender={buttonRender} />
+			<div className={c.mainContentWrapper}>
+				<TopBar />
+
+				<div className="mt-14 grid grid-cols-[330px_1fr] gap-3">
+					<RegisterCard isOverTime={isOverTime} setIsOverTime={setIsOverTime} />
+					<TableCard />
+				</div>
 			</div>
 		</main>
 	);
@@ -120,7 +157,7 @@ export default function WorkAttendance() {
 
 function TopBar() {
 	return (
-		<div className="flex h-[60px] items-center justify-between rounded-[6px] border border-[#E5E7EB] bg-white px-5">
+		<div className="flex h-[60px] items-center justify-between rounded-[6px] border border-[#E5E7EB] bg-white !px-5 mt-">
 			<div className="flex items-center gap-4">
 				<div className="flex h-[34px] overflow-hidden rounded-[5px] border border-[#D1D5DB]">
 					<button className="w-[34px] border-r bg-[#F8FAFC]">
@@ -135,14 +172,14 @@ function TopBar() {
 					</button>
 				</div>
 
-				<button className="flex h-[34px] items-center gap-1 rounded-[5px] border border-[#BFDBFE] bg-[#EFF6FF] px-4 text-[13px] font-bold text-[#2563EB]">
+				<button className="flex h-[34px] items-center gap-1 rounded-[5px] border border-[#BFDBFE] bg-[#EFF6FF] !px-4 text-[13px] font-bold text-[#2563EB]">
 					<CalendarDays size={14} />
 					오늘
 				</button>
 
 				<div className="flex items-center gap-2">
 					<span className="text-[14px] font-bold">부서</span>
-					<button className="flex h-[34px] w-[150px] items-center justify-between rounded-[5px] border border-[#D1D5DB] px-3 text-[13px] text-[#6B7280]">
+					<button className="flex h-[34px] w-[150px] items-center justify-between rounded-[5px] border border-[#D1D5DB] !px-3 text-[13px] text-[#6B7280]">
 						전체 부서
 						<ChevronRight size={14} className="rotate-90 text-[#9CA3AF]" />
 					</button>
@@ -171,22 +208,22 @@ function TopBar() {
 	);
 }
 
-function RegisterCard() {
+function RegisterCard({ isOverTime, setIsOverTime }) {
 	return (
 		<section className="rounded-[6px] border border-[#E5E7EB] bg-white">
-			<div className="flex h-[44px] items-center justify-between border-b px-4">
+			<div className="flex h-[44px] items-center justify-between border-b !px-4">
 				<div className="flex items-center gap-2 text-[15px] font-bold text-[#183A6B]">
 					<ListChecks size={16} />
 					근태 등록
 				</div>
-				<span className="rounded-full bg-[#DBEAFE] px-3 py-1 text-[12px] font-bold text-[#2563EB]">
+				<span className="rounded-full bg-[#DBEAFE] !px-3 !py-1 text-[12px] font-bold text-[#2563EB]">
 					7월 1일
 				</span>
 			</div>
 
-			<div className="p-4">
+			<div className={clsx('!p-4', c.formWrapper)}>
 				<Label required>사원 선택</Label>
-				<div className="mb-4 flex h-[36px] items-center justify-between rounded-[5px] border border-[#2563EB] px-3">
+				<div className="mb-4 flex h-[36px] items-center justify-between rounded-[5px] border border-[#2563EB] !px-3">
 					<div className="flex items-center gap-2">
 						<span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#DBEAFE] text-[11px] font-bold text-[#2563EB]">
 							박
@@ -211,8 +248,19 @@ function RegisterCard() {
 				<div className="mt-4 flex items-center justify-between">
 					<Label>초과근무(OT)</Label>
 					<div className="flex items-center gap-2">
-						<span className="h-5 w-9 rounded-full bg-[#183A6B] p-[2px]">
-							<span className="block h-4 w-4 translate-x-4 rounded-full bg-white" />
+						<span
+							className={clsx(
+								'h-5 w-9 rounded-full  p-[2px] ',
+								isOverTime ? 'bg-[#183A6B]' : 'bg-[#aaa1a1]'
+							)}
+							onClick={() => setIsOverTime(!isOverTime)}
+						>
+							<span
+								className={clsx(
+									'block h-4 w-4 rounded-full transition-transform duration-300',
+									isOverTime ? 'bg-white translate-x-4' : 'bg-[#183A6B]'
+								)}
+							/>
 						</span>
 						<span className="text-[12px]">적용</span>
 					</div>
@@ -253,17 +301,17 @@ function RegisterCard() {
 function TableCard() {
 	return (
 		<section className="overflow-hidden rounded-[6px] border border-[#E5E7EB] bg-white">
-			<div className="flex h-[44px] items-center justify-between border-b bg-[#F8FAFC] px-4">
+			<div className="flex h-[44px] items-center justify-between border-b bg-[#F8FAFC] !px-4">
 				<div className="flex items-center gap-2 text-[15px] font-bold text-[#183A6B]">
 					<ListChecks size={16} />
 					2025.07.01 근태 목록
 				</div>
 
 				<div className="flex items-center gap-2">
-					<span className="rounded-full bg-[#DBEAFE] px-3 py-1 text-[12px] font-bold text-[#2563EB]">
+					<span className="rounded-full bg-[#DBEAFE] !px-3 !py-1 text-[12px] font-bold text-[#2563EB]">
 						총 23명
 					</span>
-					<button className="flex h-[32px] items-center gap-1 rounded-[5px] border border-[#BBF7D0] bg-[#F0FDF4] px-3 text-[13px] font-bold text-[#16A34A]">
+					<button className="flex h-[32px] items-center gap-1 rounded-[5px] border border-[#BBF7D0] bg-[#F0FDF4] !px-3 text-[13px] font-bold text-[#16A34A]">
 						<Users size={14} />
 						일괄등록
 					</button>
@@ -325,15 +373,15 @@ function TableCard() {
 							</Td>
 							<td>
 								{row.type === '미등록' ? (
-									<button className="rounded-[4px] bg-[#FEF3C7] px-2 py-1 text-[12px] font-bold text-[#D97706]">
+									<button className="rounded-[4px] bg-[#FEF3C7] px-2 !py-1 text-[12px] font-bold text-[#D97706]">
 										+ 등록
 									</button>
 								) : (
 									<div className="flex justify-center gap-1">
-										<button className="rounded-[4px] bg-[#EFF6FF] px-2 py-1 text-[12px] font-bold text-[#2563EB]">
+										<button className="rounded-[4px] bg-[#EFF6FF] px-2 !py-1 text-[12px] font-bold text-[#2563EB]">
 											수정
 										</button>
-										<button className="rounded-[4px] bg-[#FEF2F2] px-2 py-1 text-[12px] font-bold text-[#EF4444]">
+										<button className="rounded-[4px] bg-[#FEF2F2] px-2 !py-1 text-[12px] font-bold text-[#EF4444]">
 											삭제
 										</button>
 									</div>
@@ -397,7 +445,7 @@ function Chip({ text, color }) {
 
 	return (
 		<span
-			className={`rounded-full px-3 py-1 text-[12px] font-bold ${map[color]}`}
+			className={`rounded-full px-3 !py-1 text-[12px] font-bold ${map[color]}`}
 		>
 			● {text}
 		</span>
@@ -429,7 +477,9 @@ function TypeButton({ label, icon: Icon, selected, color }) {
 	return (
 		<button
 			className={`flex h-[36px] items-center justify-center gap-1 rounded-[5px] border text-[13px] font-bold ${
-				selected ? selectedClass : `${selectedClass} ${colorClass[color]}`
+				selected
+					? selectedClass
+					: `${selectedClass} ${colorClass[color]} cursor-pointer`
 			}`}
 		>
 			<Icon size={14} />
@@ -451,14 +501,14 @@ function SmallTime({ value }) {
 	return (
 		<div className="relative">
 			<input
+				type="time"
 				value={value}
-				readOnly
 				className="h-[36px] w-full rounded-[5px] border border-[#D1D5DB] px-3 pr-8 text-[13px] font-bold outline-none"
 			/>
-			<Clock
+			{/* <Clock
 				size={14}
 				className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]"
-			/>
+			/> */}
 		</div>
 	);
 }
@@ -496,7 +546,7 @@ function StatusBadge({ type }) {
 
 	return (
 		<span
-			className={`rounded-full px-3 py-1 text-[12px] font-bold ${map[type]}`}
+			className={`rounded-full px-3 !py-1 text-[12px] font-bold ${map[type]}`}
 		>
 			● {type}
 		</span>
