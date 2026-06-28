@@ -20,8 +20,12 @@ import {
 	ListChecks,
 	Plus,
 	Edit,
+	Calendar as CalendarIcon,
 	Trash2,
 	Users,
+	Sun,
+	Sunrise,
+	Sunset,
 } from 'lucide-react';
 import BreadCrumb from '@/component/common/BreadCrumb';
 import CButton from '@/component/common/element/CButton';
@@ -29,18 +33,20 @@ import { clsx } from 'clsx';
 
 import MainTitleWrapper from '@/component/common/MainTitleWrapper';
 import c from './WorkAttendance.module.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { getAttnedTime, getNowTime, parsingDate, parsingIsoTime } from '@/common/utils/dateUtils';
+import { getAttnedTime, getNowDateTime, getNowTime, parsingDate, parsingDateTime, parsingIsoTime } from '@/common/utils/dateUtils';
 import CSelect from '@/component/common/element/CSelect';
 import baseApi from '@/common/api/baseApi';
 import { toast } from 'sonner';
 import LoadingSpinner from '@/common/LoadingSpinner';
+import CInputCustom from '@/component/common/element/CInputCustom';
+import CInput from '@/component/common/element/CInput';
 const rows = [
 	{
 		no: 'EMP-001',
@@ -123,6 +129,7 @@ const types = [
 ];
 
 export default function WorkAttendance() {
+	const [selectedHolidayTab, setSelectedHolidayTab] = useState('종일');
 	const [isOverTime, setIsOverTime] = useState(false);
 	const [startTime, setStartTime] = useState(getNowTime());
 	const [endTime, setEndTime] = useState(getNowTime());
@@ -140,6 +147,7 @@ export default function WorkAttendance() {
 	const [statusMap, setStatusMap] = useState({})
 
 	const [isLoading, setIsLoading] = useState(false);
+	const [selectedEalryReason, setSelectedEalryReason] = useState('병원방문');
 
 	const goAttend = async () => {
 		const token = localStorage.getItem("accessToken");
@@ -149,8 +157,11 @@ export default function WorkAttendance() {
 			if (selectedTab === '퇴근') {
 				path = "/api/v1/attendances/checkout"
 			}
+			if (selectedTab === '조퇴') {
+				path = "/api/v1/attendances/early-leave"
+			}
 
-			const is출퇴근 = ["출근", "퇴근"].includes(selectedTab);
+			const is출퇴근 = ["출근", "퇴근", "지각", '조퇴'].includes(selectedTab);
 			if (!is출퇴근) {
 				toast("개발 전 입니다.", { position: 'top-center' })
 				return;
@@ -167,10 +178,19 @@ export default function WorkAttendance() {
 
 			}
 
-			const res = await baseApi.post(path, {
+			let param = {
 				workDate: selectedTab === '출근' ? parsingDate(new Date()) : parsingIsoTime(endTime),
 				memo
-			}, {
+			}
+
+			if (selectedTab === '조퇴') {
+				param = {
+					earlyLeaveTime: parsingDateTime(endTime),
+					reason: selectedEalryReason
+				}
+			}
+
+			const res = await baseApi.post(path, param, {
 				headers: {
 					Authorization: `Bearer ${token}`
 				}
@@ -194,6 +214,21 @@ export default function WorkAttendance() {
 		const user = JSON.parse(jsonUser);
 
 		setUserInfo({ ...user });
+	}, []);
+
+	useEffect(() => {
+		// 첫 렌더 이후 지각이면 지각탭으로
+		const now = new Date();
+		const h = now.getHours();
+		const m = now.getMinutes();
+
+		if (h > 8 || (h == 8) && m > 15) {
+			// 지각
+			setSelectedTab("지각");
+		} else {
+			setSelectedTab("출근");
+		}
+
 	}, []);
 
 	const getAttendanceDaily = async (findDate) => {
@@ -291,6 +326,10 @@ export default function WorkAttendance() {
 
 				<div className="mt-14 grid grid-cols-[330px_1fr] gap-3">
 					<RegisterCard
+						selectedEalryReason={selectedEalryReason}
+						setSelectedEalryReason={setSelectedEalryReason}
+						selectedHolidayTab={selectedHolidayTab}
+						setSelectedHolidayTab={setSelectedHolidayTab}
 						memo={memo}
 						setMemo={setMemo}
 						selectedTab={selectedTab}
@@ -429,11 +468,28 @@ function RegisterCard({
 	selectedTab,
 	setSelectedTab,
 	memo,
-	setMemo
+	setMemo,
+	selectedHolidayTab,
+	setSelectedHolidayTab,
+	selectedEalryReason,
+	setSelectedEalryReason
 }) {
+	const [openStartHolidayDate, setOpenStartHolidayDate] = useState(false);
+	const [openEndHolidayDate, setOpenEndHolidayDate] = useState(false);
+
+	const [startHolidayDate, setStartHolidayDate] = useState(parsingDate(new Date()));
+	const [endHolidayDate, setEndHolidayDate] = useState(parsingDate(new Date()));
+
+
 	const todayMonth = new Date().getMonth() + 1 + '월';
 	const todayDate = new Date().getDate() + '일';
+	const isOverAttendTime = useMemo(() => {
+		const now = new Date();
+		const h = now.getHours();
+		const m = now.getMinutes();
 
+		return h > 8 || (h == 8 && m > 15);
+	}, []);
 	return (
 		<section className="rounded-[6px] border border-[#E5E7EB] bg-white">
 			<div className="flex h-[44px] items-center justify-between border-b !px-4">
@@ -448,7 +504,7 @@ function RegisterCard({
 
 			<div className={clsx('!p-4', c.formWrapper)}>
 				<Label required>사원 선택</Label>
-				<div className="mb-4 flex h-[36px] items-center justify-between rounded-[5px] border border-[#2563EB] !px-3">
+				<div className="mb-4 flex h-[36px] items-center justify-between rounded-[5px] border border-[#2563EB] !px-3 justify-center">
 					<div className="flex items-center gap-2">
 						<span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#DBEAFE] text-[11px] font-bold text-[#2563EB]">
 							{(userInfo?.name || '').slice(0, 1)}
@@ -457,46 +513,170 @@ function RegisterCard({
 							{userInfo?.name} · {userInfo?.departmentName}
 						</b>
 					</div>
-					<X size={14} className="text-[#9CA3AF]" />
+					{/* <X size={14} className="text-[#9CA3AF]" /> */}
 				</div>
 
 				<Label required>근태 유형</Label>
 				<div className="grid grid-cols-3 gap-2">
 					{types.map((item, idx) => (
-						<TypeButton onClick={() => setSelectedTab(item.label)} key={item.label} {...item} selected={item.label === selectedTab} />
+						<TypeButton onClick={() => {
+							if (item.label === '출근' && isOverAttendTime) {
+								toast.info(<>
+									<div className='font-[700] text-[18px]'>[출근시간이 아닙니다]</div>
+									<div>지각 탭을 선택하여 출근 처리해 주세요.</div>
+								</>, { position: 'top-center' });
+								return;
+							}
+
+							if (!["출근", "지각", "연차", "퇴근", "조퇴"].includes(item.label)) {
+								toast.warning("현재 사용불가", { position: 'top-center' });
+								return;
+							}
+							setSelectedTab(item.label);
+						}}
+							key={item.label} {...item}
+							selected={item.label === selectedTab}
+						/>
 					))}
 				</div>
 
 				<div className="mt-4 grid grid-cols-2 gap-2">
-					<TimeInput
-						label="출근 시간"
-						value={startTime}
-						setTime={setStartTime}
-						readOnly
-					/>
-					<TimeInput label="퇴근 시간" value={endTime} setTime={setEndTime} />
+					{selectedTab !== '연차' && (
+						<>
+							<TimeInput
+								label="출근 시간"
+								value={startTime}
+								setTime={setStartTime}
+								readOnly
+							/>
+							<TimeInput label="퇴근 시간" value={endTime} setTime={setEndTime} />
+						</>
+					)}
+
 				</div>
 
-				<div className="mt-4 flex items-center justify-between">
-					<Label>초과근무(OT)</Label>
-					<div className="flex items-center gap-2">
-						<span
-							className={clsx(
-								'h-5 w-9 rounded-full  p-[2px] ',
-								isOverTime ? 'bg-[#183A6B]' : 'bg-[#aaa1a1]'
-							)}
-							onClick={() => setIsOverTime(!isOverTime)}
-						>
+
+
+				{selectedTab === '조퇴' && (
+					<div className="mt-4 flex flex-col gap-[6px]">
+						<Label>조퇴사유</Label>
+						<div className="flex items-center gap-2">
+							<CSelect
+								optionList={[
+									"개인사유",
+									"병원방문"
+								]}
+								onChange={(e) => setSelectedEalryReason(e.target.value)}
+								value={selectedEalryReason}
+								width={308}
+							/>
+						</div>
+					</div>
+				)}
+
+				{selectedTab === '퇴근' && (
+					<div className="mt-4 flex items-center justify-between">
+						<Label>초과근무(OT)</Label>
+						<div className="flex items-center gap-2">
 							<span
 								className={clsx(
-									'block h-4 w-4 rounded-full transition-transform duration-300',
-									isOverTime ? 'bg-white translate-x-4' : 'bg-[#183A6B]'
+									'h-5 w-9 rounded-full  p-[2px] ',
+									isOverTime ? 'bg-[#183A6B]' : 'bg-[#aaa1a1]'
 								)}
-							/>
-						</span>
-						<span className="text-[12px]">적용</span>
+								onClick={() => setIsOverTime(!isOverTime)}
+							>
+								<span
+									className={clsx(
+										'block h-4 w-4 rounded-full transition-transform duration-300',
+										isOverTime ? 'bg-white translate-x-4' : 'bg-[#183A6B]'
+									)}
+								/>
+							</span>
+							<span className="text-[12px]">적용</span>
+						</div>
 					</div>
-				</div>
+				)}
+
+
+				{selectedTab === '연차' && (
+					<div className="mt-4 flex flex-col gap-[6px]">
+
+						<div className='bg-[#F0FDF4] px-[12px] py-[12px] flex flex-col gap-[10px]'>
+							<div className='flex justify-between'>
+								<div className='flex items-center gap-[6px]'>
+									<CalendarCheck size={13} color='#16A34A' />
+									<span className='text-[#15803D] text-[12px] font-[700] leading-[12.4px]'>
+										연차현황
+									</span>
+								</div>
+								<span className='text-[#6B7280] text-[11px]'>2025년 기준</span>
+							</div>
+
+							<div className={clsx(
+								'flex gap-[26.5px]',
+								c.holidaysWrapper
+							)}>
+								<HolidayStatusItem daysText={'15일'} korText={'총부여'} />
+								<HolidayStatusItem daysText={'8일'} korText={'사용'} />
+								<HolidayStatusItem daysText={'7일'} korText={'잔여'} fontColor={'#16A34A'} />
+								<HolidayStatusItem daysText={'2일'} korText={'이번 신청'} fontColor={'#2563EB'} />
+							</div>
+						</div>
+
+
+						<Label required>연차 구분</Label>
+						<div className="flex items-center gap-2 justify-between">
+							{['종일', '오전반차', '오후반차'].map((item, idx) => (
+								<HolidaySelectTab value={item} key={`htab-${idx}`} active={selectedHolidayTab === item} onClick={() => { setSelectedHolidayTab(item) }} />
+							))}
+						</div>
+
+						<Label required>연차 기간</Label>
+						<div className="flex items-center gap-[2px] justify-between">
+							<Popover className="max-w-[142px]" open={openStartHolidayDate} onOpenChange={setOpenStartHolidayDate}>
+								<PopoverTrigger>
+									<div className={c.triggerDateWrapper}>
+										<span className={c.triggerDate}>{startHolidayDate}</span>
+										<CalendarDays size={13} className={c.calendar} color='#16A34A' />
+									</div>
+								</PopoverTrigger>
+
+								<PopoverContent>
+									<Calendar
+										mode="single"
+										selected={startHolidayDate}
+										onSelect={(date) => {
+											setStartHolidayDate(parsingDate(date));
+											setOpenStartHolidayDate(false)
+										}}
+									/>
+								</PopoverContent>
+							</Popover>
+
+							<Popover open={openEndHolidayDate} onOpenChange={setOpenEndHolidayDate}>
+								<PopoverTrigger>
+									<div className={c.triggerDateWrapper}>
+										<span className={c.triggerDate}>{endHolidayDate}</span>
+										<CalendarDays size={13} className={c.calendar} color='#16A34A' />
+									</div>
+								</PopoverTrigger>
+
+								<PopoverContent>
+									<Calendar
+										mode="single"
+										selected={endHolidayDate}
+										onSelect={(date) => {
+											setEndHolidayDate(parsingDate(date));
+											setOpenEndHolidayDate(false)
+										}}
+									/>
+								</PopoverContent>
+							</Popover>
+						</div>
+					</div>
+				)}
+
+
 
 				{isOverTime && (
 					<div className="grid grid-cols-[1fr_20px_1fr_50px] items-center gap-2">
@@ -530,7 +710,7 @@ function RegisterCard({
 					</button>
 				</div>
 			</div>
-		</section>
+		</section >
 	);
 }
 
@@ -588,7 +768,7 @@ function TableCard({ date, attendanceList }) {
 							<Td>{row.departmentName}</Td>
 							<Td>{row.positionName}</Td>
 							<Td>
-								<StatusBadge type={row.checkInTime ? '출근' : '미등록'} />
+								<StatusBadge type={row.attendanceStatusCode ? row.attendanceStatusCode : '미등록'} />
 							</Td>
 							<Td
 								color={
@@ -708,7 +888,7 @@ function Label({ children, required }) {
 	);
 }
 
-function TypeButton({ label, icon: Icon, selected, color, onClick }) {
+function TypeButton({ label, icon: Icon, selected, color, onClick, disabled = false }) {
 	const selectedClass = selected
 		? 'border-[#183A6B] bg-[#183A6B] text-white'
 		: 'border-[#D1D5DB] bg-white text-[#6B7280]';
@@ -724,6 +904,7 @@ function TypeButton({ label, icon: Icon, selected, color, onClick }) {
 
 	return (
 		<button
+			disabled={disabled}
 			className={`flex h-[36px] items-center justify-center gap-1 rounded-[5px] border text-[13px] font-bold ${selected
 				? selectedClass
 				: `${selectedClass} ${colorClass[color]} cursor-pointer`
@@ -814,4 +995,60 @@ function PageBtn({ children, active }) {
 			{children}
 		</button>
 	);
+}
+
+
+function HolidayStatusItem({ fontColor, daysText, korText }) {
+	return (
+		<div
+			className={clsx(
+				'flex flex-col flex-1',
+				c.holidayStatus
+			)}
+		>
+			<span className={clsx(
+				"text-[15px] font-[700]",
+				`text-[${fontColor || '#111827'}]`
+			)}>{daysText}</span>
+			<span className={clsx(
+				'text-[11px]',
+				`text-[${fontColor || '#6B7280'}]`
+			)}>{korText}</span>
+		</div>
+	)
+
+}
+
+function Spliter() {
+	return (
+		<div className='w-[1px] h-[28px] bg-[#D1FAE5]'></div>
+
+	)
+}
+
+function HolidaySelectTab({ value, active = false, onClick }) {
+
+	const valueIcon = value === '종일'
+		? <Sun size={12} />
+		: value === '오전반차'
+			? <Sunrise size={12} />
+			: <Sunset size={12} />
+
+	return (
+		<div className={clsx(
+			'border border-[#D1D5DB]',
+			'flex rounded-[6px] cursor-pointer flex-1 justify-center items-center gap-[4px] text-[12px] px-[10px] py-[10.5px]',
+			active ? 'bg-[#16A34A] text-[#FFFFFF]' : 'bg-[#FFFFFF] text-[#9CA3AF]'
+		)}
+			onClick={() => onClick?.()}
+		>
+			<span>
+				{valueIcon}
+			</span>
+
+			<span>
+				{value}
+			</span>
+		</div>
+	)
 }

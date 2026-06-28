@@ -18,7 +18,7 @@ baseApi.interceptors.response.use(
 		return response;
 	},
 	function (error) {
-		if (error.status === 403) {
+		if (error.status === 401) {
 			alert("토큰 만료로 로그인 페이지로 이동합니다.");
 			localStorage.removeItem("accessToken");
 			localStorage.removeItem("user");

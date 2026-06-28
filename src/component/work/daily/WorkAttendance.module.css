@@ -20,3 +20,52 @@
 	align-items: center;
 	gap: 10px;
 }
+
+.holidayStatus {
+	text-align: center;
+}
+
+.holidayStatus:first-child {
+	text-align: left;
+}
+
+.holidayStatus:last-child {
+	text-align: right;
+}
+
+.holidayStatus {
+	position: relative;
+}
+
+.holidayStatus:not(:last-child)::after {
+
+	content: "";
+	width: 1px;
+	height: 28px;
+	background-color: #D1FAE5;
+	position: absolute;
+	right: -16.5px;
+}
+
+.triggerDateWrapper {
+	display: flex;
+	position: relative;
+	max-width: 142px;
+}
+
+.triggerDate {
+	font-size: 13px;
+	text-align: left;
+	width: 180px;
+	padding: 10px 0px 10px 12px;
+	border: 1px solid #D1D5DB;
+	border-radius: 6px;
+	background-color: #fff;
+}
+
+.calendar {
+	position: absolute;
+	right: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+}
