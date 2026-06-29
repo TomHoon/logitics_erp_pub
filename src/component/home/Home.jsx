@@ -248,18 +248,15 @@ export default function Home() {
 				<div className={`${c.guideArea} ${c.stagger}`}>
 					<p className={c.guideTitle}>
 						<ShieldCheck />
-						<ShieldCheck />
 						<span>Enterprise HR Solution</span>
 					</p>
 
 					<p className={c.guideCenterTitle}>
 						스마트한 인사관리의 <br />
-						스마트한 인사관리의 <br />
 						<span className={c.centerTitleHL}>새로운 기준</span>
 					</p>
 
 					<p className={c.guideDesc}>
-						직원 채용부터 급여, 근태까지 <br />
 						직원 채용부터 급여, 근태까지 <br />
 						하나의 플랫폼으로 관리하세요
 					</p>
