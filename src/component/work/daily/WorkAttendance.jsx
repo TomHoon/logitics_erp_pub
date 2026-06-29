@@ -40,7 +40,15 @@ import {
 	PopoverTrigger,
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { getAttnedTime, getNowDateTime, getNowTime, parsingDate, parsingDateTime, parsingIsoTime } from '@/common/utils/dateUtils';
+import {
+	getAttnedTime,
+	getNowDateTime,
+	getNowTime,
+	parsingDate,
+	parsingDateTime,
+	parsingIsoTime,
+	parsingLocalDateToOnlyTime,
+} from '@/common/utils/dateUtils';
 import CSelect from '@/component/common/element/CSelect';
 import baseApi from '@/common/api/baseApi';
 import { toast } from 'sonner';
@@ -129,6 +137,10 @@ const types = [
 ];
 
 export default function WorkAttendance() {
+	const [endHolidayDate, setEndHolidayDate] = useState(parsingDate(new Date()));
+	const [startHolidayDate, setStartHolidayDate] = useState(
+		parsingDate(new Date())
+	);
 	const [selectedHolidayTab, setSelectedHolidayTab] = useState('종일');
 	const [isOverTime, setIsOverTime] = useState(false);
 	const [startTime, setStartTime] = useState(getNowTime());
@@ -144,70 +156,89 @@ export default function WorkAttendance() {
 	const [attendanceList, setAttendanceList] = useState([]);
 	const [selectedTab, setSelectedTab] = useState();
 	const [memo, setMemo] = useState();
-	const [statusMap, setStatusMap] = useState({})
+	const [statusMap, setStatusMap] = useState({});
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [selectedEalryReason, setSelectedEalryReason] = useState('병원방문');
 
+	const [selectedDepartment, setSelectedDepartment] = useState('전체');
+	const [searchKeyword, setSearchKeyword] = useState('');
+
 	const goAttend = async () => {
-		const token = localStorage.getItem("accessToken");
+		const token = localStorage.getItem('accessToken');
 		try {
-			setIsLoading(true)
-			let path = "/api/v1/attendances/checkin"
+			setIsLoading(true);
+			let path = '/api/v1/attendances/checkin';
 			if (selectedTab === '퇴근') {
-				path = "/api/v1/attendances/checkout"
+				path = '/api/v1/attendances/checkout';
 			}
 			if (selectedTab === '조퇴') {
-				path = "/api/v1/attendances/early-leave"
+				path = '/api/v1/attendances/early-leave';
 			}
 
-			const is출퇴근 = ["출근", "퇴근", "지각", '조퇴'].includes(selectedTab);
+			if (selectedTab === '연차') {
+				path = '/api/v1/attendances/leave';
+			}
+
+			const is출퇴근 = ['출근', '퇴근', '지각', '조퇴', '연차'].includes(
+				selectedTab
+			);
 			if (!is출퇴근) {
-				toast("개발 전 입니다.", { position: 'top-center' })
+				toast('개발 전 입니다.', { position: 'top-center' });
 				return;
 			}
 
 			if (selectedTab === '퇴근') {
-
-				const start = Number((startTime || '').replaceAll(":", ""));
-				const end = Number((endTime || '').replaceAll(":", ""));
+				const start = Number((startTime || '').replaceAll(':', ''));
+				const end = Number((endTime || '').replaceAll(':', ''));
 				if (start > end) {
-					toast("퇴근시간이 잘못 입력되었습니다.", { position: "top-center" })
+					toast('퇴근시간이 잘못 입력되었습니다.', { position: 'top-center' });
 					return;
 				}
-
 			}
 
 			let param = {
-				workDate: selectedTab === '출근' ? parsingDate(new Date()) : parsingIsoTime(endTime),
-				memo
-			}
+				workDate:
+					selectedTab === '출근'
+						? parsingDate(new Date())
+						: parsingIsoTime(endTime),
+				memo,
+			};
 
 			if (selectedTab === '조퇴') {
 				param = {
 					earlyLeaveTime: parsingDateTime(endTime),
-					reason: selectedEalryReason
-				}
+					reason: selectedEalryReason,
+				};
+			}
+
+			if (selectedTab === '연차') {
+				param = {
+					startDate: startHolidayDate,
+					endDate: endHolidayDate,
+					leaveType: '연차',
+				};
 			}
 
 			const res = await baseApi.post(path, param, {
 				headers: {
-					Authorization: `Bearer ${token}`
-				}
+					Authorization: `Bearer ${token}`,
+				},
 			});
 
-			toast(`${selectedTab} 정상처리 되었습니다.`, { position: 'top-center' })
+			toast(`${selectedTab} 정상처리 되었습니다.`, { position: 'top-center' });
 			getAttendanceDaily();
 
-			setIsLoading(true)
+			setIsLoading(true);
 		} catch (e) {
-			toast(e?.response?.data?.message || "네트워크 에러", { position: 'top-center' });
+			console.error(e);
+			toast(e?.response?.data?.message || '네트워크 에러', {
+				position: 'top-center',
+			});
 		} finally {
-			setIsLoading(false)
+			setIsLoading(false);
 		}
-
-
-	}
+	};
 
 	useEffect(() => {
 		const jsonUser = localStorage.getItem('user');
@@ -222,23 +253,23 @@ export default function WorkAttendance() {
 		const h = now.getHours();
 		const m = now.getMinutes();
 
-		if (h > 8 || (h == 8) && m > 15) {
+		if (h > 8 || (h == 8 && m > 15)) {
 			// 지각
-			setSelectedTab("지각");
+			setSelectedTab('지각');
 		} else {
-			setSelectedTab("출근");
+			setSelectedTab('출근');
 		}
-
 	}, []);
 
 	const getAttendanceDaily = async (findDate) => {
 		try {
-
-			setIsLoading(true)
+			setIsLoading(true);
 			const token = localStorage.getItem('accessToken');
 			const res = await baseApi.get('/api/v1/attendances/daily', {
 				params: {
-					...(findDate && { findDate })
+					...(findDate && { findDate }),
+					...(searchKeyword && { keyword: searchKeyword }),
+					...(selectedDepartment && { departmentName: selectedDepartment }),
 				},
 				headers: {
 					Authorization: `Bearer ${token}`,
@@ -252,18 +283,18 @@ export default function WorkAttendance() {
 				지각: 0,
 				결근: 0,
 				연차: 0,
-			}
+			};
 
 			for (const a of res?.data?.data) {
 				if (a?.checkInTime) statusMap.출근++;
+				if (a?.attendanceStatusCode === '연차') statusMap.연차++;
 			}
-			setStatusMap({ ...statusMap })
+			setStatusMap({ ...statusMap });
 
 			setAttendanceList(res?.data?.data);
 		} catch (e) {
-
 		} finally {
-			setIsLoading(false)
+			setIsLoading(false);
 		}
 	};
 
@@ -301,21 +332,37 @@ export default function WorkAttendance() {
 			<BreadCrumb
 				crumList={[
 					{ type: 'icon', path: '/breadcrumb/breadcrumb-home.png', title: '' },
-					{ type: 'title', path: '/breadcrumb/breadcrumb-home.png', title: '근태관리' },
-					{ type: 'title', path: '/breadcrumb/breadcrumb-home.png', title: '근태관리' },
-					{ type: 'title', path: '/breadcrumb/breadcrumb-home.png', title: '일일근태등록' },
+					{
+						type: 'title',
+						path: '/breadcrumb/breadcrumb-home.png',
+						title: '근태관리',
+					},
+					{
+						type: 'title',
+						path: '/breadcrumb/breadcrumb-home.png',
+						title: '근태관리',
+					},
+					{
+						type: 'title',
+						path: '/breadcrumb/breadcrumb-home.png',
+						title: '일일근태등록',
+					},
 				]}
 			/>
 			<MainTitleWrapper
 				buttonRender={buttonRender}
 				mainTitleData={{
-					title: "일일근태등록",
-					desc: "날짜별 직원 근태 현황을 등록하고 수정합니다."
+					title: '일일근태등록',
+					desc: '날짜별 직원 근태 현황을 등록하고 수정합니다.',
 				}}
-
 			/>
 			<div className={c.mainContentWrapper}>
 				<TopBar
+					goAttend={goAttend}
+					searchKeyword={searchKeyword}
+					setSearchKeyword={setSearchKeyword}
+					selectedDepartment={selectedDepartment}
+					setSelectedDepartment={setSelectedDepartment}
 					openPopover={openPopover}
 					setOpenPopover={setOpenPopover}
 					date={date}
@@ -326,6 +373,11 @@ export default function WorkAttendance() {
 
 				<div className="mt-14 grid grid-cols-[330px_1fr] gap-3">
 					<RegisterCard
+						setIsLoading={setIsLoading}
+						endHolidayDate={endHolidayDate}
+						setEndHolidayDate={setEndHolidayDate}
+						startHolidayDate={startHolidayDate}
+						setStartHolidayDate={setStartHolidayDate}
 						selectedEalryReason={selectedEalryReason}
 						setSelectedEalryReason={setSelectedEalryReason}
 						selectedHolidayTab={selectedHolidayTab}
@@ -356,22 +408,33 @@ export default function WorkAttendance() {
 	);
 }
 
-function TopBar({ openPopover, setOpenPopover, date, setDate, statusMap, getAttendanceDaily }) {
+function TopBar({
+	openPopover,
+	setOpenPopover,
+	date,
+	setDate,
+	statusMap,
+	getAttendanceDaily,
+	selectedDepartment,
+	setSelectedDepartment,
+	searchKeyword,
+	setSearchKeyword,
+	goAttend,
+}) {
 	return (
 		<div className="flex h-[60px] items-center justify-between rounded-[6px] border border-[#E5E7EB] bg-white !px-5 mt-">
 			<div className="flex items-center gap-4">
 				<div className="flex h-[34px] overflow-hidden rounded-[5px] border border-[#D1D5DB]">
-					<button className="w-[34px] border-r bg-[#F8FAFC]">
-						<ChevronLeft
-							size={16}
-							className="mx-auto"
-							onClick={() => {
-								const originDate = new Date(date);
-								originDate.setDate(originDate.getDate() - 1);
-								setDate(parsingDate(originDate));
-								getAttendanceDaily(originDate)
-							}}
-						/>
+					<button
+						className="w-[34px] border-r bg-[#F8FAFC]"
+						onClick={() => {
+							const originDate = new Date(date);
+							originDate.setDate(originDate.getDate() - 1);
+							setDate(parsingDate(originDate));
+							getAttendanceDaily(originDate);
+						}}
+					>
+						<ChevronLeft size={16} className="mx-auto" />
 					</button>
 					<div className="flex w-[180px] items-center justify-center gap-2 text-[14px] font-bold">
 						{/* <CalendarDays size={15} className="text-[#183A6B]" /> */}
@@ -405,17 +468,16 @@ function TopBar({ openPopover, setOpenPopover, date, setDate, statusMap, getAtte
 							</PopoverContent>
 						</Popover>
 					</div>
-					<button className="w-[34px] border-l bg-[#F8FAFC]">
-						<ChevronRight
-							size={16}
-							className="mx-auto"
-							onClick={() => {
-								const originDate = new Date(date);
-								originDate.setDate(originDate.getDate() + 1);
-								setDate(parsingDate(originDate));
-								getAttendanceDaily(originDate)
-							}}
-						/>
+					<button
+						className="w-[34px] border-l bg-[#F8FAFC]"
+						onClick={() => {
+							const originDate = new Date(date);
+							originDate.setDate(originDate.getDate() + 1);
+							setDate(parsingDate(originDate));
+							getAttendanceDaily(originDate);
+						}}
+					>
+						<ChevronRight size={16} className="mx-auto" />
 					</button>
 				</div>
 
@@ -426,7 +488,12 @@ function TopBar({ openPopover, setOpenPopover, date, setDate, statusMap, getAtte
 
 				<div className="flex items-center gap-2">
 					<span className="text-[14px] font-bold">부서</span>
-					<CSelect />
+					<CSelect
+						value={selectedDepartment || '전체'}
+						onChange={(e) => {
+							setSelectedDepartment(e.target.value);
+						}}
+					/>
 				</div>
 
 				<div className="relative">
@@ -437,6 +504,15 @@ function TopBar({ openPopover, setOpenPopover, date, setDate, statusMap, getAtte
 					<input
 						placeholder="사원명 검색"
 						className="h-[34px] w-[130px] rounded-[5px] border border-[#D1D5DB] pl-9 text-[13px] outline-none"
+						value={searchKeyword}
+						onChange={(e) => {
+							setSearchKeyword(e.target.value);
+						}}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') {
+								getAttendanceDaily();
+							}
+						}}
 					/>
 				</div>
 			</div>
@@ -472,14 +548,16 @@ function RegisterCard({
 	selectedHolidayTab,
 	setSelectedHolidayTab,
 	selectedEalryReason,
-	setSelectedEalryReason
+	setSelectedEalryReason,
+	startHolidayDate,
+	setStartHolidayDate,
+	endHolidayDate,
+	setEndHolidayDate,
+	setIsLoading,
 }) {
 	const [openStartHolidayDate, setOpenStartHolidayDate] = useState(false);
 	const [openEndHolidayDate, setOpenEndHolidayDate] = useState(false);
-
-	const [startHolidayDate, setStartHolidayDate] = useState(parsingDate(new Date()));
-	const [endHolidayDate, setEndHolidayDate] = useState(parsingDate(new Date()));
-
+	const [basicInfo, setBasicInfo] = useState({});
 
 	const todayMonth = new Date().getMonth() + 1 + '월';
 	const todayDate = new Date().getDate() + '일';
@@ -490,6 +568,32 @@ function RegisterCard({
 
 		return h > 8 || (h == 8 && m > 15);
 	}, []);
+
+	const countOfHoliday = useMemo(() => {
+		console.log('startHolidayDate', startHolidayDate);
+		const counts =
+			new Date(endHolidayDate).getDay() - new Date(startHolidayDate).getDay();
+
+		return counts;
+	}, [startHolidayDate, endHolidayDate]);
+
+	const getBasicInfo = async () => {
+		try {
+			setIsLoading(true);
+			const res = await baseApi('/api/v1/attendances/info');
+			setBasicInfo(res.data.data);
+		} catch (e) {
+			console.error(e);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		// 진입시 기본 정보 호출
+		getBasicInfo();
+	}, []);
+
 	return (
 		<section className="rounded-[6px] border border-[#E5E7EB] bg-white">
 			<div className="flex h-[44px] items-center justify-between border-b !px-4">
@@ -519,22 +623,31 @@ function RegisterCard({
 				<Label required>근태 유형</Label>
 				<div className="grid grid-cols-3 gap-2">
 					{types.map((item, idx) => (
-						<TypeButton onClick={() => {
-							if (item.label === '출근' && isOverAttendTime) {
-								toast.info(<>
-									<div className='font-[700] text-[18px]'>[출근시간이 아닙니다]</div>
-									<div>지각 탭을 선택하여 출근 처리해 주세요.</div>
-								</>, { position: 'top-center' });
-								return;
-							}
+						<TypeButton
+							onClick={() => {
+								if (item.label === '출근' && isOverAttendTime) {
+									toast.info(
+										<>
+											<div className="font-[700] text-[18px]">
+												[출근시간이 아닙니다]
+											</div>
+											<div>지각 탭을 선택하여 출근 처리해 주세요.</div>
+										</>,
+										{ position: 'top-center' }
+									);
+									return;
+								}
 
-							if (!["출근", "지각", "연차", "퇴근", "조퇴"].includes(item.label)) {
-								toast.warning("현재 사용불가", { position: 'top-center' });
-								return;
-							}
-							setSelectedTab(item.label);
-						}}
-							key={item.label} {...item}
+								if (
+									!['출근', '지각', '연차', '퇴근', '조퇴'].includes(item.label)
+								) {
+									toast.warning('현재 사용불가', { position: 'top-center' });
+									return;
+								}
+								setSelectedTab(item.label);
+							}}
+							key={item.label}
+							{...item}
 							selected={item.label === selectedTab}
 						/>
 					))}
@@ -545,27 +658,57 @@ function RegisterCard({
 						<>
 							<TimeInput
 								label="출근 시간"
-								value={startTime}
-								setTime={setStartTime}
+								value={
+									parsingLocalDateToOnlyTime(basicInfo?.checkInTime) ||
+									startTime
+								}
 								readOnly
 							/>
-							<TimeInput label="퇴근 시간" value={endTime} setTime={setEndTime} />
+							{!['출근', '지각'].includes(selectedTab) && (
+								<TimeInput
+									label={selectedTab === '조퇴' ? '조퇴시간' : '퇴근시간'}
+									value={endTime}
+									setTime={(v) => {
+										// 22:04
+										const [selectedHour, selectedMinutes] = v.split(':');
+
+										const now = new Date();
+										const nowHour = now.getHours();
+										const nowMinutes = now.getMinutes();
+
+										if (
+											selectedHour === nowHour &&
+											selectedMinutes < nowMinutes
+										) {
+											toast.warning('현재시간 이전으로 선택할 수 없습니다.', {
+												position: 'top-center',
+											});
+											setEndTime(endTime);
+											return;
+										}
+										if (selectedHour < nowHour) {
+											toast.warning('현재시간 이전으로 선택할 수 없습니다.', {
+												position: 'top-center',
+											});
+											setEndTime(endTime);
+											return;
+										}
+
+										setEndTime(v);
+									}}
+								/>
+							)}
 						</>
 					)}
-
 				</div>
-
-
 
 				{selectedTab === '조퇴' && (
 					<div className="mt-4 flex flex-col gap-[6px]">
 						<Label>조퇴사유</Label>
 						<div className="flex items-center gap-2">
 							<CSelect
-								optionList={[
-									"개인사유",
-									"병원방문"
-								]}
+								optionColor="#111827"
+								optionList={['개인사유', '병원방문']}
 								onChange={(e) => setSelectedEalryReason(e.target.value)}
 								value={selectedEalryReason}
 								width={308}
@@ -597,47 +740,70 @@ function RegisterCard({
 					</div>
 				)}
 
-
 				{selectedTab === '연차' && (
 					<div className="mt-4 flex flex-col gap-[6px]">
-
-						<div className='bg-[#F0FDF4] px-[12px] py-[12px] flex flex-col gap-[10px]'>
-							<div className='flex justify-between'>
-								<div className='flex items-center gap-[6px]'>
-									<CalendarCheck size={13} color='#16A34A' />
-									<span className='text-[#15803D] text-[12px] font-[700] leading-[12.4px]'>
+						<div className="bg-[#F0FDF4] px-[12px] py-[12px] flex flex-col gap-[10px]">
+							<div className="flex justify-between">
+								<div className="flex items-center gap-[6px]">
+									<CalendarCheck size={13} color="#16A34A" />
+									<span className="text-[#15803D] text-[12px] font-[700] leading-[12.4px]">
 										연차현황
 									</span>
 								</div>
-								<span className='text-[#6B7280] text-[11px]'>2025년 기준</span>
+								<span className="text-[#6B7280] text-[11px]">2025년 기준</span>
 							</div>
 
-							<div className={clsx(
-								'flex gap-[26.5px]',
-								c.holidaysWrapper
-							)}>
-								<HolidayStatusItem daysText={'15일'} korText={'총부여'} />
-								<HolidayStatusItem daysText={'8일'} korText={'사용'} />
-								<HolidayStatusItem daysText={'7일'} korText={'잔여'} fontColor={'#16A34A'} />
-								<HolidayStatusItem daysText={'2일'} korText={'이번 신청'} fontColor={'#2563EB'} />
+							<div className={clsx('flex gap-[26.5px]', c.holidaysWrapper)}>
+								<HolidayStatusItem
+									daysText={basicInfo?.totalDays}
+									korText={'총부여'}
+								/>
+								<HolidayStatusItem
+									daysText={basicInfo?.usedDays}
+									korText={'사용'}
+								/>
+								<HolidayStatusItem
+									daysText={basicInfo?.remainDays}
+									korText={'잔여'}
+									fontColor={'#16A34A'}
+								/>
+								<HolidayStatusItem
+									daysText={countOfHoliday}
+									korText={'이번 신청'}
+									fontColor={'#2563EB'}
+								/>
 							</div>
 						</div>
-
 
 						<Label required>연차 구분</Label>
 						<div className="flex items-center gap-2 justify-between">
 							{['종일', '오전반차', '오후반차'].map((item, idx) => (
-								<HolidaySelectTab value={item} key={`htab-${idx}`} active={selectedHolidayTab === item} onClick={() => { setSelectedHolidayTab(item) }} />
+								<HolidaySelectTab
+									value={item}
+									key={`htab-${idx}`}
+									active={selectedHolidayTab === item}
+									onClick={() => {
+										setSelectedHolidayTab(item);
+									}}
+								/>
 							))}
 						</div>
 
 						<Label required>연차 기간</Label>
 						<div className="flex items-center gap-[2px] justify-between">
-							<Popover className="max-w-[142px]" open={openStartHolidayDate} onOpenChange={setOpenStartHolidayDate}>
+							<Popover
+								className="max-w-[142px]"
+								open={openStartHolidayDate}
+								onOpenChange={setOpenStartHolidayDate}
+							>
 								<PopoverTrigger>
 									<div className={c.triggerDateWrapper}>
 										<span className={c.triggerDate}>{startHolidayDate}</span>
-										<CalendarDays size={13} className={c.calendar} color='#16A34A' />
+										<CalendarDays
+											size={13}
+											className={c.calendar}
+											color="#16A34A"
+										/>
 									</div>
 								</PopoverTrigger>
 
@@ -646,18 +812,33 @@ function RegisterCard({
 										mode="single"
 										selected={startHolidayDate}
 										onSelect={(date) => {
+											const now = new Date();
+
+											if (date < now) {
+												toast.warning('현재일자 이전으로 선택할 수 없습니다.', {
+													position: 'top-center',
+												});
+												return;
+											}
 											setStartHolidayDate(parsingDate(date));
-											setOpenStartHolidayDate(false)
+											setOpenStartHolidayDate(false);
 										}}
 									/>
 								</PopoverContent>
 							</Popover>
 
-							<Popover open={openEndHolidayDate} onOpenChange={setOpenEndHolidayDate}>
+							<Popover
+								open={openEndHolidayDate}
+								onOpenChange={setOpenEndHolidayDate}
+							>
 								<PopoverTrigger>
 									<div className={c.triggerDateWrapper}>
 										<span className={c.triggerDate}>{endHolidayDate}</span>
-										<CalendarDays size={13} className={c.calendar} color='#16A34A' />
+										<CalendarDays
+											size={13}
+											className={c.calendar}
+											color="#16A34A"
+										/>
 									</div>
 								</PopoverTrigger>
 
@@ -666,8 +847,16 @@ function RegisterCard({
 										mode="single"
 										selected={endHolidayDate}
 										onSelect={(date) => {
+											const now = new Date();
+
+											if (date < now) {
+												toast.warning('현재일자 이전으로 선택할 수 없습니다.', {
+													position: 'top-center',
+												});
+												return;
+											}
 											setEndHolidayDate(parsingDate(date));
-											setOpenEndHolidayDate(false)
+											setOpenEndHolidayDate(false);
 										}}
 									/>
 								</PopoverContent>
@@ -675,8 +864,6 @@ function RegisterCard({
 						</div>
 					</div>
 				)}
-
-
 
 				{isOverTime && (
 					<div className="grid grid-cols-[1fr_20px_1fr_50px] items-center gap-2">
@@ -704,13 +891,16 @@ function RegisterCard({
 						<RotateCcw size={14} />
 						초기화
 					</button>
-					<button className="flex h-[36px] w-[82px] items-center justify-center gap-1 rounded-[5px] bg-[#183A6B] text-[13px] font-bold text-white" onClick={() => goAttend()}>
+					<button
+						className="flex h-[36px] w-[82px] items-center justify-center gap-1 rounded-[5px] bg-[#183A6B] text-[13px] font-bold text-white"
+						onClick={() => goAttend()}
+					>
 						<Save size={14} />
 						저장
 					</button>
 				</div>
 			</div>
-		</section >
+		</section>
 	);
 }
 
@@ -757,8 +947,9 @@ function TableCard({ date, attendanceList }) {
 					{attendanceList.map((row, idx) => (
 						<tr
 							key={row.no}
-							className={`h-[40px] border-t text-center ${row.type === '미등록' ? 'bg-[#FFFBEB]' : 'bg-white'
-								}`}
+							className={`h-[40px] border-t text-center ${
+								row.type === '미등록' ? 'bg-[#FFFBEB]' : 'bg-white'
+							}`}
 						>
 							<td>
 								<input type="checkbox" />
@@ -768,7 +959,13 @@ function TableCard({ date, attendanceList }) {
 							<Td>{row.departmentName}</Td>
 							<Td>{row.positionName}</Td>
 							<Td>
-								<StatusBadge type={row.attendanceStatusCode ? row.attendanceStatusCode : '미등록'} />
+								<StatusBadge
+									type={
+										row.attendanceStatusCode
+											? row.attendanceStatusCode
+											: '미등록'
+									}
+								/>
 							</Td>
 							<Td
 								color={
@@ -831,9 +1028,7 @@ function TableCard({ date, attendanceList }) {
 							<br />
 							18:09 */}
 						</td>
-						<td className="text-[#7C3AED]">
-							{/* 3.0h */}
-						</td>
+						<td className="text-[#7C3AED]">{/* 3.0h */}</td>
 						<td></td>
 					</tr>
 				</tfoot>
@@ -888,7 +1083,14 @@ function Label({ children, required }) {
 	);
 }
 
-function TypeButton({ label, icon: Icon, selected, color, onClick, disabled = false }) {
+function TypeButton({
+	label,
+	icon: Icon,
+	selected,
+	color,
+	onClick,
+	disabled = false,
+}) {
 	const selectedClass = selected
 		? 'border-[#183A6B] bg-[#183A6B] text-white'
 		: 'border-[#D1D5DB] bg-white text-[#6B7280]';
@@ -905,10 +1107,11 @@ function TypeButton({ label, icon: Icon, selected, color, onClick, disabled = fa
 	return (
 		<button
 			disabled={disabled}
-			className={`flex h-[36px] items-center justify-center gap-1 rounded-[5px] border text-[13px] font-bold ${selected
-				? selectedClass
-				: `${selectedClass} ${colorClass[color]} cursor-pointer`
-				}`}
+			className={`flex h-[36px] items-center justify-center gap-1 rounded-[5px] border text-[13px] font-bold ${
+				selected
+					? selectedClass
+					: `${selectedClass} ${colorClass[color]} cursor-pointer`
+			}`}
 			onClick={() => onClick?.()}
 		>
 			<Icon size={14} />
@@ -987,68 +1190,61 @@ function StatusBadge({ type }) {
 function PageBtn({ children, active }) {
 	return (
 		<button
-			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${active
-				? 'border-[#183A6B] bg-[#183A6B] text-white'
-				: 'border-[#E5E7EB] bg-white text-[#6B7280]'
-				}`}
+			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${
+				active
+					? 'border-[#183A6B] bg-[#183A6B] text-white'
+					: 'border-[#E5E7EB] bg-white text-[#6B7280]'
+			}`}
 		>
 			{children}
 		</button>
 	);
 }
 
-
 function HolidayStatusItem({ fontColor, daysText, korText }) {
 	return (
-		<div
-			className={clsx(
-				'flex flex-col flex-1',
-				c.holidayStatus
-			)}
-		>
-			<span className={clsx(
-				"text-[15px] font-[700]",
-				`text-[${fontColor || '#111827'}]`
-			)}>{daysText}</span>
-			<span className={clsx(
-				'text-[11px]',
-				`text-[${fontColor || '#6B7280'}]`
-			)}>{korText}</span>
+		<div className={clsx('flex flex-col flex-1', c.holidayStatus)}>
+			<span
+				className={clsx(
+					'text-[15px] font-[700]',
+					`text-[${fontColor || '#111827'}]`
+				)}
+			>
+				{daysText}
+			</span>
+			<span className={clsx('text-[11px]', `text-[${fontColor || '#6B7280'}]`)}>
+				{korText}
+			</span>
 		</div>
-	)
-
+	);
 }
 
 function Spliter() {
-	return (
-		<div className='w-[1px] h-[28px] bg-[#D1FAE5]'></div>
-
-	)
+	return <div className="w-[1px] h-[28px] bg-[#D1FAE5]"></div>;
 }
 
 function HolidaySelectTab({ value, active = false, onClick }) {
-
-	const valueIcon = value === '종일'
-		? <Sun size={12} />
-		: value === '오전반차'
-			? <Sunrise size={12} />
-			: <Sunset size={12} />
+	const valueIcon =
+		value === '종일' ? (
+			<Sun size={12} />
+		) : value === '오전반차' ? (
+			<Sunrise size={12} />
+		) : (
+			<Sunset size={12} />
+		);
 
 	return (
-		<div className={clsx(
-			'border border-[#D1D5DB]',
-			'flex rounded-[6px] cursor-pointer flex-1 justify-center items-center gap-[4px] text-[12px] px-[10px] py-[10.5px]',
-			active ? 'bg-[#16A34A] text-[#FFFFFF]' : 'bg-[#FFFFFF] text-[#9CA3AF]'
-		)}
+		<div
+			className={clsx(
+				'border border-[#D1D5DB]',
+				'flex rounded-[6px] cursor-pointer flex-1 justify-center items-center gap-[4px] text-[12px] px-[10px] py-[10.5px]',
+				active ? 'bg-[#16A34A] text-[#FFFFFF]' : 'bg-[#FFFFFF] text-[#9CA3AF]'
+			)}
 			onClick={() => onClick?.()}
 		>
-			<span>
-				{valueIcon}
-			</span>
+			<span>{valueIcon}</span>
 
-			<span>
-				{value}
-			</span>
+			<span>{value}</span>
 		</div>
-	)
+	);
 }

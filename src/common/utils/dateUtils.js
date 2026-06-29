@@ -33,7 +33,7 @@ const getNowTime = () => {
 	const min = now.getMinutes() < 10 ? '0' + now.getMinutes() : now.getMinutes();
 
 	const result = `${hour}:${min}`;
-	console.log(result)
+	console.log(result);
 	return `${hour}:${min}`;
 };
 
@@ -41,52 +41,67 @@ const getAttnedTime = (target) => {
 	if (!target) return null;
 	const date = new Date(target);
 	const hour = date.getHours();
-	const min = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
-	return `${hour}:${min}`
-
-}
+	const min =
+		date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+	return `${hour}:${min}`;
+};
 
 const parsingIsoTime = (target) => {
 	const time = target;
 
-	const today = new Date().toISOString().split("T")[0];
+	const today = new Date().toISOString().split('T')[0];
 
 	const localDateTime = `${today}T${time}:00`;
 	return localDateTime;
-}
+};
 
 const parsingMonthKorean = (target) => {
-	console.log(target)
+	console.log(target);
 	const datedTarget = new Date(target);
 	const year = datedTarget.getFullYear();
-	const month = datedTarget.getMonth() + 1 < 10 ? "0" + (datedTarget.getMonth() + 1) : datedTarget.getMonth() + 1;
+	const month =
+		datedTarget.getMonth() + 1 < 10
+			? '0' + (datedTarget.getMonth() + 1)
+			: datedTarget.getMonth() + 1;
 
-	return `${year}년 ${month}월`
-}
+	return `${year}년 ${month}월`;
+};
 
 const getNowDateTime = () => {
 	const now = new Date();
 
-	const localDateTime =
-		`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+	const localDateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
 	return localDateTime;
 	// 2026-06-28T22:28:09
-}
-
+};
 
 const parsingDateTime = (time) => {
 	const now = new Date();
 
 	const year = now.getFullYear();
-	const month = String(now.getMonth() + 1).padStart(2, "0");
-	const day = String(now.getDate()).padStart(2, "0");
+	const month = String(now.getMonth() + 1).padStart(2, '0');
+	const day = String(now.getDate()).padStart(2, '0');
 
 	const localDateTime = `${year}-${month}-${day}T${time}:00`;
 
 	return localDateTime;
-	console.log(localDateTime);
-}
+};
 
+const parsingLocalDateToOnlyTime = (fullDate) => {
+	if (!fullDate) return null;
+	const date = new Date(fullDate);
+	return `${date.getHours()}:${date.getMinutes()}`;
+};
 
-export { parsingDate, getToday, getNowTime, getAttnedTime, parsingIsoTime, parsingMonthKorean, getNowDateTime, parsingDateTime };
+export {
+	parsingDate,
+	getToday,
+	getNowTime,
+	getAttnedTime,
+	parsingIsoTime,
+	parsingMonthKorean,
+	getNowDateTime,
+	parsingDateTime,
+	parsingLocalDateToOnlyTime,
+};
