@@ -26,6 +26,13 @@ export default function Nav({
 				setActiveNav('');
 				break;
 		}
+
+		if (pathname.includes('work')) {
+			setActiveNav('근태관리');
+		}
+		if (pathname.includes('salary')) {
+			setActiveNav('급여관리');
+		}
 	}, [pathname]);
 
 	return (
