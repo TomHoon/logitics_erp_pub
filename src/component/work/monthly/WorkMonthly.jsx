@@ -3,8 +3,14 @@
 import BreadCrumb from '@/component/common/BreadCrumb';
 import MainTitleWrapper from '@/component/common/MainTitleWrapper';
 import clsx from 'clsx';
-import { CalendarDays, Grid3X3, ChevronLeft, ChevronRight, Search } from 'lucide-react';
-import c from "./WorkMonthly.module.css"
+import {
+	CalendarDays,
+	Grid3X3,
+	ChevronLeft,
+	ChevronRight,
+	Search,
+} from 'lucide-react';
+import c from './WorkMonthly.module.css';
 import {
 	Select,
 	SelectContent,
@@ -12,13 +18,18 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover';
 import { useEffect, useState } from 'react';
 import { parsingDate, parsingMonthKorean } from '@/common/utils/dateUtils';
 import { Calendar } from '@/components/ui/calendar';
 import CButton from '@/component/common/element/CButton';
 import CSelect from '@/component/common/element/CSelect';
 import baseApi from '@/common/api/baseApi';
+import LoadingSpinner from '@/common/LoadingSpinner';
 const employees = [
 	{
 		name: '김철수',
@@ -119,39 +130,69 @@ const statusList = [
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
 export default function WorkMonthly() {
-
 	const [openPopover, setOpenPopover] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const [date, setDate] = useState(parsingDate(new Date()));
+	const [monthlyList, setMonthlyList] = useState([]);
+	const [selectedDepartmentName, setSelectedDepartmentName] = useState('전체');
 
 	const getMonthlyList = async () => {
-		const token = localStorage.getItem("accessToken");
-		const res = await baseApi.get("/api/v1/attendances/monthly", {
-			headers: {
-				Authorization: `Bearer ${token}`
-			}
-		});
-	}
+		try {
+			setIsLoading(true);
+			const res = await baseApi.get('/api/v1/attendances/monthly', {
+				params: {
+					...(date && { findDate: date }),
+					...(selectedDepartmentName && {
+						departmentName: selectedDepartmentName,
+					}),
+				},
+			});
+
+			setMonthlyList(res.data.data);
+		} catch (e) {
+			console.error(e);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	useEffect(() => {
-		getMonthlyList()
-	}, [])
+		getMonthlyList();
+	}, []);
 
 	return (
-		<main className={clsx("w-[1190px] bg-[#F3F6FA] p-[10px] text-[#1F2937]", c.mainWrapper)}>
+		<main
+			className={clsx(
+				'w-[1190px] bg-[#F3F6FA] p-[10px] text-[#1F2937]',
+				c.mainWrapper
+			)}
+		>
 			<BreadCrumb
 				crumList={[
 					{ type: 'icon', path: '/breadcrumb/breadcrumb-home.png', title: '' },
-					{ type: 'title', path: '/breadcrumb/breadcrumb-home.png', title: '근태관리' },
-					{ type: 'title', path: '/breadcrumb/breadcrumb-home.png', title: '근태관리' },
-					{ type: 'title', path: '/breadcrumb/breadcrumb-home.png', title: '월근태현황' },
+					{
+						type: 'title',
+						path: '/breadcrumb/breadcrumb-home.png',
+						title: '근태관리',
+					},
+					{
+						type: 'title',
+						path: '/breadcrumb/breadcrumb-home.png',
+						title: '근태관리',
+					},
+					{
+						type: 'title',
+						path: '/breadcrumb/breadcrumb-home.png',
+						title: '월근태현황',
+					},
 				]}
 			/>
 
 			<MainTitleWrapper
-				buttonRender={() => { }}
+				buttonRender={() => {}}
 				mainTitleData={{
-					title: "월근태현황",
-					desc: "부서별·직원별 월간 근태 현황을 조회하고 관리합니다."
+					title: '월근태현황',
+					desc: '부서별·직원별 월간 근태 현황을 조회하고 관리합니다.',
 				}}
 			/>
 
@@ -175,14 +216,19 @@ export default function WorkMonthly() {
 
 							<div className="flex w-[180px] items-center justify-center gap-2 text-[14px] font-bold">
 								{/* <CalendarDays size={15} className="text-[#183A6B]" /> */}
-								<Popover open={openPopover} onOpenChange={setOpenPopover} className="flex">
+								<Popover
+									open={openPopover}
+									onOpenChange={setOpenPopover}
+									className="flex"
+								>
 									<PopoverTrigger>
 										<div
 											className={c.calendarWrapper}
 											onClick={() => setOpenPopover(true)}
-
 										>
-											<span className={c.searchFromDate}>{parsingMonthKorean(date)}</span>
+											<span className={c.searchFromDate}>
+												{parsingMonthKorean(date)}
+											</span>
 											<CalendarDays
 												size={13}
 												className={c.calendar}
@@ -222,27 +268,25 @@ export default function WorkMonthly() {
 
 						{/* department */}
 						<div className="flex items-center gap-[14px]">
-							<span className="text-[13px] font-[700] text-[#111827]">부서</span>
-
+							<span className="text-[13px] font-[700] text-[#111827]">
+								부서
+							</span>
 
 							<CSelect
-								optionList={[
-									"전체 부서",
-									"개발팀",
-									"경영지원팀"
-								]}
+								onChange={(e) => setSelectedDepartmentName(e.target.value)}
+								value={selectedDepartmentName}
 							/>
 						</div>
 
 						{/* search button */}
-						<button className="flex">
-
-							<CButton
-								beforeIcon={<Search size={22} />}
-								buttonName="조회"
-								type='type2'
-							/>
-						</button>
+						<CButton
+							beforeIcon={<Search size={22} />}
+							buttonName="조회"
+							onClick={() => {
+								getMonthlyList();
+							}}
+							type="type2"
+						/>
 					</div>
 
 					{/* legend */}
@@ -293,7 +337,8 @@ export default function WorkMonthly() {
 								{days.map((day) => (
 									<th
 										key={day}
-										className={`w-[25px] border border-[#E5E7EB] font-bold ${day === 5 ||
+										className={`w-[25px] border border-[#E5E7EB] font-bold ${
+											day === 5 ||
 											day === 6 ||
 											day === 12 ||
 											day === 13 ||
@@ -301,9 +346,9 @@ export default function WorkMonthly() {
 											day === 20 ||
 											day === 26 ||
 											day === 27
-											? 'bg-[#EAF1F8] text-[#94A3B8]'
-											: ''
-											}`}
+												? 'bg-[#EAF1F8] text-[#94A3B8]'
+												: ''
+										}`}
 									>
 										{day}
 									</th>
@@ -325,13 +370,13 @@ export default function WorkMonthly() {
 						</thead>
 
 						<tbody>
-							{employees.map((emp) => (
+							{monthlyList.map((emp) => (
 								<tr key={emp.name} className="h-[36px] bg-white">
 									<td className="border border-[#E5E7EB] font-bold text-[#111827]">
 										{emp.name}
 									</td>
 									<td className="border border-[#E5E7EB] font-bold text-[#64748B]">
-										{emp.dept}
+										{emp.departmentName}
 									</td>
 
 									{days.map((day) => (
@@ -347,16 +392,16 @@ export default function WorkMonthly() {
 									))}
 
 									<td className="border border-[#DBEAFE] bg-[#EFF6FF] font-bold text-[#2563EB]">
-										{emp.summary.출근}
+										{emp?.summary?.출근}
 									</td>
 									<td className="border border-[#FED7AA] bg-[#FFF7ED] font-bold text-[#EA580C]">
-										{emp.summary.지각}
+										{emp?.summary?.지각}
 									</td>
 									<td className="border border-[#BBF7D0] bg-[#F0FDF4] font-bold text-[#16A34A]">
-										{emp.summary.연차}
+										{emp?.summary?.연차}
 									</td>
 									<td className="border border-[#FECACA] bg-[#FFF1F2] font-bold text-[#CBD5E1]">
-										{emp.summary.결근}
+										{emp?.summary?.결근}
 									</td>
 								</tr>
 							))}
@@ -364,6 +409,7 @@ export default function WorkMonthly() {
 					</table>
 				</div>
 			</section>
+			<LoadingSpinner isLoading={isLoading} />
 		</main>
 	);
 }
