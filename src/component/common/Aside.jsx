@@ -3,7 +3,7 @@
 import s from './Aside.module.css';
 import { usePathname, useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
-import { Calendar, Clock, FileText, HeartHandshake, User } from 'lucide-react';
+import { Banknote, Calendar, Clock, FileText, HeartHandshake, User } from 'lucide-react';
 
 const infoMenuList = [
 	{
@@ -61,30 +61,20 @@ const workMenuList = [
 const salaryMenuList = [
 	{
 		titleInfo: {
-			iconPath: '/aside/user.png',
-			title: '인사정보',
+			iconPath: <Banknote size={13} color="#60A5FA" />,
+			title: '급여관리',
 		},
 		subMenus: [
-			{ title: '인사정보등록', path: '/info/register' },
-			{ title: '사원명수/인사기록카드', path: '/info/card' },
-			{ title: '인사발령등록', path: '/info/appointment' },
+			{ title: '급여기본정보관리', path: '/salary/basic' },
+			{ title: '급여지급', path: '/salary/payroll' },
+			{ title: '기본수당외수당관리', path: '#' },
+			{ title: '급여계산', path: '/salary/calculation' },
+			{ title: '급여조회', path: '/salary/trend' },
 		],
 	},
-	{
-		titleInfo: {
-			iconPath: '/aside/user.png',
-			title: '경조비관리',
-		},
-		subMenus: [{ title: '경조비신청', path: '/event-support/apply' }],
-	},
-	{
-		titleInfo: {
-			iconPath: '/aside/user.png',
-			title: '증명서관리',
-		},
-		subMenus: [{ title: '증명서발급', path: '/certificate/issue' }],
-	},
 ];
+
+/* 급여기본정보관리 급여지급 기본수당외수당관리 급여계산 급여조회 */
 
 export default function Aside({ menus = infoMenuList }) {
 	const router = useRouter();
@@ -93,6 +83,9 @@ export default function Aside({ menus = infoMenuList }) {
 
 	if (pathname.includes('work')) {
 		menus = workMenuList;
+	}
+	if (pathname.includes('salary')) {
+		menus = salaryMenuList;
 	}
 
 	return (

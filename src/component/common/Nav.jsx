@@ -60,7 +60,9 @@ export default function Nav({
 						>
 							근태관리
 						</li>
-						<li className={clsx(activeNav === '급여관리' ? style.active : '')}>
+						<li className={clsx(activeNav === '급여관리' ? style.active : '')}
+							onClick={() => router.push('/salary/basic')}
+						>
 							급여관리
 						</li>
 						<li

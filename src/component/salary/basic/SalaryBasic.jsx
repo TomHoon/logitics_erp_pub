@@ -1,5 +1,7 @@
 'use client';
 
+import BreadCrumb from '@/component/common/BreadCrumb';
+import MainTitleWrapper from '@/component/common/MainTitleWrapper';
 import {
 	Search,
 	RotateCcw,
@@ -13,19 +15,20 @@ import {
 	Save,
 	X,
 } from 'lucide-react';
+import { useState } from 'react';
 
-const rows = [
+const dummyRows = [
 	{
 		id: 'EMP-001',
 		name: '김철수',
 		dept: '인사팀',
 		rank: '팀장',
 		rankColor: 'purple',
-		base: '4,200,000',
-		meal: '200,000',
-		traffic: '150,000',
-		position: '200,000',
-		allowance: '550,000',
+		base: 4200000,
+		meal: 200000,
+		traffic: 150000,
+		position: 200000,
+		allowance: 550000,
 		bank: '국민은행',
 		account: '12****-34****',
 		start: '2024.01.01',
@@ -37,11 +40,11 @@ const rows = [
 		dept: '인사팀',
 		rank: '차장',
 		rankColor: 'blue',
-		base: '4,700,000',
-		meal: '200,000',
-		traffic: '150,000',
-		position: '200,000',
-		allowance: '550,000',
+		base: 4700000,
+		meal: 200000,
+		traffic: 150000,
+		position: 200000,
+		allowance: 550000,
 		bank: '신한은행',
 		account: '98****-12****',
 		start: '2025.01.01',
@@ -53,15 +56,15 @@ const rows = [
 		dept: '개발팀',
 		rank: '대리',
 		rankColor: 'sky',
-		base: '3,500,000',
-		meal: '200,000',
-		traffic: '150,000',
-		position: '-',
-		allowance: '350,000',
+		base: 3500000,
+		meal: 200000,
+		traffic: 150000,
+		position: 0,
+		allowance: 350000,
 		bank: '국민은행',
 		account: '45****-67****',
 		start: '2021.08.01',
-		edit: true,
+		edit: false,
 	},
 	{
 		id: 'EMP-004',
@@ -69,11 +72,11 @@ const rows = [
 		dept: '영업팀',
 		rank: '사원',
 		rankColor: 'green',
-		base: '2,800,000',
-		meal: '200,000',
-		traffic: '100,000',
-		position: '-',
-		allowance: '300,000',
+		base: 2800000,
+		meal: 200000,
+		traffic: 100000,
+		position: 0,
+		allowance: 300000,
 		bank: '하나은행',
 		account: '11****-98****',
 		start: '2023.01.09',
@@ -82,10 +85,36 @@ const rows = [
 ];
 
 export default function SalaryBasic() {
+
+	const [rows, setRows] = useState(dummyRows || [])
+
 	return (
-		<main className="w-[1190px] bg-[#F3F6FA] p-[10px] text-[#1F2937]">
+		<main className="w-[1190px] bg-[#F3F6FA]text-[#1F2937]">
+			<BreadCrumb
+				crumList={[
+					{ type: 'icon', path: '/breadcrumb/breadcrumb-home.png', title: '' },
+					{
+						type: 'title',
+						path: '/breadcrumb/breadcrumb-home.png',
+						title: '급여관리',
+					},
+					{
+						type: 'title',
+						path: '/breadcrumb/breadcrumb-home.png',
+						title: '급여기본정보관리',
+					},
+				]}
+			/>
+			<MainTitleWrapper
+				buttonRender={() => { }}
+				mainTitleData={{
+					title: '급여기본정보관리',
+					desc: '직원별 기본급여 및 수당 기준 정보를 등록하고 관리합니다.',
+				}}
+			/>
+
 			{/* summary cards */}
-			<div className="grid grid-cols-5 gap-3">
+			<div className="grid grid-cols-5 gap-3 !mt-[16px]">
 				<SummaryCard
 					dark
 					title="평균 기본급"
@@ -113,7 +142,7 @@ export default function SalaryBasic() {
 			</div>
 
 			{/* filter */}
-			<section className="mt-4 flex h-[60px] items-center gap-4 rounded-[7px] border border-[#E5E7EB] bg-white px-5">
+			<section className="!mt-4 flex h-[60px] items-center gap-4 rounded-[7px] border border-[#E5E7EB] bg-white px-5">
 				<Filter label="부서" value="전체 부서" />
 				<Filter label="직급" value="전체 직급" />
 
@@ -155,7 +184,7 @@ export default function SalaryBasic() {
 			</section>
 
 			{/* table */}
-			<section className="mt-4 overflow-hidden rounded-[7px] border border-[#E5E7EB] bg-white">
+			<section className="!mt-4 overflow-hidden rounded-[7px] border border-[#E5E7EB] bg-white">
 				<div className="flex h-[44px] items-center justify-between bg-[#F8FAFC] px-5">
 					<div className="flex items-center gap-2 text-[15px] font-bold text-[#183A6B]">
 						<Table2 size={16} />
@@ -163,7 +192,7 @@ export default function SalaryBasic() {
 					</div>
 
 					<div className="flex items-center gap-3 text-[12px]">
-						<span className="rounded-full bg-[#DBEAFE] px-3 py-1 font-bold text-[#2563EB]">
+						<span className="rounded-full bg-[#DBEAFE] !px-3 !py-1 font-bold text-[#2563EB]">
 							총 8명
 						</span>
 						<Legend color="bg-[#DBEAFE]" text="기본급" />
@@ -176,7 +205,9 @@ export default function SalaryBasic() {
 					<thead>
 						<tr className="h-[40px] bg-[#F1F5F9] text-[#64748B]">
 							<th className="w-[36px] border border-[#E5E7EB]">
-								<input type="checkbox" defaultChecked />
+								<input type="checkbox" onChange={e => {
+									setRows(prev => prev.map(v => ({ ...v, edit: e.target.checked })))
+								}} />
 							</th>
 							<Th w="80px">사원번호</Th>
 							<Th w="70px">성명</Th>
@@ -204,7 +235,7 @@ export default function SalaryBasic() {
 								계좌번호
 							</Th>
 							<Th w="95px">적용시작일</Th>
-							<Th w="105px">관리</Th>
+							<Th w="140px">관리</Th>
 						</tr>
 					</thead>
 
@@ -212,12 +243,17 @@ export default function SalaryBasic() {
 						{rows.map((row) => (
 							<tr
 								key={row.id}
-								className={`h-[43px] border-t ${
-									row.edit ? 'bg-[#EFF6FF]' : 'bg-white'
-								}`}
+								className={`h-[43px] border-t ${row.edit ? 'bg-[#EFF6FF]' : 'bg-white'
+									}`}
 							>
 								<td className="border border-[#E5E7EB]">
-									<input type="checkbox" defaultChecked={row.edit} />
+									<input type="checkbox" checked={row.edit}
+										onChange={(e) => {
+											setRows(prev => {
+												return prev.map(v => (v.id !== row.id ? ({ ...v }) : ({ ...v, edit: e.target.checked })))
+											})
+										}}
+									/>
 								</td>
 								<Td>{row.id}</Td>
 								<Td bold>{row.name}</Td>
@@ -228,19 +264,24 @@ export default function SalaryBasic() {
 								<Td blue>
 									{row.edit ? (
 										<input
-											value={row.base}
-											readOnly
+											value={row.tempBase || row.base}
+											type='number'
+											onChange={(e) => {
+												setRows(prev => {
+													return prev.map(v => (row.id === v.id ? ({ ...v, tempBase: Number(e.target.value) }) : ({ ...v })))
+												})
+											}}
 											className="h-[30px] w-[82px] rounded-[4px] border border-[#2563EB] bg-white text-center font-bold text-[#2563EB]"
 										/>
 									) : (
-										row.base
+										row.base.toLocaleString()
 									)}
 								</Td>
-								<Td yellow>{row.meal}</Td>
-								<Td yellow>{row.traffic}</Td>
-								<Td yellow>{row.position}</Td>
+								<Td yellow>{row.meal.toLocaleString()}</Td>
+								<Td yellow>{row.traffic.toLocaleString()}</Td>
+								<Td yellow>{row.position.toLocaleString()}</Td>
 								<Td yellow strong>
-									{row.allowance}
+									{row.allowance.toLocaleString()}
 								</Td>
 								<Td green>{row.bank}</Td>
 								<Td green>{row.account}</Td>
@@ -248,22 +289,37 @@ export default function SalaryBasic() {
 								<td className="border border-[#E5E7EB]">
 									{row.edit ? (
 										<div className="flex justify-center gap-1">
-											<button className="flex items-center gap-1 rounded-[4px] bg-[#183A6B] px-2 py-1 text-[12px] font-bold text-white">
+											<button className="flex items-center gap-1 rounded-[4px] bg-[#183A6B] !px-2 !py-1 text-[10px] font-bold text-white"
+												onClick={() => {
+													setRows(prev => {
+														return prev.map(v => {
+															const { tempBase, ...rest } = v;
+															return (v.id === row.id ? ({ ...rest, base: v.tempBase, edit: !v.edit }) : ({ ...rest }))
+														})
+													})
+												}}
+											>
 												<Save size={12} />
 												저장
 											</button>
-											<button className="flex items-center gap-1 rounded-[4px] bg-[#FEF2F2] px-2 py-1 text-[12px] font-bold text-[#EF4444]">
+											<button className="flex items-center gap-1 rounded-[4px] bg-[#FEF2F2] !px-2 !py-1 text-[10px] font-bold text-[#EF4444]"
+												onClick={() => {
+													setRows(prev => {
+														return prev.map(v => (v.id === row.id ? ({ ...v, base: v.base, edit: false }) : ({ ...v, edit: false })))
+													})
+												}}
+											>
 												<X size={12} />
 												취소
 											</button>
 										</div>
 									) : (
-										<div className="flex justify-center gap-1">
-											<button className="flex items-center gap-1 rounded-[4px] bg-[#EFF6FF] px-2 py-1 text-[12px] font-bold text-[#2563EB]">
+										<div className="flex !px-[14px] !py-[11px] gap-[4px]">
+											<button className="flex items-center gap-1 rounded-[4px] bg-[#EFF6FF] !px-2 !py-1 text-[10px] font-bold text-[#2563EB]">
 												<Pencil size={12} />
 												수정
 											</button>
-											<button className="flex items-center gap-1 rounded-[4px] bg-[#F8FAFC] px-2 py-1 text-[12px] font-bold text-[#64748B]">
+											<button className="flex items-center gap-1 rounded-[4px] bg-[#F8FAFC] !px-2 !py-1 text-[10px] font-bold text-[#64748B]">
 												<Clock size={12} />
 												이력
 											</button>
@@ -311,14 +367,14 @@ export default function SalaryBasic() {
 					</p>
 
 					<div className="flex gap-1">
-						<PageBtn>
+						{/* 						<PageBtn>
 							<ChevronLeft size={14} />
-						</PageBtn>
+						</PageBtn> */}
 						<PageBtn active>1</PageBtn>
-						<PageBtn>2</PageBtn>
+						{/* 						<PageBtn>2</PageBtn>
 						<PageBtn>
 							<ChevronRight size={14} />
-						</PageBtn>
+						</PageBtn> */}
 					</div>
 				</div>
 			</section>
@@ -351,10 +407,10 @@ function SummaryCard({ title, value, desc, badge, dark, blue, orange, green }) {
 
 	return (
 		<div
-			className={`flex h-[74px] flex-col items-center justify-center rounded-[7px] border ${cls}`}
+			className={`flex h-[74px] flex-col items-center justify-center rounded-[7px] border ${cls} !py-[44px] !mb-[16px]`}
 		>
 			<p className={`text-[13px] font-bold ${titleCls}`}>{title}</p>
-			<p className={`mt-1 text-[22px] font-extrabold ${valueCls}`}>{value}</p>
+			<p className={`!mt-1 text-[22px] font-extrabold ${valueCls}`}>{value}</p>
 			{desc && (
 				<p
 					className={`text-[12px] font-bold ${dark ? 'text-[#7EA6D8]' : titleCls}`}
@@ -363,7 +419,7 @@ function SummaryCard({ title, value, desc, badge, dark, blue, orange, green }) {
 				</p>
 			)}
 			{badge && (
-				<span className="mt-1 rounded-full bg-[#E9D5FF] px-3 py-[2px] text-[12px] font-bold text-[#7C3AED]">
+				<span className="!mt-1 rounded-full bg-[#E9D5FF] !px-3 !py-[2px] text-[12px] font-bold text-[#7C3AED]">
 					{badge}
 				</span>
 			)}
@@ -375,7 +431,7 @@ function Filter({ label, value }) {
 	return (
 		<div className="flex items-center gap-2">
 			<span className="text-[14px] font-bold">{label}</span>
-			<button className="flex h-[34px] w-[140px] items-center justify-between rounded-[5px] border border-[#D1D5DB] px-3 text-[13px] text-[#6B7280]">
+			<button className="flex h-[34px] w-[140px] items-center justify-between rounded-[5px] border border-[#D1D5DB] !px-3 text-[13px] text-[#6B7280]">
 				{value}
 				<ChevronDown size={14} className="text-[#9CA3AF]" />
 			</button>
@@ -412,13 +468,10 @@ function Th({ children, color, w }) {
 function Td({ children, bold, blue, yellow, green, strong }) {
 	return (
 		<td
-			className={`border border-[#E5E7EB] ${
-				bold ? 'font-bold text-[#111827]' : 'text-[#4B5563]'
-			} ${blue ? 'bg-[#EFF6FF] font-bold text-[#2563EB]' : ''} ${
-				yellow ? 'bg-[#FFFBEB]' : ''
-			} ${green ? 'bg-[#ECFDF5]' : ''} ${
-				strong ? 'font-bold text-[#B45309]' : ''
-			}`}
+			className={`border border-[#E5E7EB] ${bold ? 'font-bold text-[#111827]' : 'text-[#4B5563]'
+				} ${blue ? 'bg-[#EFF6FF] font-bold text-[#2563EB]' : ''} ${yellow ? 'bg-[#FFFBEB]' : ''
+				} ${green ? 'bg-[#ECFDF5]' : ''} ${strong ? 'font-bold text-[#B45309]' : ''
+				}`}
 		>
 			{children}
 		</td>
@@ -435,7 +488,7 @@ function RankBadge({ text, color }) {
 
 	return (
 		<span
-			className={`rounded-full px-3 py-1 text-[12px] font-bold ${map[color]}`}
+			className={`rounded-full !px-3 !py-1 text-[12px] font-bold ${map[color]}`}
 		>
 			{text}
 		</span>
@@ -445,11 +498,10 @@ function RankBadge({ text, color }) {
 function PageBtn({ children, active }) {
 	return (
 		<button
-			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${
-				active
-					? 'border-[#183A6B] bg-[#183A6B] text-white'
-					: 'border-[#E5E7EB] bg-white text-[#64748B]'
-			}`}
+			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${active
+				? 'border-[#183A6B] bg-[#183A6B] text-white'
+				: 'border-[#E5E7EB] bg-white text-[#64748B]'
+				}`}
 		>
 			{children}
 		</button>
