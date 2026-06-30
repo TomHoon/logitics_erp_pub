@@ -124,7 +124,7 @@ export default function SalaryBasic() {
 				]}
 			/>
 			<MainTitleWrapper
-				buttonRender={() => {}}
+				buttonRender={() => { }}
 				mainTitleData={{
 					title: '급여기본정보관리',
 					desc: '직원별 기본급여 및 수당 기준 정보를 등록하고 관리합니다.',
@@ -266,9 +266,8 @@ export default function SalaryBasic() {
 						{rows.map((row) => (
 							<tr
 								key={row.id}
-								className={`h-[43px] border-t ${
-									row.edit ? 'bg-[#EFF6FF]' : 'bg-white'
-								}`}
+								className={`h-[43px] border-t ${row.edit ? 'bg-[#EFF6FF]' : 'bg-white'
+									}`}
 							>
 								<td className="border border-[#E5E7EB]">
 									<input
@@ -336,24 +335,23 @@ export default function SalaryBasic() {
 											<button
 												className="flex items-center gap-1 rounded-[4px] bg-[#183A6B] !px-2 !py-1 text-[10px] font-bold text-white"
 												onClick={async () => {
-													let updateAmount = 0;
 													setRows((prev) => {
 														return prev.map((v) => {
 															const { tempBasic, ...rest } = v;
 
-															updateAmount = tempBasic;
-
 															return v.id === row.id
 																? {
-																		...rest,
-																		basicSalaryAmount: v.tempBasic,
-																		edit: !v.edit,
-																	}
+																	...rest,
+																	basicSalaryAmount: v.tempBasic,
+																	edit: !v.edit,
+																}
 																: { ...rest };
 														});
 													});
 
 													const payrollId = row?.payrollId;
+
+													const updateAmount = rows.find(item => item.id === row.id)?.tempBasic
 
 													await baseApi.patch(
 														`/api/v1/payroll/${payrollId}/basic-salary`,
@@ -415,7 +413,7 @@ export default function SalaryBasic() {
 							<td className="border border-[#FEF3C7] text-[#B45309]">
 								{Number(
 									rows.reduce((acc, cur) => acc + cur.mealAllowanceAmount, 0) ||
-										0
+									0
 								).toLocaleString()}
 							</td>
 							<td className="border border-[#FEF3C7] text-[#B45309]">
@@ -567,13 +565,10 @@ function Th({ children, color, w }) {
 function Td({ children, bold, blue, yellow, green, strong }) {
 	return (
 		<td
-			className={`border border-[#E5E7EB] ${
-				bold ? 'font-bold text-[#111827]' : 'text-[#4B5563]'
-			} ${blue ? 'bg-[#EFF6FF] font-bold text-[#2563EB]' : ''} ${
-				yellow ? 'bg-[#FFFBEB]' : ''
-			} ${green ? 'bg-[#ECFDF5]' : ''} ${
-				strong ? 'font-bold text-[#B45309]' : ''
-			}`}
+			className={`border border-[#E5E7EB] ${bold ? 'font-bold text-[#111827]' : 'text-[#4B5563]'
+				} ${blue ? 'bg-[#EFF6FF] font-bold text-[#2563EB]' : ''} ${yellow ? 'bg-[#FFFBEB]' : ''
+				} ${green ? 'bg-[#ECFDF5]' : ''} ${strong ? 'font-bold text-[#B45309]' : ''
+				}`}
 		>
 			{children}
 		</td>
@@ -600,11 +595,10 @@ function RankBadge({ text, color }) {
 function PageBtn({ children, active }) {
 	return (
 		<button
-			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${
-				active
+			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${active
 					? 'border-[#183A6B] bg-[#183A6B] text-white'
 					: 'border-[#E5E7EB] bg-white text-[#64748B]'
-			}`}
+				}`}
 		>
 			{children}
 		</button>
