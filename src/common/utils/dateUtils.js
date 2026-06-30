@@ -29,7 +29,7 @@ const getToday = () => {
 
 const getNowTime = () => {
 	const now = new Date();
-	const hour = now.getHours();
+	const hour = now.getHours() < 10 ? '0' + now.getHours() : now.getHours();
 	const min = now.getMinutes() < 10 ? '0' + now.getMinutes() : now.getMinutes();
 
 	const result = `${hour}:${min}`;
