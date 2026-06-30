@@ -1,5 +1,7 @@
 'use client';
 
+import baseApi from '@/common/api/baseApi';
+import LoadingSpinner from '@/common/LoadingSpinner';
 import BreadCrumb from '@/component/common/BreadCrumb';
 import MainTitleWrapper from '@/component/common/MainTitleWrapper';
 import {
@@ -15,7 +17,7 @@ import {
 	Save,
 	X,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const dummyRows = [
 	{
@@ -85,8 +87,24 @@ const dummyRows = [
 ];
 
 export default function SalaryBasic() {
+	const [rows, setRows] = useState(dummyRows || []);
+	const [isLoading, setIsLoading] = useState(false);
 
-	const [rows, setRows] = useState(dummyRows || [])
+	const getSalaryList = async () => {
+		setIsLoading(true);
+		try {
+			const res = await baseApi.get('/api/v1/payroll');
+			setRows(res?.data?.data);
+		} catch (e) {
+			toast(e.data.message);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		getSalaryList();
+	}, []);
 
 	return (
 		<main className="w-[1190px] bg-[#F3F6FA]text-[#1F2937]">
@@ -106,7 +124,7 @@ export default function SalaryBasic() {
 				]}
 			/>
 			<MainTitleWrapper
-				buttonRender={() => { }}
+				buttonRender={() => {}}
 				mainTitleData={{
 					title: '급여기본정보관리',
 					desc: '직원별 기본급여 및 수당 기준 정보를 등록하고 관리합니다.',
@@ -205,9 +223,14 @@ export default function SalaryBasic() {
 					<thead>
 						<tr className="h-[40px] bg-[#F1F5F9] text-[#64748B]">
 							<th className="w-[36px] border border-[#E5E7EB]">
-								<input type="checkbox" onChange={e => {
-									setRows(prev => prev.map(v => ({ ...v, edit: e.target.checked })))
-								}} />
+								<input
+									type="checkbox"
+									onChange={(e) => {
+										setRows((prev) =>
+											prev.map((v) => ({ ...v, edit: e.target.checked }))
+										);
+									}}
+								/>
 							</th>
 							<Th w="80px">사원번호</Th>
 							<Th w="70px">성명</Th>
@@ -243,70 +266,116 @@ export default function SalaryBasic() {
 						{rows.map((row) => (
 							<tr
 								key={row.id}
-								className={`h-[43px] border-t ${row.edit ? 'bg-[#EFF6FF]' : 'bg-white'
-									}`}
+								className={`h-[43px] border-t ${
+									row.edit ? 'bg-[#EFF6FF]' : 'bg-white'
+								}`}
 							>
 								<td className="border border-[#E5E7EB]">
-									<input type="checkbox" checked={row.edit}
+									<input
+										type="checkbox"
+										checked={row.edit}
 										onChange={(e) => {
-											setRows(prev => {
-												return prev.map(v => (v.id !== row.id ? ({ ...v }) : ({ ...v, edit: e.target.checked })))
-											})
+											setRows((prev) => {
+												return prev.map((v) =>
+													v.id !== row.id
+														? { ...v }
+														: { ...v, edit: e.target.checked }
+												);
+											});
 										}}
 									/>
 								</td>
-								<Td>{row.id}</Td>
-								<Td bold>{row.name}</Td>
-								<Td>{row.dept}</Td>
+								<Td>{row.employeeNo}</Td>
+								<Td bold>{row.employeeName}</Td>
+								<Td>{row.departmentName}</Td>
 								<Td>
-									<RankBadge text={row.rank} color={row.rankColor} />
+									<RankBadge text={row.positionName} color={row.rankColor} />
 								</Td>
 								<Td blue>
 									{row.edit ? (
 										<input
-											value={row.tempBase || row.base}
-											type='number'
+											value={row.tempBasic || row.basicSalaryAmount}
+											type="number"
 											onChange={(e) => {
-												setRows(prev => {
-													return prev.map(v => (row.id === v.id ? ({ ...v, tempBase: Number(e.target.value) }) : ({ ...v })))
-												})
+												setRows((prev) => {
+													return prev.map((v) =>
+														row.id === v.id
+															? { ...v, tempBasic: Number(e.target.value) }
+															: { ...v }
+													);
+												});
 											}}
 											className="h-[30px] w-[82px] rounded-[4px] border border-[#2563EB] bg-white text-center font-bold text-[#2563EB]"
 										/>
 									) : (
-										row.base.toLocaleString()
+										Number(row.basicSalaryAmount).toLocaleString()
 									)}
 								</Td>
-								<Td yellow>{row.meal.toLocaleString()}</Td>
-								<Td yellow>{row.traffic.toLocaleString()}</Td>
-								<Td yellow>{row.position.toLocaleString()}</Td>
-								<Td yellow strong>
-									{row.allowance.toLocaleString()}
+								<Td yellow>
+									{Number(row.mealAllowanceAmount).toLocaleString()}
 								</Td>
-								<Td green>{row.bank}</Td>
-								<Td green>{row.account}</Td>
+								<Td yellow>
+									{Number(row.transportationAllowanceAmount).toLocaleString()}
+								</Td>
+								<Td yellow>
+									{Number(row.responsibilityAllowanceAmount).toLocaleString()}
+								</Td>
+								<Td yellow strong>
+									{(
+										Number(row.mealAllowanceAmount) +
+										Number(row.transportationAllowanceAmount) +
+										Number(row.responsibilityAllowanceAmount)
+									).toLocaleString()}
+								</Td>
+								<Td green>{row.bankName || '-'}</Td>
+								<Td green>{row.accountNumber || '-'}</Td>
 								<Td>{row.start}</Td>
 								<td className="border border-[#E5E7EB]">
 									{row.edit ? (
 										<div className="flex justify-center gap-1">
-											<button className="flex items-center gap-1 rounded-[4px] bg-[#183A6B] !px-2 !py-1 text-[10px] font-bold text-white"
-												onClick={() => {
-													setRows(prev => {
-														return prev.map(v => {
-															const { tempBase, ...rest } = v;
-															return (v.id === row.id ? ({ ...rest, base: v.tempBase, edit: !v.edit }) : ({ ...rest }))
-														})
-													})
+											<button
+												className="flex items-center gap-1 rounded-[4px] bg-[#183A6B] !px-2 !py-1 text-[10px] font-bold text-white"
+												onClick={async () => {
+													let updateAmount = 0;
+													setRows((prev) => {
+														return prev.map((v) => {
+															const { tempBasic, ...rest } = v;
+
+															updateAmount = tempBasic;
+
+															return v.id === row.id
+																? {
+																		...rest,
+																		basicSalaryAmount: v.tempBasic,
+																		edit: !v.edit,
+																	}
+																: { ...rest };
+														});
+													});
+
+													const payrollId = row?.payrollId;
+
+													await baseApi.patch(
+														`/api/v1/payroll/${payrollId}/basic-salary`,
+														{
+															amount: updateAmount,
+														}
+													);
 												}}
 											>
 												<Save size={12} />
 												저장
 											</button>
-											<button className="flex items-center gap-1 rounded-[4px] bg-[#FEF2F2] !px-2 !py-1 text-[10px] font-bold text-[#EF4444]"
+											<button
+												className="flex items-center gap-1 rounded-[4px] bg-[#FEF2F2] !px-2 !py-1 text-[10px] font-bold text-[#EF4444]"
 												onClick={() => {
-													setRows(prev => {
-														return prev.map(v => (v.id === row.id ? ({ ...v, base: v.base, edit: false }) : ({ ...v, edit: false })))
-													})
+													setRows((prev) => {
+														return prev.map((v) =>
+															v.id === row.id
+																? { ...v, base: v.base, edit: false }
+																: { ...v, edit: false }
+														);
+													});
 												}}
 											>
 												<X size={12} />
@@ -336,22 +405,46 @@ export default function SalaryBasic() {
 								colSpan={5}
 								className="border border-[#BFDBFE] text-right pr-4"
 							>
-								Σ 합계 (8명)
+								Σ 합계 ({rows.length}명)
 							</td>
 							<td className="border border-[#BFDBFE] text-[#2563EB]">
-								29,300,000
+								{Number(
+									rows.reduce((acc, cur) => acc + cur.basicSalaryAmount, 0) || 0
+								).toLocaleString()}
 							</td>
 							<td className="border border-[#FEF3C7] text-[#B45309]">
-								1,600,000
+								{Number(
+									rows.reduce((acc, cur) => acc + cur.mealAllowanceAmount, 0) ||
+										0
+								).toLocaleString()}
 							</td>
 							<td className="border border-[#FEF3C7] text-[#B45309]">
-								1,000,000
+								{Number(
+									rows.reduce(
+										(acc, cur) => acc + cur.transportationAllowanceAmount,
+										0
+									) || 0
+								).toLocaleString()}
 							</td>
 							<td className="border border-[#FEF3C7] text-[#B45309]">
-								740,000
+								{Number(
+									rows.reduce(
+										(acc, cur) => acc + cur.responsibilityAllowanceAmount,
+										0
+									) || 0
+								).toLocaleString()}
 							</td>
 							<td className="border border-[#FEF3C7] text-[#B45309] text-[16px]">
-								3,340,000
+								{Number(
+									rows.reduce(
+										(acc, cur) =>
+											acc +
+											(+cur.mealAllowanceAmount +
+												+cur.transportationAllowanceAmount +
+												+cur.responsibilityAllowanceAmount),
+										0
+									) || 0
+								).toLocaleString()}
 							</td>
 							<td className="border border-[#BFDBFE] text-[#94A3B8]">-</td>
 							<td className="border border-[#BFDBFE] text-[#94A3B8]">-</td>
@@ -363,7 +456,11 @@ export default function SalaryBasic() {
 
 				<div className="flex h-[44px] items-center justify-between px-5">
 					<p className="text-[13px] text-[#64748B]">
-						총 8명 조회 · 1명 수정 중
+						총 {rows.length}명 조회 ·{' '}
+						{rows.reduce((acc, cur) => {
+							return acc + (cur.edit ? 1 : 0);
+						}, 0) || 0}
+						명 수정 중
 					</p>
 
 					<div className="flex gap-1">
@@ -378,6 +475,8 @@ export default function SalaryBasic() {
 					</div>
 				</div>
 			</section>
+
+			<LoadingSpinner isLoading={isLoading} />
 		</main>
 	);
 }
@@ -468,10 +567,13 @@ function Th({ children, color, w }) {
 function Td({ children, bold, blue, yellow, green, strong }) {
 	return (
 		<td
-			className={`border border-[#E5E7EB] ${bold ? 'font-bold text-[#111827]' : 'text-[#4B5563]'
-				} ${blue ? 'bg-[#EFF6FF] font-bold text-[#2563EB]' : ''} ${yellow ? 'bg-[#FFFBEB]' : ''
-				} ${green ? 'bg-[#ECFDF5]' : ''} ${strong ? 'font-bold text-[#B45309]' : ''
-				}`}
+			className={`border border-[#E5E7EB] ${
+				bold ? 'font-bold text-[#111827]' : 'text-[#4B5563]'
+			} ${blue ? 'bg-[#EFF6FF] font-bold text-[#2563EB]' : ''} ${
+				yellow ? 'bg-[#FFFBEB]' : ''
+			} ${green ? 'bg-[#ECFDF5]' : ''} ${
+				strong ? 'font-bold text-[#B45309]' : ''
+			}`}
 		>
 			{children}
 		</td>
@@ -498,10 +600,11 @@ function RankBadge({ text, color }) {
 function PageBtn({ children, active }) {
 	return (
 		<button
-			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${active
-				? 'border-[#183A6B] bg-[#183A6B] text-white'
-				: 'border-[#E5E7EB] bg-white text-[#64748B]'
-				}`}
+			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${
+				active
+					? 'border-[#183A6B] bg-[#183A6B] text-white'
+					: 'border-[#E5E7EB] bg-white text-[#64748B]'
+			}`}
 		>
 			{children}
 		</button>
