@@ -298,6 +298,7 @@ export default function WorkAttendance() {
 		}
 	};
 
+
 	useEffect(() => {
 		getAttendanceDaily();
 	}, []);

@@ -310,7 +310,7 @@ export default function WorkMonthly() {
 				<div className="flex h-[42px] items-center justify-between px-4">
 					<div className="flex items-center gap-2 text-[15px] font-bold text-[#183A6B]">
 						<Grid3X3 size={15} />
-						2025년 7월 근태현황
+						2025년 {new Date(date).getMonth() + 1}월 근태현황
 					</div>
 
 					<div className="flex items-center gap-5 text-[12px] font-bold text-[#4B5563]">
