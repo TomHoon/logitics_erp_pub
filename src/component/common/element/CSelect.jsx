@@ -44,7 +44,9 @@ export default function CSelect({
 	value = 'IT본부',
 	onChange,
 	width,
+	padding
 }) {
+	console.log('padding ', padding)
 	const [selectedOption, setSelectedOption] = useState(value);
 
 	return (
@@ -53,6 +55,7 @@ export default function CSelect({
 			value={value}
 			style={{
 				width: width ? `${width}px` : 'auto',
+				padding: padding ? padding : '9px 22px 9px 12px',
 				...(optionColor && { color: optionColor }),
 			}}
 			onChange={(e) => {
