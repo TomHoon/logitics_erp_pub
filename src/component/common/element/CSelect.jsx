@@ -44,9 +44,8 @@ export default function CSelect({
 	value = 'IT본부',
 	onChange,
 	width,
-	padding
+	padding,
 }) {
-	console.log('padding ', padding)
 	const [selectedOption, setSelectedOption] = useState(value);
 
 	return (
