@@ -1,3 +1,4 @@
+import { Landmark } from 'lucide-react';
 import s from './CSelect.module.css';
 import { useState } from 'react';
 
@@ -41,12 +42,13 @@ const departmentList = [
 export default function CSelect({
 	optionColor,
 	optionList = departmentList,
-	value = 'IT본부',
+	value,
 	onChange,
 	width,
 	padding,
+	placeholderRender,
 }) {
-	const [selectedOption, setSelectedOption] = useState(value);
+	const [selectedOption, setSelectedOption] = useState('선택');
 
 	return (
 		<select
@@ -62,6 +64,11 @@ export default function CSelect({
 				onChange?.(e);
 			}}
 		>
+			{placeholderRender && (
+				<option value="" disabled>
+					{placeholderRender()}
+				</option>
+			)}
 			{optionList.map((item, idx) => (
 				<option value={item} key={idx}>
 					{item}

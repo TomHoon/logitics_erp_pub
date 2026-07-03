@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import style from './Nav.module.css';
 import { clsx } from 'clsx';
 import { usePathname, useRouter } from 'next/navigation';
+import { Bell, LogOut } from 'lucide-react';
+import { toast } from 'sonner';
+import baseApi from '@/common/api/baseApi';
 
 export default function Nav({
 	initial = '',
@@ -11,6 +14,7 @@ export default function Nav({
 	departmentName = '',
 }) {
 	const [activeNav, setActiveNav] = useState('');
+	const [userInfo, setUserInfo] = useState({});
 
 	const router = useRouter();
 	const pathname = usePathname();
@@ -34,6 +38,12 @@ export default function Nav({
 			setActiveNav('급여관리');
 		}
 	}, [pathname]);
+
+	useEffect(() => {
+		const user = localStorage.getItem('user');
+		const jsonUserInfo = JSON.parse(user);
+		setUserInfo({ ...jsonUserInfo });
+	}, []);
 
 	return (
 		<div className={`${style.container}`}>
@@ -60,7 +70,8 @@ export default function Nav({
 						>
 							근태관리
 						</li>
-						<li className={clsx(activeNav === '급여관리' ? style.active : '')}
+						<li
+							className={clsx(activeNav === '급여관리' ? style.active : '')}
 							onClick={() => router.push('/salary/basic')}
 						>
 							급여관리
@@ -75,19 +86,33 @@ export default function Nav({
 			</div>
 
 			<div className={style.right}>
-				{initial && fullName && (
+				{!initial && (
 					<>
-						<img
-							src="/Bell.png"
-							className={`${style.imgIcon} ${style.bellIcon}`}
-						/>
-						<div className={style.nameWrapper}>
-							<span className={style.circleInitial}>{initial}</span>
-							<span className={style.fullName}>{fullName}</span>
+						<Bell size={18} color="#93C5FD" />
+						<div className={`${style.nameWrapper} !ml-[16.5px]`}>
+							<span className={style.circleInitial}>
+								{(userInfo?.name || '').slice(0, 1)}
+							</span>
+							<span className={style.fullName}>{userInfo?.name}</span>
 						</div>
 						<div className={style.departWrapper}>
 							<span>{departmentName}</span>
-							<img src="/logout.png" className={style.imgIcon} />
+							<LogOut
+								size={18}
+								className="cursor-pointer"
+								onClick={async () => {
+									// 1. 로컬스토리지, 쿠키 로그인 정보 제거
+									localStorage.clear();
+
+									await baseApi.post('/api/v1/employees/logout');
+
+									// 2. 로그인 으로 이동
+									router.replace('/');
+									toast('로그아웃 되었습니다. 로그인 페이지로 이동합니다.', {
+										position: 'top-center',
+									});
+								}}
+							/>
 						</div>
 					</>
 				)}

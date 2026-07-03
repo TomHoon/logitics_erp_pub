@@ -9,24 +9,15 @@ import CStatusLabel from '@/component/common/element/CStatusLabel';
 import { useEffect, useState } from 'react';
 import baseApi from '@/common/api/baseApi';
 import { clsx } from 'clsx';
-import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from '@/components/ui/dialog';
-import s from '@/component/common/MainTitle.module.css';
-import { Save, UserPlus, XIcon } from 'lucide-react';
-import CInput from '@/component/common/element/CInput';
-import CSelect from '@/component/common/element/CSelect';
-import PostCodeButton from '@/component/common/PostCodeButton';
+
 import CButton from '@/component/common/element/CButton';
 import { toast } from 'sonner';
 import LoadingSpinner from '@/common/LoadingSpinner';
 import ConfirmAlert from '@/common/ConfirmAlert';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import InfoRegisterModal from '@/component/modal/InfoRegisterModal';
+import { getToday } from '@/common/utils/dateUtils';
 
 const columns = [
 	'NO',
@@ -77,6 +68,7 @@ export default function InfoRegister() {
 					type="type2"
 					buttonName="신규등록"
 					onClick={() => {
+						setRegisterInfo({});
 						setSelectedInfo({});
 						setIsEdit(false);
 						setOpen(true);
@@ -150,6 +142,7 @@ export default function InfoRegister() {
 				url,
 				{
 					...param,
+					hireDate: getToday(),
 				},
 				{ headers: { Authorization: `Bearer ${token}` } }
 			);
@@ -253,319 +246,16 @@ export default function InfoRegister() {
 				)}
 			/>
 
-			<Dialog open={open} onOpenChange={setOpen}>
-				<DialogContent
-					showCloseButton={false}
-					className={'w-[600px] max-w-none p-0'}
-				>
-					<DialogHeader className={clsx('bg-[#1B3A6B]', s.modalHeader)}>
-						<DialogTitle>
-							<div className={'flex items-center justify-between'}>
-								<div className={'flex items-center gap-[10px]'}>
-									<UserPlus color="#60A5FA" />
-									<span className={'text-[16px] font-bold text-[#fff]'}>
-										인사정보등록
-									</span>
-								</div>
-
-								<div
-									className={clsx('bg-[#2D5F9E]', s.closeBtn, 'cursor-pointer')}
-									onClick={() => setOpen(false)}
-								>
-									<XIcon size={16} color="#fff" />
-								</div>
-							</div>
-						</DialogTitle>
-					</DialogHeader>
-					<div className={s.modalContent}>
-						<div className={s.contentItem}>
-							<p className={s.title}>기본정보</p>
-							<section className={s.formSection}>
-								<div className={s.formItem}>
-									<label htmlFor="">
-										사원번호
-										<span className="text-[#EF4444]">*</span>
-									</label>
-									<CInput
-										width={268}
-										readOnly
-										disabled
-										value={selectedInfo?.employeeNo}
-									/>
-								</div>
-
-								<div className={s.formItem}>
-									<label htmlFor="">
-										성명
-										<span className="text-[#EF4444]">*</span>
-									</label>
-									<CInput
-										width={268}
-										value={
-											selectedInfo?.name
-												? selectedInfo?.name
-												: registerInfo?.name
-										}
-										onChange={(e) =>
-											setRegisterInfo((prev) => ({
-												...prev,
-												name: e.target.value,
-											}))
-										}
-									/>
-								</div>
-
-								<div className={s.formItem}>
-									<label htmlFor="">
-										부서
-										<span className="text-[#EF4444]">*</span>
-									</label>
-									<CSelect
-										width={268}
-										value={
-											selectedInfo?.departmentName
-												? selectedInfo?.departmentName
-												: registerInfo?.departmentName
-										}
-										onChange={(e) =>
-											setRegisterInfo((prev) => ({
-												...prev,
-												departmentName: e.target.value,
-											}))
-										}
-									/>
-								</div>
-
-								<div className={s.formItem}>
-									<label htmlFor="">
-										직급
-										<span className="text-[#EF4444]">*</span>
-									</label>
-									<CInput
-										width={268}
-										value={
-											selectedInfo?.positionName
-												? selectedInfo?.positionName
-												: registerInfo?.positionName
-										}
-										onChange={(e) =>
-											setRegisterInfo((prev) => ({
-												...prev,
-												positionName: e.target.value,
-											}))
-										}
-									/>
-								</div>
-
-								<div className={s.formItem}>
-									<label htmlFor="">
-										입사일
-										<span className="text-[#EF4444]">*</span>
-									</label>
-									<CInput
-										width={268}
-										value={
-											selectedInfo?.hireDate
-												? selectedInfo?.hireDate
-												: registerInfo?.hireDate
-										}
-										onChange={(e) =>
-											setRegisterInfo((prev) => ({
-												...prev,
-												hireDate: e.target.value,
-											}))
-										}
-									/>
-								</div>
-
-								<div className={s.formItem}>
-									<label htmlFor="">
-										재직상태
-										<span className="text-[#EF4444]">*</span>
-									</label>
-									<CInput
-										width={268}
-										value={selectedInfo?.status || '재직중'}
-										disabled
-										readOnly
-									/>
-								</div>
-							</section>
-						</div>
-
-						{/*연락처 영역*/}
-						<div className={s.contentItem}>
-							<p className={s.title}>연락처</p>
-							<section className={s.formSection}>
-								<div className={s.formItem}>
-									<label htmlFor="">
-										휴대폰
-										<span className="text-[#EF4444]">*</span>
-									</label>
-									<CInput
-										width={268}
-										value={
-											selectedInfo?.phone
-												? selectedInfo?.phone
-												: registerInfo?.phone
-										}
-										onChange={(e) =>
-											setRegisterInfo((prev) => ({
-												...prev,
-												phone: e.target.value,
-											}))
-										}
-									/>
-								</div>
-
-								<div className={s.formItem}>
-									<label htmlFor="">이메일</label>
-									<CInput
-										width={268}
-										value={
-											selectedInfo?.email
-												? selectedInfo?.email
-												: registerInfo?.email
-										}
-										onChange={(e) =>
-											setRegisterInfo((prev) => ({
-												...prev,
-												email: e.target.value,
-											}))
-										}
-									/>
-								</div>
-							</section>
-						</div>
-
-						{/*주소영역*/}
-						<div className={s.contentItem}>
-							<p className={s.title}>주소</p>
-							<section className={s.formSection}>
-								<div className={clsx(s.formItem, s.postItem)}>
-									<label htmlFor="">우편번호</label>
-									<div className="flex gap-[8px]">
-										<CInput
-											width={160}
-											readOnly
-											disabled
-											value={
-												selectedInfo?.postCode
-													? selectedInfo?.postCode
-													: registerInfo?.postCode
-											}
-										/>
-										<PostCodeButton
-											onCompletePostData={(data) => {
-												const roadAddress = data?.roadAddress;
-												const zoneCode = data?.zonecode;
-												if (isEdit) {
-													setSelectedInfo((prev) => ({
-														...prev,
-														postCode: zoneCode,
-														address: roadAddress,
-													}));
-												} else {
-													setRegisterInfo((prev) => ({
-														...prev,
-														postCode: zoneCode,
-														address: roadAddress,
-													}));
-												}
-											}}
-										/>
-									</div>
-								</div>
-
-								<div className={clsx(s.formItem, s.postItem)}>
-									<label htmlFor="">도로명주소</label>
-									<CInput
-										width={568}
-										readOnly
-										disabled
-										value={
-											isEdit ? selectedInfo?.address : registerInfo?.address
-										}
-									/>
-								</div>
-
-								<div className={clsx(s.formItem, s.postItem)}>
-									<label htmlFor="">상세주소</label>
-									<CInput
-										width={568}
-										value={
-											isEdit
-												? selectedInfo?.detailedAddress
-												: registerInfo?.detailedAddress
-										}
-										onChange={(e) => {
-											if (isEdit) {
-												setSelectedInfo((prev) => ({
-													...prev,
-													detailedAddress: e.target.value,
-												}));
-											} else {
-												setRegisterInfo((prev) => ({
-													...prev,
-													detailedAddress: e.target.value,
-												}));
-											}
-										}}
-									/>
-								</div>
-							</section>
-						</div>
-
-						{/*비상연락처*/}
-						<div className={s.contentItem}>
-							<p className={s.title}>비상연락처</p>
-							<section className={clsx(s.formSection, s.emergency)}>
-								<div className={clsx(s.formItem)}>
-									<label htmlFor="">성명</label>
-									<CInput width={174} />
-								</div>
-
-								<div className={clsx(s.formItem)}>
-									<label htmlFor="">관계</label>
-									<CSelect width={140} />
-								</div>
-
-								<div className={clsx(s.formItem)}>
-									<label htmlFor="">연락처</label>
-									<CInput width={174} />
-								</div>
-							</section>
-						</div>
-					</div>
-
-					<DialogFooter>
-						<div className={s.footerContainer}>
-							<span className={s.footerGuide}>
-								<span className="text-[#EF4444] mr-[5px]">*</span>
-								필수 입력 항목입니다.
-							</span>
-
-							<div className={s.footerButtons}>
-								<CButton
-									buttonName="취소"
-									beforeIcon={<XIcon size={14} />}
-									onClick={() => setOpen(false)}
-								/>
-								<CButton
-									type="type2"
-									buttonName="저장"
-									beforeIcon={<Save size={14} />}
-									onClick={() => {
-										console.log('regieterInfo ', registerInfo);
-										registerEmployee();
-									}}
-								/>
-							</div>
-						</div>
-					</DialogFooter>
-					<LoadingSpinner isLoading={isLoading} />
-				</DialogContent>
-			</Dialog>
+			<InfoRegisterModal
+				open={open}
+				setOpen={setOpen}
+				selectedInfo={selectedInfo}
+				registerInfo={registerInfo}
+				setRegisterInfo={setRegisterInfo}
+				isEdit={isEdit}
+				isLoading={isLoading}
+				registerEmployee={registerEmployee}
+			/>
 
 			<LoadingSpinner isLoading={isLoading} />
 			<ConfirmAlert

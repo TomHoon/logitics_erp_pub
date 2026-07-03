@@ -70,7 +70,7 @@
 	position: absolute;
 	left: 0;
 	width: 3px;
-	height: 80%;
+	height: 16px;
 	background: #1b3a6b;
 	border-radius: 8px;
 }
@@ -86,14 +86,14 @@
 }
 
 .formItem {
-	width: 46%;
+	/* width: 46%; */
 	display: flex;
 	flex-direction: column;
 }
 
 .formSection.emergency {
 	display: flex;
-	flex-wrap: nowrap;
+	/* flex-wrap: nowrap; */
 }
 
 .contentItem {

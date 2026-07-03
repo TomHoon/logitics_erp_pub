@@ -27,11 +27,10 @@ baseApi.interceptors.response.use(
 	},
 	function (error) {
 		if (error.status === 401) {
-			alert('토큰 만료로 로그인 페이지로 이동합니다.');
-			localStorage.removeItem('accessToken');
-			localStorage.removeItem('user');
+			alert('올바른 로그인 정보가 아닙니다. 로그인 페이지로 이동합니다.');
+			localStorage.clear();
 			window.location.replace('/');
-		}
+		}	
 		// Any status codes that falls outside the range of 2xx cause this function to trigger
 		// Do something with response error
 		return Promise.reject(error);
