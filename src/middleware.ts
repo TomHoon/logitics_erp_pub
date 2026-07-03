@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl;
 
 	// 로그인 페이지는 통과
-	if (pathname === '/') {
+	if (pathname === '/' || pathname === '/oauth/kakao') {
 		return NextResponse.next();
 	}
 

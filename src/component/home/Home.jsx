@@ -145,6 +145,25 @@ export default function Home() {
 		}
 	}, []);
 
+	// kakao login load
+	useEffect(() => {
+		const initKakao = () => {
+			if (window.Kakao && !window.Kakao.isInitialized()) {
+				window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
+			}
+		};
+
+		if (window.Kakao) {
+			initKakao();
+		} else {
+			const script = document.createElement('script');
+			script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js';
+			script.async = true;
+			script.onload = initKakao;
+			document.head.appendChild(script);
+		}
+	}, []);
+
 	const renderJoin = ({
 		setIsRenderLogin,
 		bankName,
@@ -176,45 +195,6 @@ export default function Home() {
 								}))
 							}
 						/>
-						{/* 
-						<CInputCustom
-							beforeIcon={<Building2 color="#9CA3AF" />}
-							labelName="부서"
-							placeholder="소속 부서 선택"
-						/> */}
-
-						{/* <div className="flex flex-col gap-[2px]">
-							<label htmlFor="">부서</label>
-							<Select
-								value={joinInfo?.departmentName}
-								onValueChange={(v) =>
-									setJoinInfo((prev) => ({
-										...prev,
-										departmentName: v,
-									}))
-								}
-							>
-								<SelectTrigger className="!h-[48px] !w-[273px]">
-									<Building2
-										size={24}
-										color="#9CA3AF"
-										className="!h-[24px] !w-[24px]"
-									/>
-									<SelectValue
-										placeholder="소속 부서 선택"
-										className="text-left"
-									/>
-								</SelectTrigger>
-
-								<SelectContent>
-									{DEPARTMENT_LIST.map((dept) => (
-										<SelectItem key={dept} value={dept}>
-											{dept}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div> */}
 
 						<div className="flex flex-col gap-[2px]">
 							<label htmlFor="">직급</label>
@@ -242,19 +222,6 @@ export default function Home() {
 								</SelectContent>
 							</Select>
 						</div>
-						{/* 
-						<CInputCustom
-							beforeIcon={<Mail color="#9CA3AF" />}
-							labelName="회사 이메일"
-							placeholder="company@example.com"
-							value={joinInfo?.email}
-							onChange={(e) =>
-								setJoinInfo((prev) => ({
-									...prev,
-									email: e.target.value,
-								}))
-							}
-						/> */}
 
 						<CInputCustom
 							inputType={isShowPassword ? 'text' : 'password'}
@@ -438,7 +405,24 @@ export default function Home() {
 						<span>또는</span>
 					</div>
 
-					<div>
+					<div
+						onClick={() => {
+							const handleKakaoLogin = () => {
+								if (!window.Kakao?.isInitialized()) {
+									window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
+								}
+
+								window.Kakao.Auth.authorize({
+									redirectUri:
+										process.env.NODE_ENV === 'production'
+											? 'http://daewoo.digital:9800/oauth/kakao'
+											: 'http://localhost:3000/oauth/kakao',
+								});
+							};
+
+							handleKakaoLogin();
+						}}
+					>
 						<img src="kakaologin.png" alt="" className="w-[400px] h-[60px]" />
 					</div>
 				</section>
