@@ -32,6 +32,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { toast, Toaster } from 'sonner';
+import KakoAddInfoModal from '../modal/KakaoAddInfoModal';
 const POSITION_LIST = [
 	'사원',
 	'주임',
