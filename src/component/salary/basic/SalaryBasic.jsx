@@ -301,9 +301,8 @@ export default function SalaryBasic() {
 						{rows.map((row) => (
 							<tr
 								key={row.id}
-								className={`h-[43px] border-t ${
-									row.edit ? 'bg-[#EFF6FF]' : 'bg-white'
-								}`}
+								className={`h-[43px] border-t ${row.edit ? 'bg-[#EFF6FF]' : 'bg-white'
+									}`}
 							>
 								<td className="border border-[#E5E7EB]">
 									<input
@@ -607,13 +606,10 @@ function Th({ children, color, w }) {
 function Td({ children, bold, blue, yellow, green, strong }) {
 	return (
 		<td
-			className={`border border-[#E5E7EB] ${
-				bold ? 'font-bold text-[#111827]' : 'text-[#4B5563]'
-			} ${blue ? 'bg-[#EFF6FF] font-bold text-[#2563EB]' : ''} ${
-				yellow ? 'bg-[#FFFBEB]' : ''
-			} ${green ? 'bg-[#ECFDF5]' : ''} ${
-				strong ? 'font-bold text-[#B45309]' : ''
-			}`}
+			className={`border border-[#E5E7EB] ${bold ? 'font-bold text-[#111827]' : 'text-[#4B5563]'
+				} ${blue ? 'bg-[#EFF6FF] font-bold text-[#2563EB]' : ''} ${yellow ? 'bg-[#FFFBEB]' : ''
+				} ${green ? 'bg-[#ECFDF5]' : ''} ${strong ? 'font-bold text-[#B45309]' : ''
+				}`}
 		>
 			{children}
 		</td>
@@ -640,11 +636,10 @@ function RankBadge({ text, color }) {
 function PageBtn({ children, active }) {
 	return (
 		<button
-			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${
-				active
-					? 'border-[#183A6B] bg-[#183A6B] text-white'
-					: 'border-[#E5E7EB] bg-white text-[#64748B]'
-			}`}
+			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${active
+				? 'border-[#183A6B] bg-[#183A6B] text-white'
+				: 'border-[#E5E7EB] bg-white text-[#64748B]'
+				}`}
 		>
 			{children}
 		</button>

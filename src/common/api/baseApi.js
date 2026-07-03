@@ -4,7 +4,7 @@ const baseApi = axios.create({
 	headers: {
 		'Content-Type': 'application/json',
 	},
-	baseURL: 'http://localhost:33000',
+	baseURL: process.env.NODE_ENV === 'production' ? "" : 'http://localhost:33001',
 	withCredentials: true,
 	timeout: 1000 * 30,
 });
