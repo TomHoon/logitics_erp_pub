@@ -143,6 +143,11 @@ export default function Home() {
 	};
 
 	useEffect(() => {
+		if (!openKakaoInfoModal) {
+			router.replace(pathname, { scroll: false });
+		}
+	}, [openKakaoInfoModal]);
+	useEffect(() => {
 		const token = searchParams.get("providerToken");
 		const socialSuccess = searchParams.get("socialSuccess");
 
