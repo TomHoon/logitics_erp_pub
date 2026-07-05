@@ -480,7 +480,7 @@ export default function Home() {
 								window.Kakao.Auth.authorize({
 									redirectUri:
 										process.env.NODE_ENV === 'production'
-											? 'http://daewoo.digital:9800/oauth/kakao'
+											? 'http://daewoo.digital:9980/oauth/kakao'
 											: 'http://localhost:3000/oauth/kakao',
 								});
 							};
