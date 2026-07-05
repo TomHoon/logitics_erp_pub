@@ -20,4 +20,5 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd ${{ secrets.SSH_FOLDER }}
+            pwd
             ./deploy.sh
