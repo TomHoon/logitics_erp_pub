@@ -1,5 +1,6 @@
 'use client';
 
+import baseApi from '@/common/api/baseApi';
 import {
 	Dialog,
 	DialogContent,
@@ -19,8 +20,37 @@ import {
 	CircleCheck,
 	ShieldCheck,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
-export default function KakoAddInfoModal({ open, onOpenChange }) {
+export default function KakaoAddInfoModal({ open, onOpenChange, providerToken, failCallback }) {
+	const router = useRouter();
+
+	const [kakaoLoginInfo, setKakaoLoginInfo] = useState({});
+
+	const goKakaoJoin = async () => {
+		try {
+			const res = await baseApi.post("/api/v1/employees/oauth/add-info", { ...kakaoLoginInfo, providerToken });
+
+			const accessToken = res?.data?.data?.accessToken;
+			if (!accessToken) {
+				toast.warning('토큰 발급에 실패했습니다.', { position: 'top-center' });
+				return;
+			}
+
+			localStorage.setItem("accessToken", accessToken);
+			localStorage.setItem("user", JSON.stringify(res?.data?.data));
+
+			router.push('/info/register');
+			onOpenChange(false);
+			toast("가입 성공", { position: "top-center" });
+		} catch (e) {
+			failCallback?.();
+			toast.warning(e?.response?.data?.message ?? '요청 중 오류가 발생했습니다.', { position: 'top-center' });
+		}
+	}
+
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent
@@ -42,7 +72,7 @@ export default function KakoAddInfoModal({ open, onOpenChange }) {
 							onClick={() => onOpenChange(false)}
 							className="flex h-9 w-9 items-center justify-center rounded-full bg-[#EBD300]"
 						>
-							<X size={18} />
+							<X size={18} onClick={() => onOpenChange(false)} />
 						</button>
 					</div>
 
@@ -62,10 +92,11 @@ export default function KakoAddInfoModal({ open, onOpenChange }) {
 				</DialogHeader>
 
 				<div className="px-7 py-6">
-					<div className="space-y-4">
+					<div className="!space-y-4">
 						<FormField
 							label="사번"
 							required
+							onChange={e => setKakaoLoginInfo(prev => ({ ...prev, employeeNo: e.target.value }))}
 							icon={<Hash size={18} />}
 							placeholder="사번을 입력하세요 (예: EMP-2025-001)"
 						/>
@@ -76,6 +107,12 @@ export default function KakoAddInfoModal({ open, onOpenChange }) {
 							icon={<Lock size={17} />}
 							rightIcon={<EyeOff size={18} />}
 							placeholder="비밀번호를 입력하세요"
+							onChange={e => setKakaoLoginInfo(prev => ({ ...prev, password: e.target.value }))}
+							onKeyDown={e => {
+								if (e.key === 'Enter') {
+									goKakaoJoin();
+								}
+							}}
 							type="password"
 							helper="영문, 숫자, 특수문자 포함 8자 이상"
 						/>
@@ -86,14 +123,20 @@ export default function KakoAddInfoModal({ open, onOpenChange }) {
 							icon={<Lock size={17} />}
 							rightIcon={<EyeOff size={18} />}
 							placeholder="비밀번호를 다시 입력하세요"
+							onChange={e => setKakaoLoginInfo(prev => ({ ...prev, checkPassword: e.target.value }))}
+							onKeyDown={e => {
+								if (e.key === 'Enter') {
+									goKakaoJoin();
+								}
+							}}
 							type="password"
 						/>
 					</div>
 
-					<div className="my-5 h-px bg-gray-100" />
+					<div className="!my-5 h-px bg-gray-100" />
 
 					<div>
-						<p className="mb-3 text-[14px] font-bold text-gray-900">
+						<p className="!mb-3 text-[14px] font-bold text-gray-900">
 							약관 동의
 						</p>
 
@@ -113,7 +156,7 @@ export default function KakoAddInfoModal({ open, onOpenChange }) {
 									<p className="text-[14px] font-bold text-black">
 										서비스 이용약관 전체 동의
 									</p>
-									<p className="mt-1 text-[11px] text-gray-400">
+									<p className="!mt-1 text-[11px] text-gray-400">
 										아래 필수 약관에 모두 동의합니다
 									</p>
 								</div>
@@ -125,8 +168,10 @@ export default function KakoAddInfoModal({ open, onOpenChange }) {
 
 					<button
 						type="button"
+						onClick={goKakaoJoin}
 						className="
-              mt-5 flex h-[48px] w-full items-center justify-center gap-2
+						cursor-pointer
+              !mt-5 flex h-[48px] w-full items-center justify-center gap-2
               rounded-[10px] bg-[#FEE500] text-[16px] font-extrabold text-black
             "
 					>
@@ -152,6 +197,8 @@ function FormField({
 	placeholder,
 	type = 'text',
 	helper,
+	onChange,
+	onKeyDown
 }) {
 	return (
 		<div>
@@ -170,6 +217,10 @@ function FormField({
 				<input
 					type={type}
 					placeholder={placeholder}
+					onChange={e => onChange?.(e)}
+					onKeyDown={e => {
+						onKeyDown?.(e)
+					}}
 					className="
             h-full flex-1 bg-transparent text-[13px] outline-none
             placeholder:text-gray-400

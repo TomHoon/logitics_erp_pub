@@ -13,7 +13,6 @@ const infoMenuList = [
 		},
 		subMenus: [
 			{ title: '인사정보등록', path: '/info/register' },
-			{ title: '사원명수/인사기록카드', path: '/info/card' },
 			{ title: '인사발령등록', path: '/info/appointment' },
 		],
 	},

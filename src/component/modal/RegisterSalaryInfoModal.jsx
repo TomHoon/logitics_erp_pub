@@ -25,7 +25,7 @@ import CButton from '../common/element/CButton';
 import { useEffect, useMemo, useState } from 'react';
 import baseApi from '@/common/api/baseApi';
 
-export default function RegisterSalaryInfoModal({ open, setOpen }) {
+export default function RegisterSalaryInfoModal({ open, setOpen, getSalaryList }) {
 	const [name, setName] = useState('');
 	const [departmentName, setDepartmentName] = useState('');
 	const [employeeList, setEmployeeList] = useState([]);
@@ -43,6 +43,8 @@ export default function RegisterSalaryInfoModal({ open, setOpen }) {
 					? '25일'
 					: '10일',
 			});
+
+			getSalaryList();
 		} catch (e) {
 			console.error(e);
 		} finally {
@@ -140,6 +142,7 @@ export default function RegisterSalaryInfoModal({ open, setOpen }) {
 					<div className="flex gap-[10px] items-center">
 						<CButton
 							beforeIcon={<XIcon size={13} color="#6B7280" />}
+							onClick={() => setOpen(false)}
 							buttonName="취소"
 						/>
 						<CButton
@@ -262,9 +265,9 @@ function SearchEmployeeSection({
 					</thead>
 					<tbody className="max-h-[118px] overflow-y-scroll">
 						{employeeList.length === 0 && (
-							<div className="flex justify-center h-[100px] items-center">
+							<tr className="flex justify-center h-[100px] items-center">
 								<span>사원이 없습니다.</span>
-							</div>
+							</tr>
 						)}
 						{employeeList.map((item, idx) => (
 							<>
@@ -348,26 +351,26 @@ function SalaryFormSection({ selectedEmployee, setSelectedEmployee }) {
 		국민연금: Math.floor(
 			Number(
 				selectedEmployee?.basicSalary ??
-					0 + selectedEmployee?.responsibilityAllowance ??
-					0
+				0 + selectedEmployee?.responsibilityAllowance ??
+				0
 			) * 0.045
 		),
 		건강보험: Math.floor(
 			Number(
 				selectedEmployee?.basicSalary +
-					selectedEmployee?.responsibilityAllowance
+				selectedEmployee?.responsibilityAllowance
 			) * 0.03545
 		),
 		고용보험: Math.floor(
 			Number(
 				selectedEmployee?.basicSalary +
-					selectedEmployee?.responsibilityAllowance
+				selectedEmployee?.responsibilityAllowance
 			) * 0.009
 		),
 		소득세: Math.floor(
 			Number(
 				selectedEmployee?.basicSalary +
-					selectedEmployee?.responsibilityAllowance
+				selectedEmployee?.responsibilityAllowance
 			) * 0.003
 		),
 	};

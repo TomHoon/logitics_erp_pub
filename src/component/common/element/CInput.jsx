@@ -28,8 +28,8 @@ export default function CInput({
 					)}
 					style={{
 						width: `${width ?? 120}px`,
-						border: border ?? '1px solid #D1D5DB;',
-						padding: padding ?? '9px 0 9px 12px;',
+						border: border ?? '1px solid #D1D5DB',
+						padding: padding ?? '9px 0 9px 12px',
 					}}
 					onChange={(e) => onChange?.(e)}
 					type={type}

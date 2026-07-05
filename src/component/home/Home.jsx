@@ -23,7 +23,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import CInputCustom from '@/component/common/element/CInputCustom';
 import { useEffect, useState } from 'react';
 import baseApi from '@/common/api/baseApi';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
 	Select,
 	SelectContent,
@@ -32,7 +32,9 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { toast, Toaster } from 'sonner';
-import KakoAddInfoModal from '../modal/KakaoAddInfoModal';
+import KakaoAddInfoModal from '../modal/KakaoAddInfoModal';
+import Cookies from 'js-cookie';
+import KakaoFailJoinModal from '../modal/KakaoFailJoinModal';
 const POSITION_LIST = [
 	'사원',
 	'주임',
@@ -92,8 +94,13 @@ export default function Home() {
 	const [departmentName, setDepartmentName] = useState('');
 	const [joinInfo, setJoinInfo] = useState({});
 	const [isShowLoginPassword, setIsShowLoginPassword] = useState(false);
+	const [openKakaoInfoModal, setOpenKakaoInfoModal] = useState(false);
+	const [openKakaoFailJoinModal, setOpenKakaoFailJoinModal] = useState(false);
+	const [providerToken, setProviderToken] = useState();
 
 	const router = useRouter();
+	const searchParams = useSearchParams();
+	const pathname = usePathname();
 
 	const joinErp = async () => {
 		try {
@@ -134,6 +141,63 @@ export default function Home() {
 			});
 		}
 	};
+
+	useEffect(() => {
+		const token = searchParams.get("providerToken");
+		const socialSuccess = searchParams.get("socialSuccess");
+
+		// 카카오로그인 클릭 후 기가입자인 경우
+		if (socialSuccess) {
+			// 기가입자
+			const cookieToken = Cookies.get("accessToken");
+			const jsonUser = Cookies.get("user");
+			const user = JSON.parse(jsonUser);
+
+			const urlSearchParams = new URLSearchParams(searchParams.toString());
+			urlSearchParams.delete("socialSuccess");
+
+			const nextUrl = urlSearchParams.toString()
+				? `${pathname}?${urlSearchParams.toString()}`
+				: pathname;
+
+			router.replace(nextUrl, { scroll: false });
+
+			localStorage.setItem("accessToken", cookieToken);
+			localStorage.setItem("user", jsonUser);
+
+			Cookies.remove("providerToken");
+			Cookies.remove("user");
+
+			if (cookieToken && jsonUser) {
+				router.replace("/info/register");
+			} else {
+				toast.warning("소셜로그인 회원정보가 없습니다.", { position: "top-center" });
+			}
+
+			return;
+		}
+
+		if (!token) return;
+
+		// useEffect 두번실행되면서 사라지는 현상 방어
+		// 카카오로그인 클릭 후 추가가입정보 필요한 경우
+		if (!providerToken) {
+			setProviderToken(token);
+		}
+
+		const urlSearchParams = new URLSearchParams(searchParams.toString);
+		urlSearchParams.delete("providerToken");
+
+		const nextUrl = urlSearchParams.toString()
+			? `${pathname}?urlSearchParams.toString()`
+			: pathname;
+
+		router.replace(nextUrl, { scroll: false });
+
+		// providerToken이 있으면 모달 띄우기
+		setOpenKakaoInfoModal(true);
+
+	}, [searchParams])
 
 	useEffect(() => {
 		const keepLogin = localStorage.getItem('keepLogin');
@@ -524,16 +588,32 @@ export default function Home() {
 				{isRenderLogin
 					? renderLogin()
 					: renderJoin({
-							setIsRenderLogin,
-							bankName,
-							setBankName,
-							departmentName,
-							setDepartmentName,
-							joinErp,
-							joinInfo,
-							setJoinInfo,
-						})}
+						setIsRenderLogin,
+						bankName,
+						setBankName,
+						departmentName,
+						setDepartmentName,
+						joinErp,
+						joinInfo,
+						setJoinInfo,
+					})}
 			</div>
+
+
+			<KakaoAddInfoModal
+				open={openKakaoInfoModal}
+				onOpenChange={setOpenKakaoInfoModal}
+				providerToken={providerToken}
+				failCallback={() => {
+					setOpenKakaoInfoModal(false);
+					setOpenKakaoFailJoinModal(true);
+				}}
+			/>
+
+			<KakaoFailJoinModal
+				open={openKakaoFailJoinModal}
+				onOpenChange={setOpenKakaoFailJoinModal}
+			/>
 		</div>
 	);
 }

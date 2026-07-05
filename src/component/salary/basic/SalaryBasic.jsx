@@ -189,8 +189,8 @@ export default function SalaryBasic() {
 				<SummaryCard
 					green
 					title="등록 인원"
-					value={`${statusInfo.employeeCount}명`}
-					desc="미등록 0명"
+					value={`${rows.length}명`}
+					desc={`미등록 ${statusInfo.employeeCount - rows.length}명`}
 				/>
 			</div>
 
@@ -281,7 +281,7 @@ export default function SalaryBasic() {
 								교통비
 							</Th>
 							<Th color="yellow" w="80px">
-								직책수당
+								직급수당
 							</Th>
 							<Th color="yellow" w="90px">
 								수당합계
@@ -352,13 +352,13 @@ export default function SalaryBasic() {
 									{Number(row.transportationAllowanceAmount).toLocaleString()}
 								</Td>
 								<Td yellow>
-									{Number(row.responsibilityAllowanceAmount).toLocaleString()}
+									{Number(row.positionAllowanceAmount).toLocaleString()}
 								</Td>
 								<Td yellow strong>
 									{(
 										Number(row.mealAllowanceAmount) +
 										Number(row.transportationAllowanceAmount) +
-										Number(row.responsibilityAllowanceAmount)
+										Number(row.positionAllowanceAmount)
 									).toLocaleString()}
 								</Td>
 								<Td green>{row.bankName || '-'}</Td>
@@ -376,10 +376,10 @@ export default function SalaryBasic() {
 
 															return v.id === row.id
 																? {
-																		...rest,
-																		basicSalaryAmount: v.tempBasic,
-																		edit: !v.edit,
-																	}
+																	...rest,
+																	basicSalaryAmount: v.tempBasic,
+																	edit: !v.edit,
+																}
 																: { ...rest };
 														});
 													});
@@ -444,19 +444,19 @@ export default function SalaryBasic() {
 							</td>
 							<td className="border border-[#BFDBFE] text-[#2563EB]">
 								{Number(
-									rows.reduce((acc, cur) => acc + cur.basicSalaryAmount, 0) || 0
+									rows.reduce((acc, cur) => acc + Number(cur.basicSalaryAmount), 0) || 0
 								).toLocaleString()}
 							</td>
 							<td className="border border-[#FEF3C7] text-[#B45309]">
 								{Number(
-									rows.reduce((acc, cur) => acc + cur.mealAllowanceAmount, 0) ||
-										0
+									rows.reduce((acc, cur) => acc + Number(cur.mealAllowanceAmount), 0) ||
+									0
 								).toLocaleString()}
 							</td>
 							<td className="border border-[#FEF3C7] text-[#B45309]">
 								{Number(
 									rows.reduce(
-										(acc, cur) => acc + cur.transportationAllowanceAmount,
+										(acc, cur) => acc + Number(cur.transportationAllowanceAmount),
 										0
 									) || 0
 								).toLocaleString()}
@@ -464,7 +464,7 @@ export default function SalaryBasic() {
 							<td className="border border-[#FEF3C7] text-[#B45309]">
 								{Number(
 									rows.reduce(
-										(acc, cur) => acc + cur.responsibilityAllowanceAmount,
+										(acc, cur) => acc + Number(cur.positionAllowanceAmount),
 										0
 									) || 0
 								).toLocaleString()}
@@ -476,7 +476,7 @@ export default function SalaryBasic() {
 											acc +
 											(+cur.mealAllowanceAmount +
 												+cur.transportationAllowanceAmount +
-												+cur.responsibilityAllowanceAmount),
+												+cur.positionAllowanceAmount),
 										0
 									) || 0
 								).toLocaleString()}
@@ -515,6 +515,7 @@ export default function SalaryBasic() {
 			<RegisterSalaryInfoModal
 				open={openRegisterModal}
 				setOpen={setOpenRegisterModal}
+				getSalaryList={getSalaryList}
 			/>
 		</main>
 	);

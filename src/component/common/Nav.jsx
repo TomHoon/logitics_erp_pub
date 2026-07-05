@@ -22,13 +22,10 @@ export default function Nav({
 	useEffect(() => {
 		const lastPathaname = pathname.split('/').filter(Boolean).pop();
 
-		switch (lastPathaname) {
-			case 'register':
-				setActiveNav('인사관리');
-				break;
-			default:
-				setActiveNav('');
-				break;
+		const isActivePersonalInfo = ['/certificate/issue', '/event-support/apply', '/info/appointment', '/info/register'].includes(pathname);
+
+		if (isActivePersonalInfo) {
+			setActiveNav('인사관리');
 		}
 
 		if (pathname.includes('work')) {

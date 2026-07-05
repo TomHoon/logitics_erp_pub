@@ -1,5 +1,8 @@
 'use client';
 
+import BreadCrumb from '@/component/common/BreadCrumb';
+import CButton from '@/component/common/element/CButton';
+import MainTitleWrapper from '@/component/common/MainTitleWrapper';
 import SalaryStatementModal from '@/component/modal/SalaryStatementModal';
 import {
 	TrendingUp,
@@ -13,6 +16,7 @@ import {
 	Search,
 	RotateCcw,
 	Table2,
+	Plus,
 } from 'lucide-react';
 
 const rows = [
@@ -117,7 +121,43 @@ const rows = [
 export default function Payroll() {
 	return (
 		<main className="w-[1190px] bg-[#F3F6FA] p-[10px] text-[#1F2937]">
-			<div className="grid grid-cols-4 gap-3">
+			<BreadCrumb
+				crumList={[
+					{ type: 'icon', path: '/breadcrumb/breadcrumb-home.png', title: '' },
+					{
+						type: 'title',
+						path: '/breadcrumb/breadcrumb-home.png',
+						title: '급여관리',
+					},
+					{
+						type: 'title',
+						path: '/breadcrumb/breadcrumb-home.png',
+						title: '급여지급',
+					},
+				]}
+			/>
+			<MainTitleWrapper
+				buttonRender={() => {
+					return (
+						<>
+							<CButton
+								path="/download.png"
+								type="type2"
+								buttonName="급여정보등록"
+								beforeIcon={<Plus size={13} />}
+								onClick={() => {
+									setOpenRegisterModal(true);
+								}}
+							/>
+						</>
+					);
+				}}
+				mainTitleData={{
+					title: '급여지급',
+					desc: '월별 직원 급여 지급 내역을 관리하고 확정합니다.',
+				}}
+			/>
+			<div className="w-[1190px] grid grid-cols-4 gap-3 !mt-[10px]">
 				<Summary
 					dark
 					icon={<TrendingUp size={14} />}
@@ -148,7 +188,7 @@ export default function Payroll() {
 				/>
 			</div>
 
-			<section className="mt-4 flex h-[60px] items-center justify-between rounded-[7px] border border-[#E5E7EB] bg-white px-5">
+			<section className="w-[1190px] !mt-4 flex h-[60px] items-center justify-between rounded-[7px] border border-[#E5E7EB] bg-white px-5">
 				<div className="flex items-center gap-4">
 					<div className="flex h-[34px] overflow-hidden rounded-[5px] border border-[#D1D5DB]">
 						<button className="w-[34px] bg-[#F8FAFC]">
@@ -194,7 +234,7 @@ export default function Payroll() {
 				</div>
 			</section>
 
-			<section className="mt-4 overflow-hidden rounded-[7px] border border-[#E5E7EB] bg-white">
+			<section className="w-[1190px] !mt-4 overflow-hidden rounded-[7px] border border-[#E5E7EB] bg-white">
 				<div className="flex h-[44px] items-center justify-between bg-[#F8FAFC] px-5">
 					<div className="flex items-center gap-2 text-[15px] font-bold text-[#183A6B]">
 						<Table2 size={16} />
@@ -366,7 +406,7 @@ function Summary({ icon, title, value, desc, dark, red, green, yellow }) {
 	let descCls = 'text-[#94A3B8]';
 
 	if (dark) {
-		box = 'bg-[#1E4E89] border-[#1E4E89] shadow';
+		box = 'bg-gradient-to-tr from-[#1B3A6B] to-[#2D5F9E] shadow';
 		titleCls = 'text-[#A9C4E8]';
 		valueCls = 'text-white';
 		descCls = 'text-[#93C5FD]';
@@ -388,7 +428,7 @@ function Summary({ icon, title, value, desc, dark, red, green, yellow }) {
 
 	return (
 		<div
-			className={`flex h-[82px] flex-col items-center justify-center rounded-[7px] border ${box}`}
+			className={`flex h-[82px] flex-col items-center justify-center rounded-[7px] border ${box} !py-[12.5px] `}
 		>
 			<div
 				className={`flex items-center gap-1 text-[13px] font-bold ${titleCls}`}
@@ -398,7 +438,7 @@ function Summary({ icon, title, value, desc, dark, red, green, yellow }) {
 			</div>
 
 			{yellow ? (
-				<div className="mt-2 flex gap-2 text-[12px] font-bold">
+				<div className="!mt-2 flex gap-2 text-[12px] font-bold">
 					<span className="rounded-full bg-[#FEF3C7] px-3 py-1 text-[#D97706]">
 						미확정 8건
 					</span>
@@ -407,10 +447,10 @@ function Summary({ icon, title, value, desc, dark, red, green, yellow }) {
 					</span>
 				</div>
 			) : (
-				<p className={`mt-1 text-[22px] font-extrabold ${valueCls}`}>{value}</p>
+				<p className={`!mt-1 text-[22px] font-extrabold ${valueCls}`}>{value}</p>
 			)}
 
-			<p className={`mt-1 text-[12px] font-bold ${descCls}`}>{desc}</p>
+			<p className={`!mt-1 text-[12px] font-bold ${descCls}`}>{desc}</p>
 		</div>
 	);
 }
@@ -440,15 +480,14 @@ function Th({ children, w, blue, red, green }) {
 	return (
 		<th
 			style={{ width: w }}
-			className={`border font-bold ${
-				blue
-					? 'border-[#BFDBFE] bg-[#EFF6FF] text-[#2563EB]'
-					: red
-						? 'border-[#FECACA] bg-[#FEF2F2] text-[#DC2626]'
-						: green
-							? 'border-[#BBF7D0] bg-[#DCFCE7] text-[#15803D]'
-							: 'border-[#E5E7EB]'
-			}`}
+			className={`border font-bold ${blue
+				? 'border-[#BFDBFE] bg-[#EFF6FF] text-[#2563EB]'
+				: red
+					? 'border-[#FECACA] bg-[#FEF2F2] text-[#DC2626]'
+					: green
+						? 'border-[#BBF7D0] bg-[#DCFCE7] text-[#15803D]'
+						: 'border-[#E5E7EB]'
+				}`}
 		>
 			{children}
 		</th>
@@ -458,13 +497,10 @@ function Th({ children, w, blue, red, green }) {
 function Td({ children, bold, blue, red, green, large }) {
 	return (
 		<td
-			className={`border border-[#E5E7EB] ${
-				bold ? 'font-bold text-[#111827]' : 'text-[#4B5563]'
-			} ${blue ? 'bg-[#EFF6FF] text-[#2563EB]' : ''} ${
-				red ? 'bg-[#FEF2F2] text-[#EF4444]' : ''
-			} ${green ? 'bg-[#DCFCE7] text-[#15803D]' : ''} ${
-				large ? 'text-[15px]' : ''
-			}`}
+			className={`border border-[#E5E7EB] ${bold ? 'font-bold text-[#111827]' : 'text-[#4B5563]'
+				} ${blue ? 'bg-[#EFF6FF] text-[#2563EB]' : ''} ${red ? 'bg-[#FEF2F2] text-[#EF4444]' : ''
+				} ${green ? 'bg-[#DCFCE7] text-[#15803D]' : ''} ${large ? 'text-[15px]' : ''
+				}`}
 		>
 			{children}
 		</td>
@@ -474,11 +510,10 @@ function Td({ children, bold, blue, red, green, large }) {
 function PageBtn({ children, active }) {
 	return (
 		<button
-			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${
-				active
-					? 'border-[#183A6B] bg-[#183A6B] text-white'
-					: 'border-[#E5E7EB] bg-white text-[#64748B]'
-			}`}
+			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${active
+				? 'border-[#183A6B] bg-[#183A6B] text-white'
+				: 'border-[#E5E7EB] bg-white text-[#64748B]'
+				}`}
 		>
 			{children}
 		</button>
