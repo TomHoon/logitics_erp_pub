@@ -30,6 +30,17 @@ export default function RegisterSalaryInfoModal({ open, setOpen, getSalaryList }
 	const [departmentName, setDepartmentName] = useState('');
 	const [employeeList, setEmployeeList] = useState([]);
 	const [selectedEmployee, setSelectedEmployee] = useState();
+	const [departmentOptions, setDepartmentOptions] = useState(['전체']);
+
+	const getDepartmentOptions = async () => {
+		try {
+			const res = await baseApi.get('/api/v1/department');
+			const list = res?.data?.data || res?.data || [];
+			setDepartmentOptions(['전체', ...list.map((d) => d.departmentName)]);
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
 	const registerEmployeeSalary = async () => {
 		try {
@@ -68,6 +79,7 @@ export default function RegisterSalaryInfoModal({ open, setOpen, getSalaryList }
 	useEffect(() => {
 		if (open) {
 			getRegisterEmployees();
+			getDepartmentOptions();
 		}
 	}, [open]);
 
@@ -117,6 +129,7 @@ export default function RegisterSalaryInfoModal({ open, setOpen, getSalaryList }
 					<SearchEmployeeSection
 						departmentName={departmentName}
 						setDepartmentName={setDepartmentName}
+						departmentOptions={departmentOptions}
 						name={name}
 						setName={setName}
 						getRegisterEmployees={getRegisterEmployees}
@@ -171,6 +184,7 @@ function SearchEmployeeSection({
 	setName,
 	name,
 	departmentName,
+	departmentOptions,
 	getRegisterEmployees,
 	employeeList = [],
 	selectedEmployee,
@@ -205,6 +219,7 @@ function SearchEmployeeSection({
 			<div className="flex gap-[8px] !mt-[12px]">
 				<CSelect
 					padding="9px 11px 9px 12px"
+					optionList={departmentOptions}
 					value={departmentName}
 					onChange={(e) => setDepartmentName(e.target.value)}
 				/>

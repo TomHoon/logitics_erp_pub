@@ -6,11 +6,12 @@ import CLabel from './element/CLabel';
 import CSelect from './element/CSelect';
 import s from './SearchBar.module.css';
 import {CalendarDays, Search} from 'lucide-react';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {usePathname} from "next/navigation";
 import c from "@/component/appointment/AppointmentForm.module.css";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Calendar} from "@/components/ui/calendar";
+import baseApi from "@/common/api/baseApi";
 
 const initialSearchInfo = {
 	keyword: "",
@@ -48,7 +49,34 @@ export default function SearchBar({useKeyword, useDpt, usePeriod, useExactDate, 
 	const [searchToDate, setSearchToDate] = useState(parsingDate(new Date()));
 	const [openPopover, setOpenPopover] = useState(false);
 	const [openToPopover, setOpenToPopover] = useState(false);
-	
+	const [departmentOptions, setDepartmentOptions] = useState(['전체']);
+	const [positionOptions, setPositionOptions] = useState(['전체']);
+
+	useEffect(() => {
+		const getDepartmentOptions = async () => {
+			try {
+				const res = await baseApi.get('/api/v1/department');
+				const list = res?.data?.data || res?.data || [];
+				setDepartmentOptions(['전체', ...list.map(d => d.departmentName)]);
+			} catch (e) {
+				console.error(e);
+			}
+		};
+
+		const getPositionOptions = async () => {
+			try {
+				const res = await baseApi.get('/api/v1/position');
+				const list = res?.data?.data || res?.data || [];
+				setPositionOptions(['전체', ...list.map(p => p.positionName)]);
+			} catch (e) {
+				console.error(e);
+			}
+		};
+
+		getDepartmentOptions();
+		getPositionOptions();
+	}, []);
+
 	const renderBasic = () => {
 		return (
 			<>
@@ -72,20 +100,18 @@ export default function SearchBar({useKeyword, useDpt, usePeriod, useExactDate, 
 						labelName='부서'
 					/>
 					<CSelect
+						optionList={departmentOptions}
 						value={searchInfo?.departmentName || ''}
 						onChange={e => setSearchInfo({...searchInfo, departmentName: e.target.value})}
 					/>
 				</div>
-				
+
 				<div className={s.conditionItem}>
 					<CLabel
 						labelName='직급'
 					/>
 					<CSelect
-						optionList={[
-							"전체",
-							"사원",
-						]}
+						optionList={positionOptions}
 						value={searchInfo?.positionName || ''}
 						onChange={e => setSearchInfo({...searchInfo, positionName: e.target.value})}
 					/>

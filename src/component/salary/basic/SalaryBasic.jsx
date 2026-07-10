@@ -4,15 +4,21 @@ import baseApi from '@/common/api/baseApi';
 import LoadingSpinner from '@/common/LoadingSpinner';
 import BreadCrumb from '@/component/common/BreadCrumb';
 import CButton from '@/component/common/element/CButton';
+import CSelect from '@/component/common/element/CSelect';
 import MainTitleWrapper from '@/component/common/MainTitleWrapper';
 import RegisterSalaryInfoModal from '@/component/modal/RegisterSalaryInfoModal';
+import { toast } from 'sonner';
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { getToday, parsingDate } from '@/common/utils/dateUtils';
 import {
 	Search,
 	RotateCcw,
 	CalendarDays,
-	ChevronDown,
-	ChevronLeft,
-	ChevronRight,
 	Table2,
 	Pencil,
 	Clock,
@@ -22,88 +28,70 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-const dummyRows = [
-	{
-		id: 'EMP-001',
-		name: '김철수',
-		dept: '인사팀',
-		rank: '팀장',
-		rankColor: 'purple',
-		base: 4200000,
-		meal: 200000,
-		traffic: 150000,
-		position: 200000,
-		allowance: 550000,
-		bank: '국민은행',
-		account: '12****-34****',
-		start: '2024.01.01',
-		edit: false,
-	},
-	{
-		id: 'EMP-002',
-		name: '이영희',
-		dept: '인사팀',
-		rank: '차장',
-		rankColor: 'blue',
-		base: 4700000,
-		meal: 200000,
-		traffic: 150000,
-		position: 200000,
-		allowance: 550000,
-		bank: '신한은행',
-		account: '98****-12****',
-		start: '2025.01.01',
-		edit: false,
-	},
-	{
-		id: 'EMP-003',
-		name: '박민준',
-		dept: '개발팀',
-		rank: '대리',
-		rankColor: 'sky',
-		base: 3500000,
-		meal: 200000,
-		traffic: 150000,
-		position: 0,
-		allowance: 350000,
-		bank: '국민은행',
-		account: '45****-67****',
-		start: '2021.08.01',
-		edit: false,
-	},
-	{
-		id: 'EMP-004',
-		name: '최지영',
-		dept: '영업팀',
-		rank: '사원',
-		rankColor: 'green',
-		base: 2800000,
-		meal: 200000,
-		traffic: 100000,
-		position: 0,
-		allowance: 300000,
-		bank: '하나은행',
-		account: '11****-98****',
-		start: '2023.01.09',
-		edit: false,
-	},
-];
-
 export default function SalaryBasic() {
-	const [rows, setRows] = useState(dummyRows || []);
+	const [rows, setRows] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [statusInfo, setStatusInfo] = useState({});
 	const [openRegisterModal, setOpenRegisterModal] = useState(false);
-	const getSalaryList = async () => {
+	const [searchName, setSearchName] = useState('');
+	const [searchDept, setSearchDept] = useState('전체');
+	const [searchPosition, setSearchPosition] = useState('전체');
+	const [departmentOptions, setDepartmentOptions] = useState(['전체']);
+	const [positionOptions, setPositionOptions] = useState(['전체']);
+	const [applyDate, setApplyDate] = useState(getToday());
+	const [openDatePopover, setOpenDatePopover] = useState(false);
+
+	const getDepartmentOptions = async () => {
+		try {
+			const res = await baseApi.get('/api/v1/department');
+			const list = res?.data?.data || res?.data || [];
+			setDepartmentOptions(['전체', ...list.map((d) => d.departmentName)]);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const getPositionOptions = async () => {
+		try {
+			const res = await baseApi.get('/api/v1/position');
+			const list = res?.data?.data || res?.data || [];
+			setPositionOptions(['전체', ...list.map((p) => p.positionName)]);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const getSalaryList = async (overrides = {}) => {
 		setIsLoading(true);
 		try {
-			const res = await baseApi.get('/api/v1/payroll');
-			setRows(res?.data?.data);
+			const res = await baseApi.get('/api/v1/payroll', {
+				params: {
+					keyword: overrides.keyword ?? searchName,
+					departmentName: overrides.departmentName ?? searchDept,
+					positionName: overrides.positionName ?? searchPosition,
+					applyDate: overrides.applyDate ?? applyDate,
+				},
+			});
+			setRows(res?.data?.data || []);
 		} catch (e) {
-			toast(e.data.message);
+			setRows([]);
+			toast(e?.response?.data?.message || '급여 목록 조회 중 오류가 발생했습니다.');
 		} finally {
 			setIsLoading(false);
 		}
+	};
+
+	const resetSearch = () => {
+		setSearchName('');
+		setSearchDept('전체');
+		setSearchPosition('전체');
+		setApplyDate(getToday());
+		getSalaryList({
+			keyword: '',
+			departmentName: '전체',
+			positionName: '전체',
+			applyDate: getToday(),
+		});
 	};
 
 	const getMonthlyStatus = async () => {
@@ -120,6 +108,8 @@ export default function SalaryBasic() {
 	useEffect(() => {
 		getSalaryList();
 		getMonthlyStatus();
+		getDepartmentOptions();
+		getPositionOptions();
 	}, []);
 
 	return (
@@ -196,22 +186,61 @@ export default function SalaryBasic() {
 
 			{/* filter */}
 			<section className="!mt-4 flex h-[60px] items-center gap-4 rounded-[7px] border border-[#E5E7EB] bg-white px-5">
-				<Filter label="부서" value="전체 부서" />
-				<Filter label="직급" value="전체 직급" />
+				<div className="flex items-center gap-2">
+					<span className="text-[14px] font-bold">부서</span>
+					<CSelect
+						width={140}
+						padding="7px 22px 7px 12px"
+						optionList={departmentOptions}
+						value={searchDept}
+						onChange={(e) => setSearchDept(e.target.value)}
+					/>
+				</div>
+				<div className="flex items-center gap-2">
+					<span className="text-[14px] font-bold">직급</span>
+					<CSelect
+						width={140}
+						padding="7px 22px 7px 12px"
+						optionList={positionOptions}
+						value={searchPosition}
+						onChange={(e) => setSearchPosition(e.target.value)}
+					/>
+				</div>
 
 				<div className="flex items-center gap-2">
 					<span className="text-[14px] font-bold">적용기준일</span>
-					<div className="relative">
-						<input
-							value="2025.01.01"
-							readOnly
-							className="h-[34px] w-[110px] rounded-[5px] border border-[#D1D5DB] px-3 pr-8 text-[13px] font-bold text-[#6B7280]"
-						/>
-						<CalendarDays
-							size={14}
-							className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]"
-						/>
-					</div>
+					<Popover open={openDatePopover} onOpenChange={setOpenDatePopover}>
+						<PopoverTrigger asChild>
+							<div
+								className="relative cursor-pointer"
+								onClick={() => setOpenDatePopover(true)}
+							>
+								<input
+									value={applyDate}
+									readOnly
+									className="h-[34px] w-[135px] cursor-pointer rounded-[5px] border border-[#D1D5DB] pl-3 pr-8 text-[13px] font-bold text-[#6B7280]"
+								/>
+								<CalendarDays
+									size={14}
+									className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]"
+								/>
+							</div>
+						</PopoverTrigger>
+						<PopoverContent>
+							<Calendar
+								mode="single"
+								selected={applyDate}
+								onSelect={(date) => {
+									if (date) {
+										const picked = parsingDate(date);
+										setApplyDate(picked);
+										getSalaryList({ applyDate: picked });
+									}
+									setOpenDatePopover(false);
+								}}
+							/>
+						</PopoverContent>
+					</Popover>
 				</div>
 
 				<div className="relative">
@@ -221,16 +250,27 @@ export default function SalaryBasic() {
 					/>
 					<input
 						placeholder="사원명 검색"
+						value={searchName}
+						onChange={(e) => setSearchName(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') getSalaryList();
+						}}
 						className="h-[34px] w-[130px] rounded-[5px] border border-[#D1D5DB] pl-9 text-[13px] outline-none"
 					/>
 				</div>
 
-				<button className="flex h-[34px] w-[82px] items-center justify-center gap-1 rounded-[5px] bg-[#183A6B] text-[13px] font-bold text-white">
+				<button
+					onClick={() => getSalaryList()}
+					className="flex h-[34px] w-[82px] cursor-pointer items-center justify-center gap-1 rounded-[5px] bg-[#183A6B] text-[13px] font-bold text-white"
+				>
 					<Search size={14} />
 					조회
 				</button>
 
-				<button className="flex h-[34px] w-[82px] items-center justify-center gap-1 rounded-[5px] border border-[#D1D5DB] bg-white text-[13px] font-bold text-[#6B7280]">
+				<button
+					onClick={resetSearch}
+					className="flex h-[34px] w-[82px] cursor-pointer items-center justify-center gap-1 rounded-[5px] border border-[#D1D5DB] bg-white text-[13px] font-bold text-[#6B7280]"
+				>
 					<RotateCcw size={14} />
 					초기화
 				</button>
@@ -246,7 +286,7 @@ export default function SalaryBasic() {
 
 					<div className="flex items-center gap-3 text-[12px]">
 						<span className="rounded-full bg-[#DBEAFE] !px-3 !py-1 font-bold text-[#2563EB]">
-							총 8명
+							총 {rows.length}명
 						</span>
 						<Legend color="bg-[#DBEAFE]" text="기본급" />
 						<Legend color="bg-[#FEF9C3]" text="수당항목" />
@@ -300,7 +340,7 @@ export default function SalaryBasic() {
 					<tbody>
 						{rows.map((row) => (
 							<tr
-								key={row.id}
+								key={row.payrollId}
 								className={`h-[43px] border-t ${row.edit ? 'bg-[#EFF6FF]' : 'bg-white'
 									}`}
 							>
@@ -311,7 +351,7 @@ export default function SalaryBasic() {
 										onChange={(e) => {
 											setRows((prev) => {
 												return prev.map((v) =>
-													v.id !== row.id
+													v.payrollId !== row.payrollId
 														? { ...v }
 														: { ...v, edit: e.target.checked }
 												);
@@ -328,12 +368,12 @@ export default function SalaryBasic() {
 								<Td blue>
 									{row.edit ? (
 										<input
-											value={row.tempBasic || row.basicSalaryAmount}
+											value={row.tempBasic ?? row.basicSalaryAmount}
 											type="number"
 											onChange={(e) => {
 												setRows((prev) => {
 													return prev.map((v) =>
-														row.id === v.id
+														row.payrollId === v.payrollId
 															? { ...v, tempBasic: Number(e.target.value) }
 															: { ...v }
 													);
@@ -368,48 +408,53 @@ export default function SalaryBasic() {
 									{row.edit ? (
 										<div className="flex justify-center gap-1">
 											<button
-												className="flex items-center gap-1 rounded-[4px] bg-[#183A6B] !px-2 !py-1 text-[10px] font-bold text-white"
+												className="flex cursor-pointer items-center gap-1 rounded-[4px] bg-[#183A6B] !px-2 !py-1 text-[10px] font-bold text-white"
 												onClick={async () => {
-													setRows((prev) => {
-														return prev.map((v) => {
-															const { tempBasic, ...rest } = v;
-
-															return v.id === row.id
-																? {
-																	...rest,
-																	basicSalaryAmount: v.tempBasic,
-																	edit: !v.edit,
-																}
-																: { ...rest };
-														});
-													});
-
-													const payrollId = row?.payrollId;
-
 													const updateAmount = rows.find(
-														(item) => item.id === row.id
+														(item) => item.payrollId === row.payrollId
 													)?.tempBasic;
 
-													await baseApi.patch(
-														`/api/v1/payroll/${payrollId}/basic-salary`,
-														{
-															amount: updateAmount,
-														}
-													);
+													try {
+														await baseApi.patch(
+															`/api/v1/payroll/${row.payrollId}/basic-salary`,
+															{
+																amount: updateAmount,
+															}
+														);
+
+														setRows((prev) => {
+															return prev.map((v) => {
+																const { tempBasic, ...rest } = v;
+
+																return v.payrollId === row.payrollId
+																	? {
+																		...rest,
+																		basicSalaryAmount: updateAmount,
+																		edit: false,
+																	}
+																	: { ...rest };
+															});
+														});
+														toast('기본급이 수정되었습니다.');
+													} catch (e) {
+														toast(
+															e?.response?.data?.message ||
+															'기본급 수정 중 오류가 발생했습니다.'
+														);
+													}
 												}}
 											>
 												<Save size={12} />
 												저장
 											</button>
 											<button
-												className="flex items-center gap-1 rounded-[4px] bg-[#FEF2F2] !px-2 !py-1 text-[10px] font-bold text-[#EF4444]"
+												className="flex cursor-pointer items-center gap-1 rounded-[4px] bg-[#FEF2F2] !px-2 !py-1 text-[10px] font-bold text-[#EF4444]"
 												onClick={() => {
 													setRows((prev) => {
-														return prev.map((v) =>
-															v.id === row.id
-																? { ...v, base: v.base, edit: false }
-																: { ...v, edit: false }
-														);
+														return prev.map((v) => {
+															const { tempBasic, ...rest } = v;
+															return { ...rest, edit: false };
+														});
 													});
 												}}
 											>
@@ -419,11 +464,22 @@ export default function SalaryBasic() {
 										</div>
 									) : (
 										<div className="flex !px-[14px] !py-[11px] gap-[4px]">
-											<button className="flex items-center gap-1 rounded-[4px] bg-[#EFF6FF] !px-2 !py-1 text-[10px] font-bold text-[#2563EB]">
+											<button
+												onClick={() => {
+													setRows((prev) =>
+														prev.map((v) =>
+															v.payrollId === row.payrollId
+																? { ...v, edit: true }
+																: v
+														)
+													);
+												}}
+												className="flex cursor-pointer items-center gap-1 rounded-[4px] bg-[#EFF6FF] !px-2 !py-1 text-[10px] font-bold text-[#2563EB]"
+											>
 												<Pencil size={12} />
 												수정
 											</button>
-											<button className="flex items-center gap-1 rounded-[4px] bg-[#F8FAFC] !px-2 !py-1 text-[10px] font-bold text-[#64748B]">
+											<button className="flex cursor-pointer items-center gap-1 rounded-[4px] bg-[#F8FAFC] !px-2 !py-1 text-[10px] font-bold text-[#64748B]">
 												<Clock size={12} />
 												이력
 											</button>
@@ -562,18 +618,6 @@ function SummaryCard({ title, value, desc, badge, dark, blue, orange, green }) {
 					{badge}
 				</span>
 			)}
-		</div>
-	);
-}
-
-function Filter({ label, value }) {
-	return (
-		<div className="flex items-center gap-2">
-			<span className="text-[14px] font-bold">{label}</span>
-			<button className="flex h-[34px] w-[140px] items-center justify-between rounded-[5px] border border-[#D1D5DB] !px-3 text-[13px] text-[#6B7280]">
-				{value}
-				<ChevronDown size={14} className="text-[#9CA3AF]" />
-			</button>
 		</div>
 	);
 }

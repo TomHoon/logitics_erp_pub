@@ -51,6 +51,8 @@ export default function InfoRegister() {
 	const [isEdit, setIsEdit] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isOpenAlert, setIsOpenAlert] = useState(false);
+	const [departmentOptions, setDepartmentOptions] = useState([]);
+	const [positionOptions, setPositionOptions] = useState([]);
 
 	const buttonRender = () => {
 		return (
@@ -108,6 +110,26 @@ export default function InfoRegister() {
 		}
 
 		return row[key];
+	};
+
+	const getDepartmentOptions = async () => {
+		try {
+			const res = await baseApi.get('/api/v1/department');
+			const list = res?.data?.data || res?.data || [];
+			setDepartmentOptions(list.map((d) => d.departmentName));
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const getPositionOptions = async () => {
+		try {
+			const res = await baseApi.get('/api/v1/position');
+			const list = res?.data?.data || res?.data || [];
+			setPositionOptions(list.map((p) => p.positionName));
+		} catch (e) {
+			console.error(e);
+		}
 	};
 
 	const getEmployees = async (params) => {
@@ -213,6 +235,8 @@ export default function InfoRegister() {
 	useEffect(() => {
 		console.log('jsPDF >> ', jsPDF);
 		getEmployees();
+		getDepartmentOptions();
+		getPositionOptions();
 	}, []);
 
 	return (
@@ -250,11 +274,14 @@ export default function InfoRegister() {
 				open={open}
 				setOpen={setOpen}
 				selectedInfo={selectedInfo}
+				setSelectedInfo={setSelectedInfo}
 				registerInfo={registerInfo}
 				setRegisterInfo={setRegisterInfo}
 				isEdit={isEdit}
 				isLoading={isLoading}
 				registerEmployee={registerEmployee}
+				departmentOptions={departmentOptions}
+				positionOptions={positionOptions}
 			/>
 
 			<LoadingSpinner isLoading={isLoading} />

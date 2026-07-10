@@ -21,11 +21,14 @@ export default function InfoRegisterModal({
 	open,
 	setOpen,
 	selectedInfo,
+	setSelectedInfo,
 	registerInfo,
 	setRegisterInfo,
 	isEdit = false,
 	isLoading = false,
 	registerEmployee,
+	departmentOptions = [],
+	positionOptions = [],
 }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -96,6 +99,7 @@ export default function InfoRegisterModal({
 								</label>
 								<CSelect
 									width={268}
+									optionList={departmentOptions}
 									value={
 										selectedInfo?.departmentName
 											? selectedInfo?.departmentName
@@ -116,17 +120,7 @@ export default function InfoRegisterModal({
 									<span className="text-[#EF4444]">*</span>
 								</label>
 								<CSelect
-									optionList={[
-										'사원',
-										'주임',
-										'대리',
-										'선임',
-										'과장',
-										'차장',
-										'부장',
-										'실장',
-										'센터장',
-									]}
+									optionList={positionOptions}
 									width={268}
 									value={
 										selectedInfo?.positionName
