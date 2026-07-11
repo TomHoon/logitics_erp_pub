@@ -24,6 +24,15 @@ import CInput from '../common/element/CInput';
 import CButton from '../common/element/CButton';
 import { useEffect, useMemo, useState } from 'react';
 import baseApi from '@/common/api/baseApi';
+import { toast } from 'sonner';
+
+const getPaymentDateChoice = (employee) => {
+	if (employee?.paymentDateOverride) return employee.paymentDateOverride;
+	if (employee?.paymentDate) {
+		return new Date(employee.paymentDate).getDate() === 25 ? '25일' : '10일';
+	}
+	return '10일';
+};
 
 export default function RegisterSalaryInfoModal({ open, setOpen, getSalaryList }) {
 	const [name, setName] = useState('');
@@ -43,22 +52,27 @@ export default function RegisterSalaryInfoModal({ open, setOpen, getSalaryList }
 	};
 
 	const registerEmployeeSalary = async () => {
+		if (!selectedEmployee?.employeeNo) {
+			toast('등록할 사원을 먼저 선택해주세요.');
+			return;
+		}
+
 		try {
-			const res = await baseApi.post('/api/v1/payroll/register/employees', {
+			await baseApi.post('/api/v1/payroll/register/employees', {
 				employeeNo: selectedEmployee?.employeeNo,
 				basicSalary: selectedEmployee?.basicSalary,
 				transportationAllowance: selectedEmployee?.transportationAllowance,
 				mealAllowance: selectedEmployee?.mealAllowance,
 				responsibilityAllowance: selectedEmployee?.responsibilityAllowance,
-				paymentDate: (selectedEmployee?.hireDate || '').includes('25')
-					? '25일'
-					: '10일',
+				dutyAllowance: selectedEmployee?.dutyAllowance,
+				paymentDate: getPaymentDateChoice(selectedEmployee),
 			});
 
+			toast('급여정보가 등록되었습니다.');
+			setOpen(false);
 			getSalaryList();
 		} catch (e) {
-			console.error(e);
-		} finally {
+			toast(e?.response?.data?.message || '급여정보 등록 중 오류가 발생했습니다.');
 		}
 	};
 
@@ -211,13 +225,14 @@ function SearchEmployeeSection({
 				<span className="flex items-center bg-[#EFF6FF] rounded-[6px] px-[10px] py-[4px] w-fit gap-[4px]">
 					<UsersRound size={12} color="#2563EB" />
 					<span className="flex items-center leading-[14.5px] text-[#2563EB] text-[11px] font-[700]">
-						검색결과 3명
+						검색결과 {employeeList.length}명
 					</span>
 				</span>
 			</div>
 
 			<div className="flex gap-[8px] !mt-[12px]">
 				<CSelect
+					width={140}
 					padding="9px 11px 9px 12px"
 					optionList={departmentOptions}
 					value={departmentName}
@@ -362,32 +377,18 @@ function Divider() {
 }
 
 function SalaryFormSection({ selectedEmployee, setSelectedEmployee }) {
+	const totalAmount =
+		Number(selectedEmployee?.basicSalary ?? 0) +
+		Number(selectedEmployee?.mealAllowance ?? 0) +
+		Number(selectedEmployee?.transportationAllowance ?? 0) +
+		Number(selectedEmployee?.responsibilityAllowance ?? 0) +
+		Number(selectedEmployee?.dutyAllowance ?? 0);
+
 	const deductionInfo = {
-		국민연금: Math.floor(
-			Number(
-				selectedEmployee?.basicSalary ??
-				0 + selectedEmployee?.responsibilityAllowance ??
-				0
-			) * 0.045
-		),
-		건강보험: Math.floor(
-			Number(
-				selectedEmployee?.basicSalary +
-				selectedEmployee?.responsibilityAllowance
-			) * 0.03545
-		),
-		고용보험: Math.floor(
-			Number(
-				selectedEmployee?.basicSalary +
-				selectedEmployee?.responsibilityAllowance
-			) * 0.009
-		),
-		소득세: Math.floor(
-			Number(
-				selectedEmployee?.basicSalary +
-				selectedEmployee?.responsibilityAllowance
-			) * 0.003
-		),
+		국민연금: Math.floor(totalAmount * 0.045),
+		건강보험: Math.floor(totalAmount * 0.03545),
+		고용보험: Math.floor(totalAmount * 0.009),
+		소득세: Math.floor(totalAmount * 0.003),
 	};
 
 	const totalDeductionAmount =
@@ -395,12 +396,6 @@ function SalaryFormSection({ selectedEmployee, setSelectedEmployee }) {
 		deductionInfo?.건강보험 +
 		deductionInfo?.고용보험 +
 		deductionInfo?.소득세;
-	const totalAmount =
-		selectedEmployee?.basicSalary ??
-		0 + selectedEmployee?.mealAllowance ??
-		0 + selectedEmployee?.transportationAllowance ??
-		0 + selectedEmployee?.responsibilityAllowance ??
-		0;
 
 	return (
 		<section>
@@ -466,6 +461,17 @@ function SalaryFormSection({ selectedEmployee, setSelectedEmployee }) {
 					).toLocaleString()}
 				/>
 				<SalaryInput
+					title="직책수당"
+					unit="원"
+					onChange={(e) => {
+						setSelectedEmployee((prev) => ({
+							...prev,
+							dutyAllowance: Number(e.target.value.replace(/\D/g, '')),
+						}));
+					}}
+					value={Number(selectedEmployee?.dutyAllowance ?? 0).toLocaleString()}
+				/>
+				<SalaryInput
 					title="식대"
 					unit="원"
 					onChange={(e) => {
@@ -496,13 +502,11 @@ function SalaryFormSection({ selectedEmployee, setSelectedEmployee }) {
 					title="급여지급일"
 					impt
 					optionList={['25일', '10일']}
-					value={
-						(selectedEmployee?.hireDate || '').includes('25') ? '25일' : '10일'
-					}
+					value={getPaymentDateChoice(selectedEmployee)}
 					onChange={(e) => {
 						setSelectedEmployee((prev) => ({
 							...prev,
-							hireDate: e.target.value,
+							paymentDateOverride: e.target.value,
 						}));
 					}}
 				/>

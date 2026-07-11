@@ -156,6 +156,20 @@ export default function InfoRegister() {
 			? { ...registerInfo, employmentStatus: '재직중' }
 			: { ...selectedInfo, employmentStatus: '재직중' };
 
+		if (
+			!param.name ||
+			!param.departmentName ||
+			!param.positionName ||
+			!param.phone ||
+			!param.bankName ||
+			!param.accountNumber
+		) {
+			toast('필수 입력 항목(성명/부서/직급/휴대폰/은행/계좌번호)을 모두 입력해주세요.', {
+				position: 'top-center',
+			});
+			return;
+		}
+
 		const token = localStorage.getItem('accessToken');
 		try {
 			setIsLoading(true);

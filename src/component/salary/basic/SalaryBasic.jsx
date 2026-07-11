@@ -7,6 +7,7 @@ import CButton from '@/component/common/element/CButton';
 import CSelect from '@/component/common/element/CSelect';
 import MainTitleWrapper from '@/component/common/MainTitleWrapper';
 import RegisterSalaryInfoModal from '@/component/modal/RegisterSalaryInfoModal';
+import PayrollHistoryModal from '@/component/modal/PayrollHistoryModal';
 import { toast } from 'sonner';
 import {
 	Popover,
@@ -40,6 +41,8 @@ export default function SalaryBasic() {
 	const [positionOptions, setPositionOptions] = useState(['전체']);
 	const [applyDate, setApplyDate] = useState(getToday());
 	const [openDatePopover, setOpenDatePopover] = useState(false);
+	const [openHistoryModal, setOpenHistoryModal] = useState(false);
+	const [historyTarget, setHistoryTarget] = useState(null);
 
 	const getDepartmentOptions = async () => {
 		try {
@@ -323,6 +326,9 @@ export default function SalaryBasic() {
 							<Th color="yellow" w="80px">
 								직급수당
 							</Th>
+							<Th color="yellow" w="80px">
+								직책수당
+							</Th>
 							<Th color="yellow" w="90px">
 								수당합계
 							</Th>
@@ -370,6 +376,7 @@ export default function SalaryBasic() {
 										<input
 											value={row.tempBasic ?? row.basicSalaryAmount}
 											type="number"
+											step={10000}
 											onChange={(e) => {
 												setRows((prev) => {
 													return prev.map((v) =>
@@ -394,12 +401,11 @@ export default function SalaryBasic() {
 								<Td yellow>
 									{Number(row.positionAllowanceAmount).toLocaleString()}
 								</Td>
+								<Td yellow>
+									{Number(row.responsibilityAllowanceAmount).toLocaleString()}
+								</Td>
 								<Td yellow strong>
-									{(
-										Number(row.mealAllowanceAmount) +
-										Number(row.transportationAllowanceAmount) +
-										Number(row.positionAllowanceAmount)
-									).toLocaleString()}
+									{Number(row.totalAllowanceAmount).toLocaleString()}
 								</Td>
 								<Td green>{row.bankName || '-'}</Td>
 								<Td green>{row.accountNumber || '-'}</Td>
@@ -479,7 +485,16 @@ export default function SalaryBasic() {
 												<Pencil size={12} />
 												수정
 											</button>
-											<button className="flex cursor-pointer items-center gap-1 rounded-[4px] bg-[#F8FAFC] !px-2 !py-1 text-[10px] font-bold text-[#64748B]">
+											<button
+												onClick={() => {
+													setHistoryTarget({
+														employeeNo: row.employeeNo,
+														employeeName: row.employeeName,
+													});
+													setOpenHistoryModal(true);
+												}}
+												className="flex cursor-pointer items-center gap-1 rounded-[4px] bg-[#F8FAFC] !px-2 !py-1 text-[10px] font-bold text-[#64748B]"
+											>
 												<Clock size={12} />
 												이력
 											</button>
@@ -525,16 +540,17 @@ export default function SalaryBasic() {
 									) || 0
 								).toLocaleString()}
 							</td>
-							<td className="border border-[#FEF3C7] text-[#B45309] text-[16px]">
+							<td className="border border-[#FEF3C7] text-[#B45309]">
 								{Number(
 									rows.reduce(
-										(acc, cur) =>
-											acc +
-											(+cur.mealAllowanceAmount +
-												+cur.transportationAllowanceAmount +
-												+cur.positionAllowanceAmount),
+										(acc, cur) => acc + Number(cur.responsibilityAllowanceAmount),
 										0
 									) || 0
+								).toLocaleString()}
+							</td>
+							<td className="border border-[#FEF3C7] text-[#B45309] text-[16px]">
+								{Number(
+									rows.reduce((acc, cur) => acc + Number(cur.totalAllowanceAmount), 0) || 0
 								).toLocaleString()}
 							</td>
 							<td className="border border-[#BFDBFE] text-[#94A3B8]">-</td>
@@ -572,6 +588,12 @@ export default function SalaryBasic() {
 				open={openRegisterModal}
 				setOpen={setOpenRegisterModal}
 				getSalaryList={getSalaryList}
+			/>
+			<PayrollHistoryModal
+				open={openHistoryModal}
+				setOpen={setOpenHistoryModal}
+				employeeNo={historyTarget?.employeeNo}
+				employeeName={historyTarget?.employeeName}
 			/>
 		</main>
 	);

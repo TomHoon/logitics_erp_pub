@@ -25,7 +25,7 @@ export default function CButton({
 	return (
 		<button
 			onClick={() => onClick?.()}
-			className={clsx(s.commonButton, getTypeClass(), 'cursor-pointer')}
+			className={clsx(s.commonButton, getTypeClass(), 'cursor-pointer', 'shrink-0', 'whitespace-nowrap')}
 			style={{
 				width: width ? `${width}px` : 'auto',
 				fontSize: `${fontSize || 13}px`,

@@ -83,12 +83,19 @@ export default function InfoRegisterModal({
 									value={
 										selectedInfo?.name ? selectedInfo?.name : registerInfo?.name
 									}
-									onChange={(e) =>
-										setRegisterInfo((prev) => ({
-											...prev,
-											name: e.target.value,
-										}))
-									}
+									onChange={(e) => {
+										if (isEdit) {
+											setSelectedInfo((prev) => ({
+												...prev,
+												name: e.target.value,
+											}));
+										} else {
+											setRegisterInfo((prev) => ({
+												...prev,
+												name: e.target.value,
+											}));
+										}
+									}}
 								/>
 							</div>
 
@@ -101,16 +108,28 @@ export default function InfoRegisterModal({
 									width={268}
 									optionList={departmentOptions}
 									value={
-										selectedInfo?.departmentName
+										(selectedInfo?.departmentName
 											? selectedInfo?.departmentName
-											: registerInfo?.departmentName
+											: registerInfo?.departmentName) || ''
 									}
-									onChange={(e) =>
-										setRegisterInfo((prev) => ({
-											...prev,
-											departmentName: e.target.value,
-										}))
-									}
+									onChange={(e) => {
+										if (isEdit) {
+											setSelectedInfo((prev) => ({
+												...prev,
+												departmentName: e.target.value,
+											}));
+										} else {
+											setRegisterInfo((prev) => ({
+												...prev,
+												departmentName: e.target.value,
+											}));
+										}
+									}}
+									placeholderRender={() => (
+										<div>
+											<span>부서를 선택하세요</span>
+										</div>
+									)}
 								/>
 							</div>
 
@@ -123,16 +142,28 @@ export default function InfoRegisterModal({
 									optionList={positionOptions}
 									width={268}
 									value={
-										selectedInfo?.positionName
+										(selectedInfo?.positionName
 											? selectedInfo?.positionName
-											: registerInfo?.positionName
+											: registerInfo?.positionName) || ''
 									}
-									onChange={(e) =>
-										setRegisterInfo((prev) => ({
-											...prev,
-											positionName: e.target.value,
-										}))
-									}
+									onChange={(e) => {
+										if (isEdit) {
+											setSelectedInfo((prev) => ({
+												...prev,
+												positionName: e.target.value,
+											}));
+										} else {
+											setRegisterInfo((prev) => ({
+												...prev,
+												positionName: e.target.value,
+											}));
+										}
+									}}
+									placeholderRender={() => (
+										<div>
+											<span>직급을 선택하세요</span>
+										</div>
+									)}
 								/>
 							</div>
 
@@ -186,12 +217,19 @@ export default function InfoRegisterModal({
 											? selectedInfo?.phone
 											: registerInfo?.phone
 									}
-									onChange={(e) =>
-										setRegisterInfo((prev) => ({
-											...prev,
-											phone: e.target.value,
-										}))
-									}
+									onChange={(e) => {
+										if (isEdit) {
+											setSelectedInfo((prev) => ({
+												...prev,
+												phone: e.target.value,
+											}));
+										} else {
+											setRegisterInfo((prev) => ({
+												...prev,
+												phone: e.target.value,
+											}));
+										}
+									}}
 								/>
 							</div>
 
@@ -205,12 +243,19 @@ export default function InfoRegisterModal({
 											? selectedInfo?.email
 											: registerInfo?.email
 									}
-									onChange={(e) =>
-										setRegisterInfo((prev) => ({
-											...prev,
-											email: e.target.value,
-										}))
-									}
+									onChange={(e) => {
+										if (isEdit) {
+											setSelectedInfo((prev) => ({
+												...prev,
+												email: e.target.value,
+											}));
+										} else {
+											setRegisterInfo((prev) => ({
+												...prev,
+												email: e.target.value,
+											}));
+										}
+									}}
 								/>
 							</div>
 						</section>
@@ -333,13 +378,22 @@ export default function InfoRegisterModal({
 										'제주은행',
 									]}
 									width={268}
-									value={registerInfo?.bankName || ''}
-									onChange={(e) =>
-										setRegisterInfo((prev) => ({
-											...prev,
-											bankName: e.target.value,
-										}))
+									value={
+										(isEdit ? selectedInfo?.bankName : registerInfo?.bankName) || ''
 									}
+									onChange={(e) => {
+										if (isEdit) {
+											setSelectedInfo((prev) => ({
+												...prev,
+												bankName: e.target.value,
+											}));
+										} else {
+											setRegisterInfo((prev) => ({
+												...prev,
+												bankName: e.target.value,
+											}));
+										}
+									}}
 									placeholderRender={() => (
 										<div>
 											<span>은행을 선택하세요</span>
@@ -369,13 +423,21 @@ export default function InfoRegisterModal({
 								<CInput
 									width={376}
 									placeholder="- 없이 숫자만 입력"
-									value={registerInfo?.accountNumber}
-									onChange={(e) =>
-										setRegisterInfo((prev) => ({
-											...prev,
-											accountNumber: e.target.value.replace(/\D/, ''),
-										}))
-									}
+									value={isEdit ? selectedInfo?.accountNumber : registerInfo?.accountNumber}
+									onChange={(e) => {
+										const value = e.target.value.replace(/\D/, '');
+										if (isEdit) {
+											setSelectedInfo((prev) => ({
+												...prev,
+												accountNumber: value,
+											}));
+										} else {
+											setRegisterInfo((prev) => ({
+												...prev,
+												accountNumber: value,
+											}));
+										}
+									}}
 								/>
 								<p className="bg-[#F0F9FF] border border-[#BAE6FD] text-[#0369A1] text-[12px] rounded-[8px] flex w-[568px] items-center px-[12px] py-[10px] gap-[4px] !mt-[10px]">
 									<Info size={11}></Info>
