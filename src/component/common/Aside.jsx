@@ -66,7 +66,7 @@ const salaryMenuList = [
 		subMenus: [
 			{ title: '급여기본정보관리', path: '/salary/basic' },
 			{ title: '급여지급', path: '/salary/payroll' },
-			{ title: '기본수당외수당관리', path: '#' },
+			/* { title: '기본수당외수당관리', path: '#' }, */
 			{ title: '급여계산', path: '/salary/calculation' },
 			{ title: '급여조회', path: '/salary/trend' },
 		],

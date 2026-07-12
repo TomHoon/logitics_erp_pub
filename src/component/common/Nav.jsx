@@ -73,11 +73,11 @@ export default function Nav({
 						>
 							급여관리
 						</li>
-						<li
+						{/* 						<li
 							className={clsx(activeNav === '일용직관리' ? style.active : '')}
 						>
 							일용직관리
-						</li>
+						</li> */}
 					</ul>
 				</div>
 			</div>
