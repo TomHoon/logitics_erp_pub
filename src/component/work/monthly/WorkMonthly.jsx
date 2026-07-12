@@ -189,7 +189,7 @@ export default function WorkMonthly() {
 			/>
 
 			<MainTitleWrapper
-				buttonRender={() => {}}
+				buttonRender={() => { }}
 				mainTitleData={{
 					title: '월근태현황',
 					desc: '부서별·직원별 월간 근태 현황을 조회하고 관리합니다.',
@@ -337,8 +337,7 @@ export default function WorkMonthly() {
 								{days.map((day) => (
 									<th
 										key={day}
-										className={`w-[25px] border border-[#E5E7EB] font-bold ${
-											day === 5 ||
+										className={`w-[25px] border border-[#E5E7EB] font-bold ${day === 5 ||
 											day === 6 ||
 											day === 12 ||
 											day === 13 ||
@@ -346,9 +345,9 @@ export default function WorkMonthly() {
 											day === 20 ||
 											day === 26 ||
 											day === 27
-												? 'bg-[#EAF1F8] text-[#94A3B8]'
-												: ''
-										}`}
+											? 'bg-[#EAF1F8] text-[#94A3B8]'
+											: ''
+											}`}
 									>
 										{day}
 									</th>
@@ -382,7 +381,7 @@ export default function WorkMonthly() {
 									{days.map((day) => (
 										<td
 											key={day}
-											className={`border border-[#E5E7EB] ${getDayBg(
+											className={`h-[36px] border border-[#E5E7EB] ${getDayBg(
 												emp.days[day],
 												day
 											)}`}
@@ -392,16 +391,21 @@ export default function WorkMonthly() {
 									))}
 
 									<td className="border border-[#DBEAFE] bg-[#EFF6FF] font-bold text-[#2563EB]">
-										{emp?.summary?.출근}
+										{/* {emp?.summary?.출근} */}
+										{emp.days.reduce((acc, cur) => (cur === '출근' ? acc + 1 : acc), 0)}
 									</td>
 									<td className="border border-[#FED7AA] bg-[#FFF7ED] font-bold text-[#EA580C]">
-										{emp?.summary?.지각}
+										{/* {emp?.summary?.지각} */}
+										{emp.days.reduce((acc, cur) => (cur === '지각' ? acc + 1 : acc), 0)}
 									</td>
 									<td className="border border-[#BBF7D0] bg-[#F0FDF4] font-bold text-[#16A34A]">
-										{emp?.summary?.연차}
+										{/* {emp?.summary?.연차} */}
+
+										{emp.days.reduce((acc, cur) => (cur === '연차' ? acc + 1 : acc), 0)}
 									</td>
 									<td className="border border-[#FECACA] bg-[#FFF1F2] font-bold text-[#CBD5E1]">
-										{emp?.summary?.결근}
+										{/* {emp?.summary?.결근} */}
+										{emp.days.reduce((acc, cur) => (cur === '결근' ? acc + 1 : acc), 0)}
 									</td>
 								</tr>
 							))}
@@ -416,15 +420,24 @@ export default function WorkMonthly() {
 
 function StatusText({ value }) {
 	const map = {
-		출: 'text-[#94A3B8]',
-		지: 'text-[#EA580C] font-bold',
-		연: 'text-[#16A34A] font-bold',
-		장: 'text-[#8B5CF6] font-bold',
-		반: 'text-[#0284C7] font-bold',
-		휴: 'text-[#CBD5E1]',
+		출근: 'text-[#94A3B8]',
+		지각: 'text-[#EA580C] bg-[#FFF7ED] font-bold',
+		연차: 'text-[#16A34A] bg-[#F0FDF4] font-bold',
+		출장: 'text-[#8B5CF6] font-bold',
+		반차: 'text-[#0284C7] bg-[#E0F2FE] font-bold',
+		휴일: 'text-[#CBD5E1]',
 	};
 
-	return <span className={map[value] || 'text-[#94A3B8]'}>{value}</span>;
+	const valueToKeyMap = {
+		출근: '출',
+		지각: '지',
+		연차: '연',
+		출장: '장',
+		반차: '반',
+		휴일: '휴',
+	};
+
+	return <span className={clsx(map[value] || 'text-[#94A3B8]', 'flex justify-center items-center w-full h-full')}>{valueToKeyMap[value]}</span>;
 }
 
 function getDayBg(value, day) {
