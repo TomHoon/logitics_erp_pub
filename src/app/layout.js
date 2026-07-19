@@ -35,6 +35,7 @@ export default function RootLayout({ children }) {
 					integrity="sha384-OL+ylM/iuPLtW5U3XcvLSGhE8JzReKDank5InqlHGWPhb4140/yrBw0bg0y7+C9J"
 					crossorigin="anonymous"
 				/>
+
 				<Toaster />
 			</body>
 		</html>
