@@ -22,7 +22,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 import baseApi from '@/common/api/baseApi';
 import CargoRequestModal from '@/component/modal/CargoRequestModal';
@@ -102,9 +102,8 @@ function StatusBadge({ status }) {
 }
 
 export default function CargoStatus() {
+	const [open, setOpen] = useState(true);
 	const mapRef = useRef(null);
-
-	useEffect(() => {}, []);
 
 	const initMap = () => {
 		console.log('window.kakao', window.kakao);
@@ -174,7 +173,7 @@ export default function CargoStatus() {
 	return (
 		<div className="h-screen min-w-[1280px] overflow-hidden bg-[#0d1930] text-white">
 			<Script
-				src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${'f780fa1d148f8bc9b54d5a931f4cf301'}&autoload=false&libraries=services`}
+				src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JS_KEY}&autoload=false&libraries=services`}
 				type="text/javascript"
 				strategy="afterInteractive"
 				onLoad={initMap}
@@ -332,6 +331,7 @@ export default function CargoStatus() {
 								)}
 							</button>
 						))}
+						<button onClick={() => setOpen(true)}>배차요청</button>
 					</div>
 				</aside>
 
@@ -531,7 +531,8 @@ export default function CargoStatus() {
 					</div>
 				</aside>
 			</main>
-			<CargoRequestModal open={true} />
+
+			<CargoRequestModal open={open} setOpen={setOpen} />
 		</div>
 	);
 }

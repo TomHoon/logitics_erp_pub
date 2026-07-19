@@ -4,7 +4,11 @@ import { useState } from 'react';
 import CButton from '@/component/common/element/CButton';
 
 // 주소검색 공통
-export default function PostCodeButton({ onCompletePostData, buttonRender }) {
+export default function PostCodeButton({
+	onCompletePostData,
+	buttonRender,
+	onCompletePostLatLngData,
+}) {
 	const [open, setOpen] = useState(false);
 
 	const openPostcode = () => {
@@ -18,9 +22,7 @@ export default function PostCodeButton({ onCompletePostData, buttonRender }) {
 					if (status === window.kakao.maps.services.Status.OK) {
 						const lat = result[0].y;
 						const lng = result[0].x;
-
-						console.log('위도>>', lat);
-						console.log('경도>>', lng);
+						onCompletePostLatLngData(lat, lng);
 					}
 				});
 			},

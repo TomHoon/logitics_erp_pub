@@ -35,21 +35,64 @@ import { Textarea } from '@/components/ui/textarea';
 import PostCodeButton from '../common/PostCodeButton';
 
 export default function CargoRequestModal({ open, setOpen }) {
-	const [address, setAddress] = useState();
+	const [departureAddress, setDepartureAddress] = useState();
+	const [arrivalAddress, setArrivalAddress] = useState();
+
+	//배차요청 진행시 예시코드
+	const goDispatchCargo = async () => {
+		const param = {
+			vehicleType: '1톤 트럭',
+			dispatchDateTime: new Date().toISOString().slice(0, 19),
+
+			dispatchManager: '홍길동',
+
+			departureLocation: '서울특별시 강남구 테헤란로 123',
+			departureLat: 37.5012,
+			departureLng: 127.0396,
+			departureArrivalTime: new Date().toISOString().slice(0, 19),
+			departureMangerName: '김상차',
+			departureMangerPhone: '010-1234-5678',
+
+			arrivalLat: 35.1796,
+			arrivalLng: 129.0756,
+			arrivalTime: new Date().toISOString().slice(0, 19),
+			arrivalMangerName: '이하차',
+			arrivalMangerPhone: '010-5678-1234',
+
+			cargoList: [
+				{
+					cargoName: '냉장 식품',
+					quantity: '10',
+					weight: '500',
+					width: 100,
+					depth: 80,
+					height: '120',
+				},
+			],
+		};
+
+		const res = await baseApi.post('/api/v1/transport/dispatch-request', param);
+	};
+
+	const onCompletePostDepartureLatLngData = (lat, lng) => {
+		console.log('lat >>', lat);
+		console.log('lng >>', lng);
+	};
+
+	const onCompletePostArrivalLatLngData = (lat, lng) => {
+		console.log('lat >>', lat);
+		console.log('lng >>', lng);
+	};
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
-				<Button>배차 요청</Button>
-			</DialogTrigger>
-
 			<DialogContent
 				showCloseButton={false}
 				className="
           max-h-[95vh]
           w-[770px]
           max-w-[770px]
-          overflow-scroll
+          overflow-y-scroll
           border-0
           bg-white
           !p-0
@@ -154,8 +197,9 @@ export default function CargoRequestModal({ open, setOpen }) {
 
 					<AddressSearch
 						color="emerald"
-						address={address}
-						setAddress={setAddress}
+						address={departureAddress}
+						setAddress={setDepartureAddress}
+						onCompletePostLatLngData={onCompletePostDepartureLatLngData}
 					/>
 
 					<div className="grid grid-cols-3 gap-4 !mt-5">
@@ -210,7 +254,9 @@ export default function CargoRequestModal({ open, setOpen }) {
 
 					<AddressSearch
 						color="amber"
-						address="경기도 성남시 분당구 판교역로 235"
+						address={arrivalAddress}
+						setAddress={setArrivalAddress}
+						onCompletePostLatLngData={onCompletePostArrivalLatLngData}
 					/>
 
 					<div className="grid grid-cols-3 gap-4 !mt-5">
@@ -329,12 +375,10 @@ export default function CargoRequestModal({ open, setOpen }) {
 							취소
 						</Button>
 
-						<Button variant="outline" className="h-12 !px-7">
-							<Save className="!mr-2 h-4 w-4" />
-							임시저장
-						</Button>
-
-						<Button className="h-12 bg-blue-600 !px-8 hover:bg-blue-700">
+						<Button
+							className="h-12 bg-blue-600 !px-8 hover:bg-blue-700"
+							onClick={goDispatchCargo}
+						>
 							<Truck className="!mr-2 h-4 w-4" />
 							배차 요청
 						</Button>
@@ -388,7 +432,12 @@ function IconInput({ icon: Icon, value, placeholder, dropdown, type }) {
 	);
 }
 
-function AddressSearch({ color, address, setAddress }) {
+function AddressSearch({
+	color,
+	address,
+	setAddress,
+	onCompletePostLatLngData,
+}) {
 	const isGreen = color === 'emerald';
 
 	return (
@@ -411,6 +460,7 @@ function AddressSearch({ color, address, setAddress }) {
 					onCompletePostData={(e) => {
 						setAddress(e.address);
 					}}
+					onCompletePostLatLngData={onCompletePostLatLngData}
 				/>
 				{/* 
 				<Button
