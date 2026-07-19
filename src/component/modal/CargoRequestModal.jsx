@@ -33,6 +33,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import PostCodeButton from '../common/PostCodeButton';
+import baseApi from '@/common/api/baseApi';
 
 export default function CargoRequestModal({ open, setOpen }) {
 	const [departureAddress, setDepartureAddress] = useState();
@@ -53,6 +54,7 @@ export default function CargoRequestModal({ open, setOpen }) {
 			departureMangerName: '김상차',
 			departureMangerPhone: '010-1234-5678',
 
+			arrivalLocation: '경기 부천시 소사구 경인로 605',
 			arrivalLat: 35.1796,
 			arrivalLng: 129.0756,
 			arrivalTime: new Date().toISOString().slice(0, 19),
