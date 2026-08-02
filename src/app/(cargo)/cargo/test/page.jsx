@@ -74,7 +74,7 @@ const summary = [
 	{ label: '총 운행거리', value: '14,280km', icon: Route },
 ];
 
-function StatusBadge({ status: string }) {
+function StatusBadge({ status }) {
 	const className =
 		status === '운송중'
 			? 'bg-amber-500/15 text-amber-400'
@@ -216,7 +216,7 @@ export default function CargoTrackPage() {
 									<div className="flex items-center">
 										<span className="text-sm font-semibold">{item.no}</span>
 										<div className="!ml-2">
-											<StatusBadge status={item.status} />
+											<StatusBadge status={item?.status || ''} />
 										</div>
 									</div>
 
