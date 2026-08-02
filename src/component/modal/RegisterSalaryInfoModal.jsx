@@ -34,7 +34,11 @@ const getPaymentDateChoice = (employee) => {
 	return '10일';
 };
 
-export default function RegisterSalaryInfoModal({ open, setOpen, getSalaryList }) {
+export default function RegisterSalaryInfoModal({
+	open,
+	setOpen,
+	getSalaryList,
+}) {
 	const [name, setName] = useState('');
 	const [departmentName, setDepartmentName] = useState('');
 	const [employeeList, setEmployeeList] = useState([]);
@@ -56,6 +60,13 @@ export default function RegisterSalaryInfoModal({ open, setOpen, getSalaryList }
 			toast('등록할 사원을 먼저 선택해주세요.');
 			return;
 		}
+		if (
+			!selectedEmployee?.basicSalary ||
+			!selectedEmployee?.responsibilityAllowance
+		) {
+			toast('필수사항이 누락되었습니다.');
+			return;
+		}
 
 		try {
 			await baseApi.post('/api/v1/payroll/register/employees', {
@@ -72,7 +83,9 @@ export default function RegisterSalaryInfoModal({ open, setOpen, getSalaryList }
 			setOpen(false);
 			getSalaryList();
 		} catch (e) {
-			toast(e?.response?.data?.message || '급여정보 등록 중 오류가 발생했습니다.');
+			toast(
+				e?.response?.data?.message || '급여정보 등록 중 오류가 발생했습니다.'
+			);
 		}
 	};
 

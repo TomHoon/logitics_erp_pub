@@ -78,7 +78,9 @@ export default function SalaryBasic() {
 			setRows(res?.data?.data || []);
 		} catch (e) {
 			setRows([]);
-			toast(e?.response?.data?.message || '급여 목록 조회 중 오류가 발생했습니다.');
+			toast(
+				e?.response?.data?.message || '급여 목록 조회 중 오류가 발생했습니다.'
+			);
 		} finally {
 			setIsLoading(false);
 		}
@@ -338,7 +340,7 @@ export default function SalaryBasic() {
 							<Th color="green" w="120px">
 								계좌번호
 							</Th>
-							<Th w="95px">적용시작일</Th>
+							{/* <Th w="95px">적용시작일</Th> */}
 							<Th w="140px">관리</Th>
 						</tr>
 					</thead>
@@ -347,8 +349,9 @@ export default function SalaryBasic() {
 						{rows.map((row) => (
 							<tr
 								key={row.payrollId}
-								className={`h-[43px] border-t ${row.edit ? 'bg-[#EFF6FF]' : 'bg-white'
-									}`}
+								className={`h-[43px] border-t ${
+									row.edit ? 'bg-[#EFF6FF]' : 'bg-white'
+								}`}
 							>
 								<td className="border border-[#E5E7EB]">
 									<input
@@ -434,10 +437,10 @@ export default function SalaryBasic() {
 
 																return v.payrollId === row.payrollId
 																	? {
-																		...rest,
-																		basicSalaryAmount: updateAmount,
-																		edit: false,
-																	}
+																			...rest,
+																			basicSalaryAmount: updateAmount,
+																			edit: false,
+																		}
 																	: { ...rest };
 															});
 														});
@@ -445,7 +448,7 @@ export default function SalaryBasic() {
 													} catch (e) {
 														toast(
 															e?.response?.data?.message ||
-															'기본급 수정 중 오류가 발생했습니다.'
+																'기본급 수정 중 오류가 발생했습니다.'
 														);
 													}
 												}}
@@ -515,19 +518,25 @@ export default function SalaryBasic() {
 							</td>
 							<td className="border border-[#BFDBFE] text-[#2563EB]">
 								{Number(
-									rows.reduce((acc, cur) => acc + Number(cur.basicSalaryAmount), 0) || 0
-								).toLocaleString()}
-							</td>
-							<td className="border border-[#FEF3C7] text-[#B45309]">
-								{Number(
-									rows.reduce((acc, cur) => acc + Number(cur.mealAllowanceAmount), 0) ||
-									0
+									rows.reduce(
+										(acc, cur) => acc + Number(cur.basicSalaryAmount),
+										0
+									) || 0
 								).toLocaleString()}
 							</td>
 							<td className="border border-[#FEF3C7] text-[#B45309]">
 								{Number(
 									rows.reduce(
-										(acc, cur) => acc + Number(cur.transportationAllowanceAmount),
+										(acc, cur) => acc + Number(cur.mealAllowanceAmount),
+										0
+									) || 0
+								).toLocaleString()}
+							</td>
+							<td className="border border-[#FEF3C7] text-[#B45309]">
+								{Number(
+									rows.reduce(
+										(acc, cur) =>
+											acc + Number(cur.transportationAllowanceAmount),
 										0
 									) || 0
 								).toLocaleString()}
@@ -543,19 +552,23 @@ export default function SalaryBasic() {
 							<td className="border border-[#FEF3C7] text-[#B45309]">
 								{Number(
 									rows.reduce(
-										(acc, cur) => acc + Number(cur.responsibilityAllowanceAmount),
+										(acc, cur) =>
+											acc + Number(cur.responsibilityAllowanceAmount),
 										0
 									) || 0
 								).toLocaleString()}
 							</td>
 							<td className="border border-[#FEF3C7] text-[#B45309] text-[16px]">
 								{Number(
-									rows.reduce((acc, cur) => acc + Number(cur.totalAllowanceAmount), 0) || 0
+									rows.reduce(
+										(acc, cur) => acc + Number(cur.totalAllowanceAmount),
+										0
+									) || 0
 								).toLocaleString()}
 							</td>
 							<td className="border border-[#BFDBFE] text-[#94A3B8]">-</td>
 							<td className="border border-[#BFDBFE] text-[#94A3B8]">-</td>
-							<td className="border border-[#BFDBFE] text-[#94A3B8]">-</td>
+							{/* <td className="border border-[#BFDBFE] text-[#94A3B8]">-</td> */}
 							<td className="border border-[#BFDBFE] text-[#94A3B8]">-</td>
 						</tr>
 					</tfoot>
@@ -673,10 +686,13 @@ function Th({ children, color, w }) {
 function Td({ children, bold, blue, yellow, green, strong }) {
 	return (
 		<td
-			className={`border border-[#E5E7EB] ${bold ? 'font-bold text-[#111827]' : 'text-[#4B5563]'
-				} ${blue ? 'bg-[#EFF6FF] font-bold text-[#2563EB]' : ''} ${yellow ? 'bg-[#FFFBEB]' : ''
-				} ${green ? 'bg-[#ECFDF5]' : ''} ${strong ? 'font-bold text-[#B45309]' : ''
-				}`}
+			className={`border border-[#E5E7EB] ${
+				bold ? 'font-bold text-[#111827]' : 'text-[#4B5563]'
+			} ${blue ? 'bg-[#EFF6FF] font-bold text-[#2563EB]' : ''} ${
+				yellow ? 'bg-[#FFFBEB]' : ''
+			} ${green ? 'bg-[#ECFDF5]' : ''} ${
+				strong ? 'font-bold text-[#B45309]' : ''
+			}`}
 		>
 			{children}
 		</td>
@@ -703,10 +719,11 @@ function RankBadge({ text, color }) {
 function PageBtn({ children, active }) {
 	return (
 		<button
-			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${active
-				? 'border-[#183A6B] bg-[#183A6B] text-white'
-				: 'border-[#E5E7EB] bg-white text-[#64748B]'
-				}`}
+			className={`flex h-[30px] w-[30px] items-center justify-center rounded-[5px] border text-[13px] font-bold ${
+				active
+					? 'border-[#183A6B] bg-[#183A6B] text-white'
+					: 'border-[#E5E7EB] bg-white text-[#64748B]'
+			}`}
 		>
 			{children}
 		</button>
